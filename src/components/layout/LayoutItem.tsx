@@ -5,6 +5,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface LayoutItemProps {
   children: string;
@@ -12,11 +13,13 @@ interface LayoutItemProps {
   icon: ReactNode;
 }
 function LayoutItem({ children, icon, to }: LayoutItemProps) {
+  const navigate = useNavigate();
+
   return (
     <ListItem>
-      <ListItemButton>
+      <ListItemButton onClick={() => navigate(to)}>
         <ListItemIcon>{icon}</ListItemIcon>
-        <ListItemText></ListItemText>
+        <ListItemText>{children}</ListItemText>
       </ListItemButton>
     </ListItem>
   );
