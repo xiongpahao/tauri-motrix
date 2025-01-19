@@ -20,15 +20,19 @@ function Layout() {
         <Paper className="layout">
           <div className="layout-left">
             <List>
-              {routers.map((router) => (
-                <LayoutItem
-                  icon={router.icon}
-                  to={router.path}
-                  key={router.label}
-                >
-                  {t(router.label)}
-                </LayoutItem>
-              ))}
+              {routers.map(
+                (router) =>
+                  router.path &&
+                  router.label && (
+                    <LayoutItem
+                      icon={router.icon}
+                      to={router.path}
+                      key={router.label}
+                    >
+                      {t(router.label)}
+                    </LayoutItem>
+                  )
+              )}
             </List>
           </div>
 

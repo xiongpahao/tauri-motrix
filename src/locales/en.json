@@ -1,3 +1,7 @@
 {
-    "Label-Task": "Task"
+    "Label-Task-Active": "Downloading",
+    "Label-Task-Waiting": "Waiting",
+    "Label-Task-Stopped": "Stopped",
+    "Label-Setting": "Setting",
+    "Label-Advanced": "Advanced"
 }
