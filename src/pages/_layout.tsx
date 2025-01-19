@@ -17,8 +17,8 @@ function Layout() {
   return (
     <SWRConfig>
       <ThemeProvider theme={{}}>
-        <Paper>
-          <div>
+        <Paper className="layout">
+          <div className="layout-left">
             <List>
               {routers.map((router) => (
                 <LayoutItem
@@ -32,7 +32,7 @@ function Layout() {
             </List>
           </div>
 
-          <div>{routerElements}</div>
+          <div className="layout-right">{routerElements}</div>
         </Paper>
       </ThemeProvider>
     </SWRConfig>
