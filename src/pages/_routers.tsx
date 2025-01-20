@@ -1,5 +1,5 @@
 import PreferencePage from "@/pages/Preference";
-import TaskPage from "@/pages/Task";
+import TaskActivePage from "@/pages/TaskActive";
 import {
   ConstructionRounded,
   PauseRounded,
@@ -21,19 +21,19 @@ export const routers: IRoute[] = [
     label: "Label-Task-Active",
     path: "/task-start",
     icon: <PlayArrowRounded />,
-    element: <TaskPage />,
+    element: <TaskActivePage />,
   },
   {
     label: "Label-Task-Waiting",
     path: "/task-waiting",
     icon: <PauseRounded />,
-    element: <TaskPage />,
+    element: <TaskActivePage />,
   },
   {
     label: "Label-Task-Stopped",
     path: "/task-stopped",
     icon: <StopRounded />,
-    element: <TaskPage />,
+    element: <TaskActivePage />,
   },
   {
     label: "Label-Setting",

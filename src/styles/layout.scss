@@ -2,8 +2,22 @@
   display: flex;
   width: 100%;
   height: 100vh;
+
   &__left {
+    display: flex;
     flex: 1 0 200px;
+    flex-direction: column;
+
+    .the-logo {
+      display: flex;
+      flex: 1 0 58px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .the-menu {
+      flex: 1 1 80%;
+    }
   }
 
   &__right {
