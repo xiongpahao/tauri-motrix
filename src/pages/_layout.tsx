@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { List, Paper, SvgIcon, ThemeProvider } from "@mui/material";
+import { List, Paper, SvgIcon, ThemeProvider, useTheme } from "@mui/material";
 
 import LayoutItem from "@/components/layout/LayoutItem";
 import { routers } from "@/pages/_routers";
@@ -19,7 +19,14 @@ function Layout() {
   return (
     <SWRConfig>
       <ThemeProvider theme={{}}>
-        <Paper className="layout">
+        <Paper
+          className="layout"
+          sx={[
+            ({ palette }) => ({
+              bgcolor: palette.background.paper,
+            }),
+          ]}
+        >
           <div className="layout__left">
             <div className="the-logo" data-tauri-drag-region="true">
               <div
@@ -34,13 +41,10 @@ function Layout() {
                   style={{
                     height: "24px",
                     width: "62px",
-                    marginTop: "-3px",
-                    marginRight: "5px",
-                    marginLeft: "-3px",
                   }}
                   inheritViewBox
                 />
-                <span>Motrix</span>
+                {/* <span>Motrix</span> */}
               </div>
             </div>
 

@@ -10,7 +10,7 @@ interface Props {
 }
 
 //isDark ? "#1e1f27" :
-function BasePage({ title, header, children, contentStyle }: Props) {
+function BasePage({ title, header, children, contentStyle, full }: Props) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
@@ -27,7 +27,7 @@ function BasePage({ title, header, children, contentStyle }: Props) {
         {header}
       </header>
 
-      <div className="base-container" style={{ backgroundColor: "#ffffff" }}>
+      <div className={full ? "base-container no-padding" : "base-container"}>
         <section
           style={{
             backgroundColor: isDark ? "#1e1f27" : "var(--background-color)",

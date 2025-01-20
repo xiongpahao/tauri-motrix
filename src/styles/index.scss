@@ -1,6 +1,16 @@
 @use "./layout.scss";
+@use "./page.scss";
 
 body {
   margin: 0;
   overflow: hidden;
+}
+
+:root {
+  --primary-main: #5b5c9d;
+  --text-primary: #1f1f1f;
+  --selection-color: #f5f5f5;
+  --scroller-color: #8c8c8c;
+  --background-color: #f5f5f5;
+  --border-radius: 8px;
 }
