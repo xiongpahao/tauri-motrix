@@ -2,7 +2,11 @@
     "Label-Task-Active": "Downloading",
     "Label-Task-Waiting": "Waiting",
     "Label-Task-Stopped": "Stopped",
-    "Label-Setting": "Setting",
+    "Label-Settings": "Setting",
     "Label-Advanced": "Advanced",
-    "Task-Start": "Downloading"
+    "Task-Start": "Downloading",
+    "Task-Waiting": "Waiting",
+    "Task-Stopped": "Stopped",
+    "Settings": "Settings",
+    "Advanced": "Advanced"
 }

@@ -1,7 +1,10 @@
 import BasePage from "@/components/common/BasePage";
+import { useTranslation } from "react-i18next";
 
 function TaskWaitingPage() {
-  return <BasePage>111</BasePage>;
+  const { t } = useTranslation();
+
+  return <BasePage title={t("Task-Waiting")}>111</BasePage>;
 }
 
 export default TaskWaitingPage;

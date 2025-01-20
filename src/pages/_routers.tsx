@@ -40,7 +40,7 @@ export const routers: IRoute[] = [
     element: <TaskStoppedPage />,
   },
   {
-    label: "Label-Setting",
+    label: "Label-Settings",
     path: "/settings",
     icon: <SettingsRounded />,
     element: <SettingsPage />,

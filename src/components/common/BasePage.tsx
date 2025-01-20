@@ -18,7 +18,7 @@ function BasePage({ title, header, children, contentStyle, full }: Props) {
     <div className="base-page">
       <header data-tauri-drag-region="true" style={{ userSelect: "none" }}>
         <Typography
-          sx={{ fontSize: "20px", fontWeight: "700 " }}
+          // sx={{ fontSize: "20px", fontWeight: "700 " }}
           data-tauri-drag-region="true"
         >
           {title}
