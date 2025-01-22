@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { List, Paper, SvgIcon, ThemeProvider, useTheme } from "@mui/material";
+import { List, Paper, SvgIcon, ThemeProvider } from "@mui/material";
 
 import LayoutItem from "@/components/layout/LayoutItem";
 import { routers } from "@/pages/_routers";
