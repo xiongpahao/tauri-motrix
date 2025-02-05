@@ -1,13 +1,18 @@
 {
     "Label-Task-Active": "Downloading",
-    "Label-Task-Waiting": "Waiting",
-    "Label-Task-Stopped": "Stopped",
+    "Label-Task-History": "History",
+    "Label-Task-Done": "Done",
     "Label-Settings": "Setting",
     "Label-Advanced": "Advanced",
     "Task-Start": "Downloading",
-    "Task-Waiting": "Waiting",
-    "Task-Stopped": "Stopped",
+    "Task-History": "History",
+    "Task-Done": "Done",
     "Settings": "Settings",
     "Advanced": "Advanced",
-    "Close All Tasks": "Close All Tasks"
+    "Close All Tasks": "Close All Tasks",
+    "ThemeMode": {
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+    }
 }

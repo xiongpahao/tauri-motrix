@@ -1,10 +1,10 @@
 import BasePage from "@/components/common/BasePage";
 import { useTranslation } from "react-i18next";
 
-function TaskWaitingPage() {
+function TaskHistoryPage() {
   const { t } = useTranslation();
 
-  return <BasePage title={t("Task-Waiting")}>111</BasePage>;
+  return <BasePage title={t("Task-History")}>111</BasePage>;
 }
 
-export default TaskWaitingPage;
+export default TaskHistoryPage;
