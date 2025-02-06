@@ -1,8 +1,8 @@
 import {
-  ConstructionRounded,
   DoneRounded,
   HistoryRounded,
   PlayArrowRounded,
+  RecyclingRounded,
   SettingsRounded,
 } from "@mui/icons-material";
 import { ReactNode } from "react";
@@ -12,7 +12,7 @@ import SettingsPage from "@/pages/Settings";
 import TaskActivePage from "@/pages/TaskStart";
 import TaskStoppedPage from "@/pages/TaskDone";
 import TaskHistoryPage from "@/pages/TaskHistory";
-import AdvancedPage from "@/pages/Advanced";
+import TaskRecyclePage from "@/pages/TaskRecycle";
 
 type IRoute = RouteObject & { label?: string; icon?: ReactNode };
 
@@ -40,15 +40,15 @@ export const routers: IRoute[] = [
     element: <TaskHistoryPage />,
   },
   {
+    label: "Label-Task-Recycle",
+    path: "/task-recycle",
+    icon: <RecyclingRounded />,
+    element: <TaskRecyclePage />,
+  },
+  {
     label: "Label-Settings",
     path: "/settings",
     icon: <SettingsRounded />,
     element: <SettingsPage />,
-  },
-  {
-    label: "Label-Advanced",
-    path: "/advanced",
-    icon: <ConstructionRounded />,
-    element: <AdvancedPage />,
   },
 ];

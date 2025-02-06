@@ -1,5 +1,5 @@
 import BasePage from "@/components/common/BasePage";
-import AppearanceSetting from "@/components/setting/AppearanceSetting";
+import AppearanceSetting from "@/components/setting/DisplaySetting";
 import { Box, Grid2, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 

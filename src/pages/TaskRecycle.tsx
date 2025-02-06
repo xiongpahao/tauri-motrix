@@ -1,10 +1,10 @@
 import BasePage from "@/components/common/BasePage";
 import { useTranslation } from "react-i18next";
 
-function AdvancedPage() {
+function TaskRecyclePage() {
   const { t } = useTranslation();
 
-  return <BasePage title={t("Advanced")}>advanced</BasePage>;
+  return <BasePage title={t("Recycle")}>Recycle</BasePage>;
 }
 
-export default AdvancedPage;
+export default TaskRecyclePage;

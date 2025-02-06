@@ -4,7 +4,7 @@ import { MenuItem, Select, Switch } from "@mui/material";
 
 function AppearanceSetting() {
   return (
-    <SettingList title="Appearance">
+    <SettingList title="Display">
       <SettingItem label="Theme Mode">
         <ThemeModeSwitch />
       </SettingItem>
