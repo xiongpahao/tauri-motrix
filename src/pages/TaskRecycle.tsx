@@ -1,5 +1,6 @@
-import BasePage from "@/components/common/BasePage";
 import { useTranslation } from "react-i18next";
+
+import BasePage from "@/components/BasePage";
 
 function TaskRecyclePage() {
   const { t } = useTranslation();

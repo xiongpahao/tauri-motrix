@@ -1,5 +1,3 @@
-import BasePage from "@/components/common/BasePage";
-import { useTask } from "@/hooks/task";
 import {
   CloseOutlined,
   FileOpenOutlined,
@@ -19,6 +17,9 @@ import {
   ListItemText,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
+
+import BasePage from "@/components/BasePage";
+import { useTask } from "@/hooks/task";
 
 function TaskActivePage() {
   const { t } = useTranslation();

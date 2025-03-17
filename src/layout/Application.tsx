@@ -1,13 +1,13 @@
+import { List, Paper, SvgIcon, ThemeProvider } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
-import { List, Paper, SvgIcon, ThemeProvider } from "@mui/material";
 
-import LayoutItem from "@/components/layout/LayoutItem";
-import { routers } from "@/pages/_routers";
 import logoIcon from "@/assets/logo.svg?react";
+import { routers } from "@/routes/_routers";
+import LayoutItem from "@@/routes/applicationm";
 
-function Layout() {
+function ApplicationLayout() {
   const { t } = useTranslation();
 
   const routerElements = useRoutes(routers);
@@ -60,7 +60,7 @@ function Layout() {
                     >
                       {t(router.label)}
                     </LayoutItem>
-                  )
+                  ),
               )}
             </List>
           </div>
@@ -72,4 +72,4 @@ function Layout() {
   );
 }
 
-export default Layout;
+export default ApplicationLayout;

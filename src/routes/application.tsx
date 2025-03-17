@@ -9,10 +9,10 @@ import { ReactNode } from "react";
 import { Navigate, RouteObject } from "react-router-dom";
 
 import SettingsPage from "@/pages/Settings";
-import TaskActivePage from "@/pages/TaskStart";
 import TaskStoppedPage from "@/pages/TaskDone";
 import TaskHistoryPage from "@/pages/TaskHistory";
 import TaskRecyclePage from "@/pages/TaskRecycle";
+import TaskActivePage from "@/pages/TaskStart";
 
 type IRoute = RouteObject & { label?: string; icon?: ReactNode };
 

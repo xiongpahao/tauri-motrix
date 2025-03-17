@@ -1,8 +1,9 @@
 @use "./layout.scss";
 @use "./page.scss";
 
+@import "tailwindcss";
+
 body {
-  margin: 0;
   overflow: hidden;
 }
 
