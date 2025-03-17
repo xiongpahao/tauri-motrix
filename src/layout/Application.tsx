@@ -4,8 +4,8 @@ import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import logoIcon from "@/assets/logo.svg?react";
-import { routers } from "@/routes/_routers";
-import LayoutItem from "@@/routes/applicationm";
+import LayoutItem from "@/layout/LayoutItem";
+import { routers } from "@/routes/application";
 
 function ApplicationLayout() {
   const { t } = useTranslation();
