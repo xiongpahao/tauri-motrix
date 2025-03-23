@@ -1,8 +1,8 @@
 import { Box, Grid2, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
+import AppearanceSetting from "@/business/setting/DisplaySetting";
 import BasePage from "@/components/BasePage";
-import AppearanceSetting from "@/components/setting/DisplaySetting";
 
 function SettingsPage() {
   const { t } = useTranslation();

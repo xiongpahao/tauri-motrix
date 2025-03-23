@@ -8,7 +8,7 @@ import {
   ListItemText,
   ListSubheader,
 } from "@mui/material";
-import { useState, ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 interface ItemProps {
   label: ReactNode;
@@ -18,13 +18,8 @@ interface ItemProps {
   onClick?: () => void | Promise<any>;
 }
 
-export function SettingItem({
-  label,
-  extra,
-  children,
-  secondary,
-  onClick,
-}: ItemProps) {
+export function SettingItem(props: ItemProps) {
+  const { label, extra, children, secondary, onClick } = props;
   const clickable = !!onClick;
 
   const primary = (
@@ -39,18 +34,22 @@ export function SettingItem({
     // TODO
   };
 
-  return clickable ? (
-    <ListItem disablePadding>
-      <ListItemButton onClick={handleClick} disabled={isLoading}>
-        <ListItemText primary={primary} secondary={secondary} />
-        {isLoading ? (
-          <CircularProgress color="inherit" size={20} />
-        ) : (
-          <ChevronRightRounded />
-        )}
-      </ListItemButton>
-    </ListItem>
-  ) : (
+  if (clickable) {
+    return (
+      <ListItem disablePadding>
+        <ListItemButton onClick={handleClick} disabled={isLoading}>
+          <ListItemText primary={primary} secondary={secondary} />
+          {isLoading ? (
+            <CircularProgress color="inherit" size={20} />
+          ) : (
+            <ChevronRightRounded />
+          )}
+        </ListItemButton>
+      </ListItem>
+    );
+  }
+
+  return (
     <ListItem sx={{ pt: "5px", pb: "5px" }}>
       <ListItemText primary={primary} secondary={secondary} />
       {children}

@@ -5,15 +5,7 @@ let axiosIns: AxiosInstance = null!;
 export const getAxios = async (force: boolean = false) => {
   if (axiosIns && !force) return axiosIns;
 
-  let server = "127.0.0.1:16800";
-
-  //   try {
-  //     const info = await getClashInfo();
-
-  //     if (info?.server) {
-  //       server = info.server;
-  //     }
-  //   } catch {}
+  const server = "127.0.0.1:16800";
 
   axiosIns = axios.create({
     baseURL: `http://${server}`,
