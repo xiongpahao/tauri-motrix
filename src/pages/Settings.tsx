@@ -1,4 +1,4 @@
-import { Box, Grid2, useTheme } from "@mui/material";
+import { Box, Grid, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import AppearanceSetting from "@/business/setting/DisplaySetting";
@@ -18,13 +18,13 @@ function SettingsPage() {
 
   return (
     <BasePage title={t("Settings")}>
-      <Grid2 container spacing={2}>
+      <Grid container spacing={2}>
         <Box sx={boxSx}>
           <AppearanceSetting />
         </Box>
 
         <Box sx={boxSx}></Box>
-      </Grid2>
+      </Grid>
     </BasePage>
   );
 }

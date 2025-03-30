@@ -1,4 +1,10 @@
-import { List, Paper, SvgIcon, ThemeProvider } from "@mui/material";
+import {
+  createTheme,
+  List,
+  Paper,
+  SvgIcon,
+  ThemeProvider,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
@@ -6,6 +12,8 @@ import { SWRConfig } from "swr";
 import logoIcon from "@/assets/logo.svg?react";
 import LayoutItem from "@/layout/LayoutItem";
 import { routers } from "@/routes/application";
+
+const theme = createTheme();
 
 function ApplicationLayout() {
   const { t } = useTranslation();
@@ -18,7 +26,7 @@ function ApplicationLayout() {
 
   return (
     <SWRConfig>
-      <ThemeProvider theme={{}}>
+      <ThemeProvider theme={theme}>
         <Paper
           className="layout"
           sx={[

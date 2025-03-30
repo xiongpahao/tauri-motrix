@@ -9,7 +9,6 @@
     "Task-Done": "Done",
     "Settings": "Settings",
     "Recycle": "Recycle",
-    "Close All Tasks": "Close All Tasks",
     "ThemeMode": {
         "light": "Light",
         "dark": "Dark",
@@ -21,5 +20,8 @@
         "ThemeMode": "Theme Mode",
         "Language": "Language",
         "Display": "Display"
+    },
+    "task": {
+        "CloseAllTasks": "Close All Tasks"
     }
 }

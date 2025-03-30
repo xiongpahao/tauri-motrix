@@ -1,5 +1,6 @@
-import BasePage from "@/components/BasePage";
 import { useTranslation } from "react-i18next";
+
+import BasePage from "@/components/BasePage";
 
 function TaskStoppedPage() {
   const { t } = useTranslation();

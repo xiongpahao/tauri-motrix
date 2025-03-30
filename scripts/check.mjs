@@ -1,11 +1,101 @@
+import AdmZip from "adm-zip";
+import { execSync } from "child_process";
+import fs from "fs";
 import fsp from "fs/promises";
 import path from "path";
 import process from "process";
+import { extract } from "tar";
+import zlib from "zlib";
 
-import { log_error, log_success } from "./utils.mjs";
+import { createAria2BinInfo, getLatestAria2Tag } from "./aria2_helper.mjs";
+import { downloadFile, log_debug, log_error, log_success } from "./utils.mjs";
 
 const { cwd: cwdFn } = process;
 const cwd = cwdFn();
+
+const TEMP_DIR = path.join(cwd, "node_modules/.tauri-motrix");
+
+async function resolveSidecar(binInfo) {
+  const { name, targetFile, zipFile, exeFile, downloadURL } = binInfo;
+
+  const sidecarDir = path.join(cwd, "src-tauri", "sidecar");
+  const sidecarPath = path.join(sidecarDir, targetFile);
+
+  await fsp.mkdir(sidecarDir, { recursive: true });
+
+  const tempDir = path.join(TEMP_DIR, name);
+  const tempZip = path.join(tempDir, zipFile);
+  const tempExe = path.join(tempDir, exeFile);
+
+  await fsp.mkdir(tempDir, { recursive: true });
+  try {
+    if (!fs.existsSync(tempZip)) {
+      await downloadFile(downloadURL, tempZip);
+    }
+
+    if (zipFile.endsWith(".zip")) {
+      const zip = new AdmZip(tempZip);
+      zip.getEntries().forEach((entry) => {
+        log_debug(`"${name}" entry name`, entry.entryName);
+      });
+      zip.extractAllTo(tempDir, true);
+      await fsp.rename(tempExe, sidecarPath);
+      log_success(`unzip finished: "${name}"`);
+    } else if (zipFile.endsWith(".tgz")) {
+      // tgz
+      await fsp.mkdir(tempDir, { recursive: true });
+      await extract({
+        cwd: tempDir,
+        file: tempZip,
+      });
+      const files = await fsp.readdir(tempDir);
+      log_debug(`"${name}" files in tempDir:`, files);
+
+      // TODO
+      // await fsp.rename(tempExe, sidecarPath);
+      // log_success(`"${name}" file renamed to "${sidecarPath}"`);
+      // execSync(`chmod 755 ${sidecarPath}`);
+      // log_success(`chmod binary finished: "${name}"`);
+    } else {
+      // gz
+      const readStream = fs.createReadStream(tempZip);
+      const writeStream = fs.createWriteStream(sidecarPath);
+      await new Promise((resolve, reject) => {
+        const onError = (error) => {
+          log_error(`"${name}" gz failed:`, error.message);
+          reject(error);
+        };
+        readStream
+          .pipe(zlib.createGunzip().on("error", onError))
+          .pipe(writeStream)
+          .on("finish", () => {
+            execSync(`chmod 755 ${sidecarPath}`);
+            log_success(`chmod binary finished: "${name}"`);
+            resolve();
+          })
+          .on("error", onError);
+      });
+    }
+  } catch (err) {
+    // Need to delete the file
+    await fsp.rm(sidecarPath, { recursive: true, force: true });
+    throw err;
+  } finally {
+    // delete temp dir
+    await fsp.rm(tempDir, { recursive: true, force: true });
+  }
+}
+/**
+ * Download aria2 from Github Release page and save to sidecar
+ */
+
+async function resolveAria2() {
+  const latestTag = await getLatestAria2Tag();
+
+  const binInfo = createAria2BinInfo(latestTag);
+
+  resolveSidecar(binInfo);
+}
 
 /**
  * TODO
@@ -40,6 +130,11 @@ async function resolveLocales() {
  * @type { Array<{ name: string, func: Function, retry: number}> }
  */
 const tasks = [
+  {
+    name: "aria2",
+    func: resolveAria2,
+    retry: 5,
+  },
   {
     name: "locales",
     func: resolveLocales,
