@@ -1,19 +1,15 @@
+// @ts-check
 import AdmZip from "adm-zip";
 import { execSync } from "child_process";
 import fs from "fs";
 import fsp from "fs/promises";
 import path from "path";
-import process from "process";
 import { extract } from "tar";
 import zlib from "zlib";
 
 import { createAria2BinInfo, getLatestAria2Tag } from "./aria2_helper.mjs";
+import { cwd, TEMP_DIR } from "./environment.mjs";
 import { downloadFile, log_debug, log_error, log_success } from "./utils.mjs";
-
-const { cwd: cwdFn } = process;
-const cwd = cwdFn();
-
-const TEMP_DIR = path.join(cwd, "node_modules/.tauri-motrix");
 
 async function resolveSidecar(binInfo) {
   const { name, targetFile, zipFile, exeFile, downloadURL } = binInfo;
@@ -71,7 +67,7 @@ async function resolveSidecar(binInfo) {
           .on("finish", () => {
             execSync(`chmod 755 ${sidecarPath}`);
             log_success(`chmod binary finished: "${name}"`);
-            resolve();
+            resolve(1);
           })
           .on("error", onError);
       });
@@ -98,7 +94,7 @@ async function resolveAria2() {
 }
 
 /**
- * TODO
+ * Ensure locales file to Rust process using.
  */
 async function resolveLocales() {
   const srcLocalesDir = path.join(cwd, "src/locales");

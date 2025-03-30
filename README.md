@@ -1,7 +1,18 @@
-# Tauri + React + Typescript
+# tauri-motrix
 
-This template should help get you started developing with Tauri, React and Typescript in Vite.
+**Use Tauri to refactor [Motrix](https://github.com/agalwood/Motrix) project.**
 
-## Recommended IDE Setup
+## Devolvement
 
-- [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+```Powershell
+pnpm run check # ensure fetch
+
+pnpm run tauri dev
+```
+
+## Acknowledgements
+
+I would like to express my gratitude to the following projects and contributors whose work has made this project possible:
+
+- [Clash Verge](https://github.com/clash-verge-rev)
+- [Motrix](https://github.com/agalwood/Motrix)
