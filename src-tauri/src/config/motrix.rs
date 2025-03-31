@@ -3,7 +3,10 @@ use serde::{Deserialize, Serialize};
 use crate::utils::{dirs, help};
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
-pub struct IMotrix {}
+pub struct IMotrix {
+    /// aria2c path
+    pub aria2_engine: Option<String>,
+}
 
 impl IMotrix {
     pub fn new() -> Self {
