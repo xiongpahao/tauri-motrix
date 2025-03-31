@@ -1,9 +1,9 @@
 use once_cell::sync::OnceCell;
 
-use super::{aria2::IAria2, Draft};
+use super::{motrix::IMotrix, Draft};
 
 pub struct Config {
-    aria2_config: Draft<IAria2>,
+    motrix_config: Draft<IMotrix>,
 }
 
 impl Config {
@@ -11,11 +11,11 @@ impl Config {
         static CONFIG: OnceCell<Config> = OnceCell::new();
 
         CONFIG.get_or_init(|| Config {
-            aria2_config: Draft::from(IAria2::new()),
+            motrix_config: Draft::from(IMotrix::new()),
         })
     }
 
-    pub fn aria2() -> Draft<IAria2> {
-        Self::global().aria2_config.clone()
+    pub fn motrix() -> Draft<IMotrix> {
+        Self::global().motrix_config.clone()
     }
 }

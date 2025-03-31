@@ -7,7 +7,7 @@ use tauri::Manager;
 use crate::core::handle;
 
 pub static APP_ID: &str = "com.tauri-motrix.app";
-pub static ARIA2_CONFIG: &str = "aria2.conf";
+pub static MOTRIX_CONFIG: &str = "motrix.yaml";
 
 pub static PORTABLE_FLAG: OnceCell<bool> = OnceCell::new();
 
@@ -38,6 +38,6 @@ pub fn app_home_dir() -> Result<PathBuf> {
     }
 }
 
-pub fn aria2_path() -> Result<PathBuf> {
-    Ok(app_home_dir()?.join(ARIA2_CONFIG))
+pub fn motrix_path() -> Result<PathBuf> {
+    Ok(app_home_dir()?.join(MOTRIX_CONFIG))
 }

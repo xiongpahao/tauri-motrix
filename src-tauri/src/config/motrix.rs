@@ -3,11 +3,11 @@ use serde::{Deserialize, Serialize};
 use crate::utils::{dirs, help};
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
-pub struct IAria2 {}
+pub struct IMotrix {}
 
-impl IAria2 {
+impl IMotrix {
     pub fn new() -> Self {
-        match dirs::aria2_path().and_then(|path| help::read_yaml::<IAria2>(&path)) {
+        match dirs::motrix_path().and_then(|path| help::read_yaml::<IMotrix>(&path)) {
             Ok(config) => config,
             Err(err) => {
                 log::error!(target: "app", "{err}");
@@ -17,7 +17,7 @@ impl IAria2 {
     }
 
     pub fn template() -> Self {
-        IAria2 {
+        IMotrix {
             ..Default::default()
         }
     }

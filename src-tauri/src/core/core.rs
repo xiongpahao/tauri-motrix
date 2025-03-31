@@ -7,7 +7,7 @@ pub struct CoreManager {}
 
 impl CoreManager {
     /// Start core by sidecar
-    async fn run_core_by_sidecar(&self, config_path: &PathBuf) -> Result<()> {
-        let aria2 = { Config::aria2().latest().clone() };
+    async fn run_core_by_sidecar(&self, config_path: &PathBuf) {
+        let aria2 = { Config::motrix().latest().clone() };
     }
 }
