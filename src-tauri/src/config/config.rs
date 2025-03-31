@@ -14,6 +14,7 @@ impl Config {
             aria2_config: Draft::from(IAria2::new()),
         })
     }
+
     pub fn aria2() -> Draft<IAria2> {
         Self::global().aria2_config.clone()
     }

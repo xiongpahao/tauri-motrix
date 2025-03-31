@@ -6,7 +6,8 @@ use crate::config::Config;
 pub struct CoreManager {}
 
 impl CoreManager {
+    /// Start core by sidecar
     async fn run_core_by_sidecar(&self, config_path: &PathBuf) -> Result<()> {
-        let aria2 = Config::aria2();
+        let aria2 = { Config::aria2().latest().clone() };
     }
 }
