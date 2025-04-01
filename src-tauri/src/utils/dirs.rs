@@ -8,6 +8,7 @@ use crate::core::handle;
 
 pub static APP_ID: &str = "com.tauri-motrix.app";
 pub static MOTRIX_CONFIG: &str = "motrix.yaml";
+pub static ARIA2_CONFIG: &str = "aria2.conf";
 
 pub static PORTABLE_FLAG: OnceCell<bool> = OnceCell::new();
 

@@ -5,13 +5,21 @@ import {
   RefreshOutlined,
 } from "@mui/icons-material";
 import { Box, IconButton, List } from "@mui/material";
+import { useMount } from "ahooks";
 import { useTranslation } from "react-i18next";
 
 import TaskItem from "@/business/task/TaskItem";
 import BasePage from "@/components/BasePage";
+import { useTaskStore } from "@/store/task";
 
 function TaskActivePage() {
   const { t } = useTranslation();
+
+  const { tasks, fetchTasks } = useTaskStore();
+
+  useMount(() => {
+    fetchTasks();
+  });
 
   return (
     <BasePage
@@ -46,6 +54,9 @@ function TaskActivePage() {
       >
         <TaskItem />
         <TaskItem />
+        {tasks.map((task) => (
+          <TaskItem key={task.gid} />
+        ))}
       </List>
     </BasePage>
   );
