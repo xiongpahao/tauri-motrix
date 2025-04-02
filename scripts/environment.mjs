@@ -16,3 +16,5 @@ export const TEMP_DIR = path.join(cwd, "node_modules/.tauri-motrix");
 export const SIDECAR_HOST = execSync("rustc -vV")
   .toString()
   .match(/(?<=host: ).+(?=\s*)/g)[0];
+
+export const TARGET_KEY = `${platform}-${arch}`;

@@ -1,6 +1,7 @@
 import clc from "cli-color";
 import fsp from "fs/promises";
 import { HttpsProxyAgent } from "https-proxy-agent";
+import path from "path";
 import process from "process";
 
 export const log_success = (msg, ...optionalParams) =>
@@ -44,4 +45,33 @@ export async function downloadFile(url, path) {
   await fsp.writeFile(path, new Uint8Array(buffer));
 
   log_success(`download finished: ${url}`);
+}
+
+/**
+ *
+ * @param {string} dir
+ * @returns {Promise<void>}
+ */
+export async function pullUpOnlySubDirectory(dir) {
+  const files = await fsp.readdir(dir);
+
+  if (files.length !== 1) {
+    return;
+  }
+
+  const firstFile = files[0];
+  const stats = await fsp.stat(path.join(dir, firstFile));
+
+  if (!stats.isDirectory()) {
+    return;
+  }
+
+  const innerFolder = path.join(dir, firstFile);
+  const innerFiles = await fsp.readdir(innerFolder);
+  await Promise.all(
+    innerFiles.map(async (file) => {
+      await fsp.rename(path.join(innerFolder, file), path.join(dir, file));
+    }),
+  );
+  await fsp.rmdir(innerFolder);
 }

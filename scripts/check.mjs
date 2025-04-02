@@ -9,7 +9,13 @@ import zlib from "zlib";
 
 import { createAria2BinInfo, getLatestAria2Tag } from "./aria2_helper.mjs";
 import { cwd, TEMP_DIR } from "./environment.mjs";
-import { downloadFile, log_debug, log_error, log_success } from "./utils.mjs";
+import {
+  downloadFile,
+  log_debug,
+  log_error,
+  log_success,
+  pullUpOnlySubDirectory,
+} from "./utils.mjs";
 
 async function resolveSidecar(binInfo) {
   const { name, targetFile, zipFile, exeFile, downloadURL } = binInfo;
@@ -35,6 +41,10 @@ async function resolveSidecar(binInfo) {
         log_debug(`"${name}" entry name`, entry.entryName);
       });
       zip.extractAllTo(tempDir, true);
+
+      await fsp.rm(tempZip);
+      await pullUpOnlySubDirectory(tempDir);
+
       await fsp.rename(tempExe, sidecarPath);
       log_success(`unzip finished: "${name}"`);
     } else if (zipFile.endsWith(".tgz")) {
