@@ -16,3 +16,7 @@ I would like to express my gratitude to the following projects and contributors 
 
 - [Clash Verge](https://github.com/clash-verge-rev)
 - [Motrix](https://github.com/agalwood/Motrix)
+
+## License
+
+GPL-3.0 License. See [License here](./LICENSE) for details.

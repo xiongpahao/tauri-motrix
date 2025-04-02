@@ -1,12 +1,15 @@
-use std::sync::Arc;
+use std::{fs::File, sync::Arc};
 
 use once_cell::sync::OnceCell;
 use parking_lot::RwLock;
 use tauri::AppHandle;
+use tauri_plugin_shell::process::CommandChild;
 
 #[derive(Debug, Clone)]
 pub struct Handle {
     pub app_handle: Arc<RwLock<Option<AppHandle>>>,
+    pub core_lock: Arc<RwLock<Option<File>>>,
+    pub core_process: Arc<RwLock<Option<CommandChild>>>,
 }
 
 impl Handle {
@@ -15,10 +18,27 @@ impl Handle {
 
         HANDLE.get_or_init(|| Handle {
             app_handle: Arc::new(RwLock::new(None)),
+            core_lock: Arc::new(RwLock::new(None)),
+            core_process: Arc::new(RwLock::new(None)),
         })
+    }
+
+    pub fn init(&self, app_handle: &AppHandle) {
+        let mut handle = self.app_handle.write();
+        *handle = Some(app_handle.clone());
     }
 
     pub fn app_handle(&self) -> Option<AppHandle> {
         self.app_handle.read().clone()
+    }
+
+    // set core file to be lock
+    pub fn set_core_lock(&self, file: File) {
+        let mut core_lock = self.core_lock.write();
+        *core_lock = Some(file);
+    }
+    pub fn set_core_process(&self, process: CommandChild) {
+        let mut core_process = self.core_process.write();
+        *core_process = Some(process);
     }
 }

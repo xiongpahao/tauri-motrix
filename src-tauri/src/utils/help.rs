@@ -1,7 +1,7 @@
 use std::{fs, path::PathBuf};
 
 use anyhow::{bail, Context, Result};
-use serde::de::DeserializeOwned;
+use serde::{de::DeserializeOwned, Serialize};
 
 pub fn read_yaml<T: DeserializeOwned>(path: &PathBuf) -> Result<T> {
     if !path.exists() {
@@ -17,4 +17,33 @@ pub fn read_yaml<T: DeserializeOwned>(path: &PathBuf) -> Result<T> {
             path.display()
         )
     })
+}
+
+pub fn save_yaml<T: Serialize>(path: &PathBuf, data: &T, prefix: Option<&str>) -> Result<()> {
+    let data_str = serde_yaml::to_string(data)?;
+
+    let yaml_str = match prefix {
+        Some(prefix) => format!("{prefix}\n\n{data_str}"),
+        None => data_str,
+    };
+
+    let path_str = path.as_os_str().to_string_lossy().to_string();
+
+    fs::write(path, yaml_str.as_bytes())
+        .with_context(|| format!("failed to save file \"{path_str}\""))
+}
+
+#[macro_export]
+macro_rules! log_err {
+    ($result: expr) => {
+        if let Err(err) = $result {
+            log::error!(target: "app", "{err}");
+        }
+    };
+
+    ($result: expr, $err_str:  expr) => {
+        if let Err(_) = $result {
+            log::error!(target: "app", "{}", $err_str);
+        }
+    };
 }

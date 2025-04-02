@@ -42,3 +42,11 @@ pub fn app_home_dir() -> Result<PathBuf> {
 pub fn motrix_path() -> Result<PathBuf> {
     Ok(app_home_dir()?.join(MOTRIX_CONFIG))
 }
+
+pub fn path_to_str(path: &PathBuf) -> Result<&str> {
+    let path_str = path
+        .as_os_str()
+        .to_str()
+        .ok_or(anyhow::anyhow!("failed to get path from {:?}", path))?;
+    Ok(path_str)
+}
