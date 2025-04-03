@@ -52,7 +52,6 @@ function ApplicationLayout() {
                   }}
                   inheritViewBox
                 />
-                {/* <span>Motrix</span> */}
               </div>
             </div>
 

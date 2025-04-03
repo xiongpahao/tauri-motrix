@@ -31,44 +31,37 @@ function TaskItem() {
         sx={{
           bgcolor: "background.paper",
         }}
-        secondaryAction={
-          <Box sx={{ textAlign: "end" }}>
-            <Box>
-              <IconButton size="small">
-                <PlayArrowOutlined />
-              </IconButton>
-
-              <IconButton size="small" title={t("CloseAllTasks")}>
-                <CloseOutlined />
-              </IconButton>
-
-              <IconButton size="small">
-                <FileOpenOutlined />
-              </IconButton>
-
-              <IconButton size="small">
-                <LinkOutlined />
-              </IconButton>
-
-              <IconButton size="small">
-                <InfoOutlined />
-              </IconButton>
-            </Box>
-            <TaskDownloadDescription />
-          </Box>
-        }
       >
         <ListItemIcon>
-          <Checkbox
-            edge="start"
-            // checked={checked.includes(value)}
-            tabIndex={-1}
-            disableRipple
-            // inputProps={{ "aria-labelledby": labelId }}
-          />
+          <Checkbox edge="start" tabIndex={-1} disableRipple />
         </ListItemIcon>
 
         <ListItemText primary="Filename" secondary="2.36 GB / 5.91 GB" />
+
+        <Box sx={{ textAlign: "end" }}>
+          <Box>
+            <IconButton size="small">
+              <PlayArrowOutlined />
+            </IconButton>
+
+            <IconButton size="small" title={t("CloseAllTasks")}>
+              <CloseOutlined />
+            </IconButton>
+
+            <IconButton size="small">
+              <FileOpenOutlined />
+            </IconButton>
+
+            <IconButton size="small">
+              <LinkOutlined />
+            </IconButton>
+
+            <IconButton size="small">
+              <InfoOutlined />
+            </IconButton>
+          </Box>
+          <TaskDownloadDescription />
+        </Box>
       </ListItem>
 
       <Box sx={{ width: "100%" }}>
