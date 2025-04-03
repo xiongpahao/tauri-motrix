@@ -12,6 +12,7 @@ impl IAria2Temp {
         map.insert("enable-rpc".into(), "true".into());
         map.insert("rpc-allow-origin-all".into(), "true".into());
         map.insert("rpc-listen-all".into(), "true".into());
+        map.insert("rpc-listen-port".into(), "16800".into());
 
         Self(map)
     }
