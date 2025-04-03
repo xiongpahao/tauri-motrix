@@ -21,7 +21,8 @@ impl IMotrix {
 
     pub fn template() -> Self {
         IMotrix {
-            ..Default::default()
+            aria2_engine: Some("aria2c".into()),
+            ..Self::default()
         }
     }
 }

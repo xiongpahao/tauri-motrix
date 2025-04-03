@@ -4,12 +4,18 @@ use crate::{
     config::Config,
     core::{handle, CoreManager},
     log_err,
+    utils::init,
 };
 
 pub async fn resolve_setup(app: &App) {
     // let version = app.package_info().version.to_string();
     handle::Handle::global().init(app.app_handle());
 
+    // Create file to fill config if not exist
+    log_err!(init::init_config());
+    log_err!(init::init_resources());
+
+    // core start engine
     log::trace!(target:"app", "init config");
     log_err!(Config::init_config().await);
 

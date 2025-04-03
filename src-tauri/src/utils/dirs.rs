@@ -39,8 +39,24 @@ pub fn app_home_dir() -> Result<PathBuf> {
     }
 }
 
+pub fn app_resources_dir() -> Result<PathBuf> {
+    let app_handle = handle::Handle::global().app_handle().unwrap();
+
+    match app_handle.path().resource_dir() {
+        Ok(dir) => Ok(dir.join("resources")),
+        Err(e) => {
+            log::error!(target:"app", "Failed to get the resource directory: {}", e);
+            Err(anyhow::anyhow!("Failed to get the resource directory"))
+        }
+    }
+}
+
 pub fn motrix_path() -> Result<PathBuf> {
     Ok(app_home_dir()?.join(MOTRIX_CONFIG))
+}
+
+pub fn aria2_path() -> Result<PathBuf> {
+    Ok(app_home_dir()?.join(ARIA2_CONFIG))
 }
 
 pub fn path_to_str(path: &PathBuf) -> Result<&str> {
