@@ -6,10 +6,10 @@ use tauri_plugin_shell::ShellExt;
 use tokio::{sync::Mutex, time::sleep};
 
 use crate::{
-    config::{Config, ConfigType},
+    config::Config,
     core::handle,
     log_err,
-    utils::dirs,
+    utils::dirs::{self, aria2_path},
 };
 
 #[derive(Debug)]
@@ -39,7 +39,7 @@ impl CoreManager {
             return Ok(());
         }
 
-        let config_path = Config::generate_file(ConfigType::Run)?;
+        let config_path = aria2_path()?;
 
         self.run_core_by_sidecar(&config_path).await?;
 
