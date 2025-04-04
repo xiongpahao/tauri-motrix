@@ -120,5 +120,5 @@ export const downloadingTasks = (param?: {
     ["aria2.tellWaiting", ...[param?.offset ?? 0, param?.num ?? 20]],
   ]).then((res) => res.flat(2));
 
-export const fetchStoppedTaskList = (args: object[]) =>
+export const stoppedTasks = (args: object[]) =>
   aria2cCall<Aria2Task[]>("tellStopped", ...args);

@@ -59,6 +59,10 @@ pub fn aria2_path() -> Result<PathBuf> {
     Ok(app_home_dir()?.join(ARIA2_CONFIG))
 }
 
+pub fn aria2_download_session_path() -> Result<PathBuf> {
+    Ok(app_home_dir()?.join("aria2-download.session"))
+}
+
 pub fn path_to_str(path: &PathBuf) -> Result<&str> {
     let path_str = path
         .as_os_str()

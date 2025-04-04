@@ -30,6 +30,12 @@ pub fn init_config() -> Result<()> {
         }
     }));
 
+    log_err!(dirs::aria2_download_session_path().map(|session_path| {
+        if !session_path.exists() {
+            let _ = fs::File::create(&session_path);
+        }
+    }));
+
     Ok(())
 }
 

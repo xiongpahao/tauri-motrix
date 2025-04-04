@@ -2,6 +2,8 @@ use std::{collections::HashMap, fmt};
 
 use serde::Serialize;
 
+use crate::utils::dirs::{aria2_download_session_path, path_to_str};
+
 #[derive(Debug, Default, Clone, Serialize)]
 pub struct IAria2Temp(pub HashMap<String, String>);
 
@@ -19,6 +21,12 @@ impl IAria2Temp {
         map.insert("rpc-allow-origin-all".into(), "true".into());
         map.insert("rpc-listen-all".into(), "true".into());
         map.insert("rpc-listen-port".into(), "16800".into());
+
+        let save_session = aria2_download_session_path().unwrap();
+        let save_session = path_to_str(&save_session).unwrap();
+
+        map.insert("save-session".into(), save_session.into());
+        map.insert("input-file".into(), save_session.into());
 
         Self(map)
     }
