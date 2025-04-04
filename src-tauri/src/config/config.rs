@@ -1,10 +1,11 @@
 use anyhow::Result;
 use once_cell::sync::OnceCell;
 
-use super::{motrix::IMotrix, Draft};
+use super::{motrix::IMotrix, Draft, IAria2Temp};
 
 pub struct Config {
     motrix_config: Draft<IMotrix>,
+    aria2_config: Draft<IAria2Temp>,
 }
 
 impl Config {
@@ -13,6 +14,7 @@ impl Config {
 
         CONFIG.get_or_init(|| Config {
             motrix_config: Draft::from(IMotrix::new()),
+            aria2_config: Draft::from(IAria2Temp::new()),
         })
     }
 
@@ -23,6 +25,10 @@ impl Config {
 
     pub fn motrix() -> Draft<IMotrix> {
         Self::global().motrix_config.clone()
+    }
+
+    pub fn aria2() -> Draft<IAria2Temp> {
+        Self::global().aria2_config.clone()
     }
 }
 

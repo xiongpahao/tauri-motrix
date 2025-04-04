@@ -4,9 +4,11 @@ import {
   parseJsonRpcSuccessResponse,
 } from "@cosmjs/json-rpc";
 import axios, { AxiosInstance } from "axios";
+import { v4 as uuidv4 } from "uuid";
+
+import { getAria2Info } from "@/services/cmd";
 
 let axiosIns: AxiosInstance = null!;
-let id = 0;
 
 type MultiCall = [string, ...CallParam[]];
 type CallParam = string | boolean | number | object | CallParam[];
@@ -28,7 +30,13 @@ export async function getAxios(force: boolean = false) {
     return axiosIns;
   }
 
-  const server = "127.0.0.1:16800";
+  let server = "";
+
+  const aria2Info = await getAria2Info().catch();
+
+  if (aria2Info.server) {
+    server = aria2Info.server;
+  }
 
   axiosIns = axios.create({
     baseURL: `http://${server}`,
@@ -44,7 +52,7 @@ export async function aria2cCall<T>(
 ): Promise<T> {
   const message = parseJsonRpcRequest({
     jsonrpc: "2.0",
-    id: id++,
+    id: uuidv4(),
     method: ensurePrefix(method),
     params,
   });

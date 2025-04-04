@@ -6,6 +6,12 @@ use serde::Serialize;
 pub struct IAria2Temp(pub HashMap<String, String>);
 
 impl IAria2Temp {
+    pub fn new() -> Self {
+        // TODO: load from file
+
+        Self::template()
+    }
+
     pub fn template() -> Self {
         let mut map = HashMap::new();
 
@@ -15,6 +21,21 @@ impl IAria2Temp {
         map.insert("rpc-listen-port".into(), "16800".into());
 
         Self(map)
+    }
+
+    pub fn get_client_info(&self) -> Aria2Info {
+        let config = &self.0;
+
+        let port = config
+            .get("rpc-listen-port")
+            .and_then(|value| value.parse().ok())
+            .unwrap_or(16800);
+
+        Aria2Info {
+            port,
+            // temporary solution, need to be fixed
+            server: format!("127.0.0.1:{}", port),
+        }
     }
 }
 
@@ -26,4 +47,11 @@ impl fmt::Display for IAria2Temp {
 
         Ok(())
     }
+}
+
+// expose to web
+#[derive(Debug, Clone, Serialize)]
+pub struct Aria2Info {
+    pub port: u16,
+    pub server: String,
 }

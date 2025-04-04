@@ -50,6 +50,9 @@ importers:
       swr:
         specifier: ^2.3.0
         version: 2.3.2(react@19.1.0)
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.0
       zustand:
         specifier: ^5.0.3
         version: 5.0.3(@types/react@19.0.12)(react@19.1.0)(use-sync-external-store@1.4.0(react@19.1.0))
@@ -2824,6 +2827,10 @@ packages:
     resolution: {integrity: sha512-9WXSPC5fMv61vaupRkCKCxsPxBocVnwakBEkMIHHpkTTg6icbJtg6jzgtLDm4bl3cSHAca52rYWih0k4K3PfHw==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
 
   vite-plugin-svgr@4.3.0:
     resolution: {integrity: sha512-Jy9qLB2/PyWklpYy0xk0UU3TlU0t2UMpJXZvf+hWII1lAmRHrOUKi11Uw8N3rxoNk7atZNYO3pR3vI1f7oi+6w==}
@@ -5838,6 +5845,8 @@ snapshots:
   use-sync-external-store@1.4.0(react@19.1.0):
     dependencies:
       react: 19.1.0
+
+  uuid@11.1.0: {}
 
   vite-plugin-svgr@4.3.0(rollup@4.34.4)(typescript@5.6.3)(vite@6.2.3(@types/node@22.13.1)(jiti@2.4.2)(lightningcss@1.29.2)(sass@1.84.0)(yaml@2.7.0)):
     dependencies:

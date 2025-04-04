@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use parking_lot::{MappedMutexGuard, Mutex, MutexGuard};
 
-use super::motrix::IMotrix;
+use super::{motrix::IMotrix, IAria2Temp};
 
 #[derive(Debug, Clone)]
 pub struct Draft<T: Clone + ToOwned> {
@@ -33,3 +33,4 @@ macro_rules! draft_define {
 }
 
 draft_define!(IMotrix);
+draft_define!(IAria2Temp);
