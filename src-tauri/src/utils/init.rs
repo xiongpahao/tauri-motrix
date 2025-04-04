@@ -7,7 +7,7 @@ use crate::{
     log_err,
     utils::{
         dirs,
-        help::{self, save_file},
+        help::{self, simple_save_file},
     },
 };
 
@@ -20,7 +20,7 @@ pub fn init_config() -> Result<()> {
 
     log_err!(dirs::aria2_path().map(|aria2_path| {
         if !aria2_path.exists() {
-            let _ = save_file(&aria2_path, &IAria2Temp::template());
+            let _ = simple_save_file(&aria2_path, &IAria2Temp::template());
         }
     }));
 

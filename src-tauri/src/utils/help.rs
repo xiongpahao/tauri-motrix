@@ -1,8 +1,4 @@
-use std::{
-    fmt::Display,
-    fs::{self, File},
-    path::PathBuf,
-};
+use std::{fmt::Display, fs, path::PathBuf};
 
 use anyhow::{bail, Context, Result};
 use serde::{de::DeserializeOwned, Serialize};
@@ -31,10 +27,10 @@ pub fn save_yaml<T: Serialize>(path: &PathBuf, data: &T, prefix: Option<&str>) -
         None => data_str,
     };
 
-    save_file(path, &yaml_str)
+    simple_save_file(path, &yaml_str)
 }
 
-pub fn save_file<T: Display>(path: &PathBuf, data: &T) -> Result<()> {
+pub fn simple_save_file<T: Display>(path: &PathBuf, data: &T) -> Result<()> {
     let path_str = path.as_os_str().to_string_lossy().to_string();
 
     fs::write(path, data.to_string().as_bytes())
