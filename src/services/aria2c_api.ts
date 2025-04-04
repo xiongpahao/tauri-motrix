@@ -1,10 +1,4 @@
-import {
-  parseJsonRpcErrorResponse,
-  parseJsonRpcRequest,
-  parseJsonRpcSuccessResponse,
-} from "@cosmjs/json-rpc";
 import axios, { AxiosInstance } from "axios";
-import { v4 as uuidv4 } from "uuid";
 
 import { getAria2Info } from "@/services/cmd";
 
@@ -50,25 +44,31 @@ export async function aria2cCall<T>(
   method: string,
   ...params: CallParam[]
 ): Promise<T> {
-  const message = parseJsonRpcRequest({
+  const message = {
     jsonrpc: "2.0",
-    id: uuidv4(),
+    id: Date.now().toString(),
     method: ensurePrefix(method),
     params,
-  });
+  };
 
   const instance = await getAxios();
 
   const { data } = await instance.post("/jsonrpc", message);
 
-  try {
-    const res = parseJsonRpcErrorResponse(data);
-    throw res.error;
-  } catch {
-    const res = parseJsonRpcSuccessResponse(data);
-    return res.result;
+  if (data.error) {
+    throw data.error;
   }
+
+  return data.result;
 }
+
+aria2cCall<string[]>("system.listNotifications").then((res) =>
+  console.log("aria2 notifications: ", res),
+);
+
+aria2cCall<string[]>("system.listMethods").then((res) =>
+  console.log("aria2 methods: ", res),
+);
 
 export function aria2cMultiCall<T>(calls: MultiCall[]) {
   const multi = [
