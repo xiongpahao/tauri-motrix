@@ -1,10 +1,13 @@
 import {
+  Box,
   createTheme,
   List,
+  Modal,
   Paper,
   SvgIcon,
   ThemeProvider,
 } from "@mui/material";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
@@ -12,11 +15,14 @@ import { SWRConfig } from "swr";
 import logoIcon from "@/assets/logo.svg?react";
 import LayoutItem from "@/layout/LayoutItem";
 import { routers } from "@/routes/application";
+import AddTaskModal from "@/business/task/AddTaskModal";
 
 const theme = createTheme();
 
 function ApplicationLayout() {
   const { t } = useTranslation();
+
+  const [addModalOpen, setAddModalOpen] = useState(false);
 
   const routerElements = useRoutes(routers);
 
@@ -42,7 +48,9 @@ function ApplicationLayout() {
                   height: "27px",
                   display: "flex",
                   justifyContent: "space-between",
+                  cursor: "pointer",
                 }}
+                onClick={() => setAddModalOpen(true)}
               >
                 <SvgIcon
                   component={logoIcon}
@@ -73,6 +81,11 @@ function ApplicationLayout() {
           </div>
 
           <div className="layout__right">{routerElements}</div>
+
+          <AddTaskModal
+            open={addModalOpen}
+            onClose={() => setAddModalOpen(false)}
+          />
         </Paper>
       </ThemeProvider>
     </SWRConfig>

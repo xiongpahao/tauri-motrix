@@ -26,7 +26,11 @@ pub fn init_config() -> Result<()> {
 
     log_err!(dirs::motrix_path().map(|motrix_path| {
         if !motrix_path.exists() {
-            let _ = help::save_yaml(&motrix_path, &IMotrix::template(), Some("# tauri-motrix"));
+            let _ = help::save_yaml(
+                &motrix_path,
+                &IMotrix::template(),
+                Some("# Created by tauri-motrix"),
+            );
         }
     }));
 
