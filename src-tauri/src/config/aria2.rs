@@ -1,17 +1,34 @@
-use std::{collections::HashMap, fmt};
+use std::{collections::HashMap, fmt, fs::read_to_string};
 
 use serde::Serialize;
 
-use crate::utils::dirs::{aria2_download_session_path, path_to_str};
+use crate::utils::dirs::{aria2_download_session_path, aria2_path, path_to_str};
 
 #[derive(Debug, Default, Clone, Serialize)]
 pub struct IAria2Temp(pub HashMap<String, String>);
 
 impl IAria2Temp {
     pub fn new() -> Self {
-        // TODO: load from file
+        let aria2_path = aria2_path().unwrap();
+        let aria2_path = path_to_str(&aria2_path).unwrap();
 
-        Self::template()
+        let str = read_to_string(aria2_path).unwrap();
+        let template = Self::template();
+        let mut map = template.0;
+
+        for line in str.lines() {
+            if line.starts_with('#') || line.is_empty() {
+                continue;
+            }
+
+            let mut split = line.split('=');
+            let key = split.next().unwrap().trim().to_string();
+            let value = split.next().unwrap().trim().to_string();
+
+            map.insert(key, value);
+        }
+
+        Self(map)
     }
 
     pub fn template() -> Self {
@@ -41,7 +58,7 @@ impl IAria2Temp {
 
         Aria2Info {
             port,
-            // temporary solution, need to be fixed
+            // TODO: temporary solution, need to be fixed
             server: format!("127.0.0.1:{}", port),
         }
     }

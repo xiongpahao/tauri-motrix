@@ -4,7 +4,7 @@ use crate::utils::{dirs, help};
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct IMotrix {
-    /// aria2c path
+    /// aria2c run name for sidecar
     pub aria2_engine: Option<String>,
 }
 
