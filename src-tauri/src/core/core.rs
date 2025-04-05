@@ -9,7 +9,10 @@ use crate::{
     config::Config,
     core::handle,
     log_err,
-    utils::dirs::{self, aria2_path},
+    utils::{
+        dirs::{self, aria2_path},
+        sys,
+    },
 };
 
 #[derive(Debug)]
@@ -55,20 +58,32 @@ impl CoreManager {
         log::info!(target: "app", "starting core {} in sidecar mode", aria2_engine);
         println!("[sidecar]: Begin run engine: {}", aria2_engine);
 
-        if let Ok(pids) = self.check_existing_processes(&aria2_engine).await {
-            if !pids.is_empty() {
-                println!("[sidecar] Already running process");
+        let aria2_map = Config::aria2().latest().0.clone();
+        let aria2_port = aria2_map
+            .get("rpc-listen-port")
+            .and_then(|value| value.parse::<u16>().ok())
+            .unwrap_or(16800);
 
-                // TODO
-            }
-        } else {
-            println!("[sidecar] Failed to check existing processes");
+        println!("[sidecar] Check existing port: {}", aria2_port);
+
+        let occupies = sys::get_occupied_port_pids(aria2_port).await;
+
+        if !occupies.is_empty() {
+            println!("[sidecar] port {} is already occupied", aria2_port);
         }
+
+        for pid in occupies {
+            println!("[sidecar] try to kill process: {}", pid);
+            sys::terminate_process(pid).await;
+        }
+
+        println!("[sidecar] Waiting for process to exit...");
+        sleep(Duration::from_millis(500)).await;
 
         let lock_file = dirs::app_home_dir()?.join(format!("{}.lock", aria2_engine));
         println!("[sidecar] lock_file path : {:?}", lock_file);
 
-        println!("[sidecar] Try to get lock file");
+        println!("[sidecar] try to get lock file");
         let file = std::fs::OpenOptions::new()
             .write(true)
             .create(true)
@@ -108,46 +123,5 @@ impl CoreManager {
         log::info!(target: "app", "core started in sidecar mode");
 
         Ok(())
-    }
-
-    async fn check_existing_processes(&self, process_name: &str) -> Result<Vec<u32>> {
-        println!(
-            "[check_process] Check if the process exists in the system: {}",
-            process_name
-        );
-
-        #[cfg(target_os = "windows")]
-        {
-            use std::process::Command;
-
-            println!("[check_process] Use 'tasklist' command for Windows");
-
-            let output = Command::new("tasklist")
-                .args(["/FO", "CSV", "/NH"])
-                .output()?;
-
-            let output = String::from_utf8_lossy(&output.stdout);
-
-            let pids: Vec<u32> = output
-                .lines()
-                .filter(|line| line.contains(process_name))
-                .filter_map(|line| {
-                    println!("[check_process] Found Line: {}", line);
-                    let parts: Vec<&str> = line.split(',').collect();
-                    if parts.len() >= 2 {
-                        let pid_str = parts[1].trim_matches('"');
-                        pid_str.parse::<u32>().ok().map(|pid| {
-                            println!("[check_process] Found PID of the process: {}", pid);
-                            pid
-                        })
-                    } else {
-                        None
-                    }
-                })
-                .collect();
-
-            println!("[check_process] Found {} processes", pids.len());
-            Ok(pids)
-        }
     }
 }
