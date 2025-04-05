@@ -44,20 +44,15 @@ impl CoreManager {
 
         let config_path = aria2_path()?;
 
+        self.ensure_port_available().await;
         self.run_core_by_sidecar(&config_path).await?;
 
         *running = true;
 
         Ok(())
     }
-    /// Start core by sidecar
-    async fn run_core_by_sidecar(&self, config_path: &PathBuf) -> Result<()> {
-        let aria2_engine = { Config::motrix().latest().aria2_engine.clone() };
-        let aria2_engine = aria2_engine.unwrap_or("aria2c".into());
 
-        log::info!(target: "app", "starting core {} in sidecar mode", aria2_engine);
-        println!("[sidecar]: Begin run engine: {}", aria2_engine);
-
+    pub async fn ensure_port_available(&self) {
         let aria2_map = Config::aria2().latest().0.clone();
         let aria2_port = aria2_map
             .get("rpc-listen-port")
@@ -79,6 +74,15 @@ impl CoreManager {
 
         println!("[sidecar] Waiting for process to exit...");
         sleep(Duration::from_millis(500)).await;
+    }
+
+    /// Start core by sidecar
+    async fn run_core_by_sidecar(&self, config_path: &PathBuf) -> Result<()> {
+        let aria2_engine = { Config::motrix().latest().aria2_engine.clone() };
+        let aria2_engine = aria2_engine.unwrap_or("aria2c".into());
+
+        log::info!(target: "app", "starting core {} in sidecar mode", aria2_engine);
+        println!("[sidecar]: Begin run engine: {}", aria2_engine);
 
         let lock_file = dirs::app_home_dir()?.join(format!("{}.lock", aria2_engine));
         println!("[sidecar] lock_file path : {:?}", lock_file);

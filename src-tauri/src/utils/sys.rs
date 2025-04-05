@@ -49,7 +49,7 @@ pub async fn get_occupied_port_pids(port: u16) -> Vec<u32> {
                         .last()
                         .unwrap()
                         .parse::<u32>()
-                        .unwrap();
+                        .expect("failed to parse PID");
 
                     if !pids.contains(&pid) {
                         pids.push(pid);
