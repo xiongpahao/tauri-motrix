@@ -1,5 +1,6 @@
-import { Box, Button, Modal, TextField } from "@mui/material";
+import { Box, Button, Modal, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
 import { addTaskApi } from "@/services/aria2c_api";
@@ -11,6 +12,8 @@ export interface AddTaskModalProps {
 }
 
 function AddTaskModal({ onClose, open }: AddTaskModalProps) {
+  const { t } = useTranslation("common");
+
   const [downloadLink, setDownloadLink] = useState("");
 
   const { data: aria2Info } = useSWR("getAria2Info", getAria2Info);
@@ -38,20 +41,22 @@ function AddTaskModal({ onClose, open }: AddTaskModalProps) {
           left: "50%",
           transform: "translate(-50%, -50%)",
           bgcolor: "background.paper",
-          pt: 2,
           px: 4,
-          pb: 3,
+          py: 3,
         }}
       >
+        <Typography>{t("DownloadFile")}</Typography>
+
         <TextField
-          label="Download Link"
+          label={t("DownloadLink")}
           fullWidth
           onChange={(e) => setDownloadLink(e.target.value)}
           value={downloadLink}
+          sx={{ mt: 2 }}
         />
 
         <TextField
-          label="Download Path"
+          label={t("DownloadPath")}
           fullWidth
           sx={{ mt: 2 }}
           disabled={!aria2Info?.dir}
@@ -60,10 +65,10 @@ function AddTaskModal({ onClose, open }: AddTaskModalProps) {
 
         <Box sx={{ display: "flex", mt: 2, justifyContent: "end", gap: 2 }}>
           <Button variant="contained" onClick={onSubmit}>
-            Submit
+            {t("Submit")}
           </Button>
           <Button variant="outlined" onClick={onClose}>
-            Cancel
+            {t("Cancel")}
           </Button>
         </Box>
       </Box>

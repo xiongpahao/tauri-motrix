@@ -23,5 +23,12 @@
     },
     "task": {
         "CloseAllTasks": "Close All Tasks"
+    },
+    "common": {
+        "DownloadFile": "Download File",
+        "DownloadLink": "Download Link",
+        "DownloadPath": "Download Path",
+        "Submit": " Submit",
+        "Cancel": " Cancel"
     }
 }
