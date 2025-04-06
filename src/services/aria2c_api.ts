@@ -2,7 +2,11 @@ import axios, { AxiosInstance } from "axios";
 
 import { getAria2Info } from "@/services/cmd";
 
+let webSocketIns: WebSocket = null!;
 let axiosIns: AxiosInstance = null!;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const event: Record<string, Array<(data: any) => void>> = {};
 
 type MultiCall = [string, ...CallParam[]];
 type CallParam = string | boolean | number | object | CallParam[];
@@ -40,6 +44,36 @@ export async function getAxios(force: boolean = false) {
   return axiosIns;
 }
 
+export async function getWebSocket(force: boolean = false) {
+  if (webSocketIns && !force) {
+    return webSocketIns;
+  }
+
+  const aria2Info = await getAria2Info().catch();
+
+  webSocketIns = new WebSocket(`ws://${aria2Info.server}/jsonrpc`);
+
+  webSocketIns.onopen = () => {
+    console.log("aria2", "OPEN");
+  };
+
+  webSocketIns.onclose = () => {
+    console.log("aria2", "CLOSE");
+  };
+
+  webSocketIns.onmessage = (message: MessageEvent) => {
+    const data = JSON.parse(message.data);
+    const key = data?.method;
+
+    if (!data.id && key in event) {
+      const callbacks = event[key];
+      callbacks.forEach((fn) => fn(data.params));
+    }
+  };
+
+  return webSocketIns;
+}
+
 export async function aria2cCall<T>(
   method: string,
   ...params: CallParam[]
@@ -69,6 +103,12 @@ aria2cCall<string[]>("system.listNotifications").then((res) =>
 aria2cCall<string[]>("system.listMethods").then((res) =>
   console.log("aria2 methods: ", res),
 );
+
+export function aria2cOn<T>(method: string, callback: (data: T) => void) {
+  const key = ensurePrefix(method);
+  event[key] ??= [];
+  event[key].push(callback);
+}
 
 export function aria2cMultiCall<T>(calls: MultiCall[]) {
   const multi = [
