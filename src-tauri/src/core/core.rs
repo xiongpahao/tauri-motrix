@@ -57,7 +57,7 @@ impl CoreManager {
         let aria2_port = aria2_map
             .get("rpc-listen-port")
             .and_then(|value| value.parse::<u16>().ok())
-            .unwrap_or(16800);
+            .unwrap_or(16801);
 
         println!("[sidecar] Check existing port: {}", aria2_port);
 

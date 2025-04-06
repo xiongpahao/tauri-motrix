@@ -51,6 +51,20 @@ pub fn app_resources_dir() -> Result<PathBuf> {
     }
 }
 
+pub fn user_downloads_dir() -> Result<PathBuf> {
+    let app_handle = handle::Handle::global().app_handle().unwrap();
+
+    match app_handle.path().download_dir() {
+        Ok(dir) => Ok(dir),
+        Err(e) => {
+            log::error!(target:"app", "Failed to get the user downloads directory: {}", e);
+            Err(anyhow::anyhow!(
+                "Failed to get the user downloads directory"
+            ))
+        }
+    }
+}
+
 pub fn motrix_path() -> Result<PathBuf> {
     Ok(app_home_dir()?.join(MOTRIX_CONFIG))
 }

@@ -1,8 +1,8 @@
+import { AddOutlined } from "@mui/icons-material";
 import {
-  Box,
   createTheme,
+  Fab,
   List,
-  Modal,
   Paper,
   SvgIcon,
   ThemeProvider,
@@ -13,9 +13,9 @@ import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import logoIcon from "@/assets/logo.svg?react";
+import AddTaskModal from "@/business/task/AddTaskModal";
 import LayoutItem from "@/layout/LayoutItem";
 import { routers } from "@/routes/application";
-import AddTaskModal from "@/business/task/AddTaskModal";
 
 const theme = createTheme();
 
@@ -42,22 +42,11 @@ function ApplicationLayout() {
           ]}
         >
           <div className="layout__left">
-            <div className="the-logo" data-tauri-drag-region="true">
-              <div
-                style={{
-                  height: "27px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  cursor: "pointer",
-                }}
-                onClick={() => setAddModalOpen(true)}
-              >
+            <div className="the-logo" data-tauri-drag-region>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <SvgIcon
+                  sx={{ width: 62 }}
                   component={logoIcon}
-                  style={{
-                    height: "24px",
-                    width: "62px",
-                  }}
                   inheritViewBox
                 />
               </div>
@@ -80,7 +69,17 @@ function ApplicationLayout() {
             </List>
           </div>
 
-          <div className="layout__right">{routerElements}</div>
+          <div className="layout__right">
+            {routerElements}
+
+            <Fab
+              sx={{ position: "absolute", bottom: 16, right: 16 }}
+              color="primary"
+              onClick={() => setAddModalOpen(true)}
+            >
+              <AddOutlined />
+            </Fab>
+          </div>
 
           <AddTaskModal
             open={addModalOpen}

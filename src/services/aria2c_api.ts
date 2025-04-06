@@ -122,3 +122,10 @@ export const downloadingTasks = (param?: {
 
 export const stoppedTasks = (args: object[]) =>
   aria2cCall<Aria2Task[]>("tellStopped", ...args);
+
+export const addTaskApi = (urls: string | string[]) => {
+  if (typeof urls === "string") {
+    urls = [urls];
+  }
+  return aria2cCall<string>("addUri", urls);
+};
