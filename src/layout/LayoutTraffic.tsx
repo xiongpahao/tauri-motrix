@@ -31,12 +31,12 @@ const unitSx: SxProps = {
 
 function LayoutTraffic() {
   const { t } = useTranslation();
-  const { data: globalStat } = useSWR("getGlobalStat", getGlobalStatApi, {
+  const { data: stat } = useSWR("getGlobalStat", getGlobalStatApi, {
     refreshInterval: 1000,
   });
 
-  const [up, upUnit] = parseTraffic(Number(globalStat?.uploadSpeed));
-  const [down, downUnit] = parseTraffic(Number(globalStat?.downloadSpeed));
+  const [up, upUnit] = parseTraffic(Number(stat?.uploadSpeed), "/s");
+  const [down, downUnit] = parseTraffic(Number(stat?.downloadSpeed), "/s");
 
   return (
     <Box display="flex" flexDirection="column" gap={0.75}>
@@ -48,7 +48,7 @@ function LayoutTraffic() {
         <Typography sx={valSx} color="secondary">
           {up}
         </Typography>
-        <Typography sx={unitSx}>{upUnit}/s</Typography>
+        <Typography sx={unitSx}>{upUnit}</Typography>
       </Box>
       <Box title={t("DownloadSpeed")} sx={boxSx}>
         <ArrowDownwardRounded
@@ -58,7 +58,7 @@ function LayoutTraffic() {
         <Typography color="primary" sx={valSx}>
           {down}
         </Typography>
-        <Typography sx={unitSx}>{downUnit}/s</Typography>
+        <Typography sx={unitSx}>{downUnit}</Typography>
       </Box>
     </Box>
   );
