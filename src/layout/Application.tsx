@@ -42,16 +42,10 @@ function ApplicationLayout() {
             }),
           ]}
         >
-          <div className="layout__left">
-            <div className="the-logo" data-tauri-drag-region>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <SvgIcon
-                  sx={{ width: 62 }}
-                  component={logoIcon}
-                  inheritViewBox
-                />
-              </div>
-            </div>
+          <aside className="layout__left">
+            <section className="the-logo" data-tauri-drag-region>
+              <SvgIcon sx={{ width: 62 }} component={logoIcon} inheritViewBox />
+            </section>
 
             <List className="the-menu">
               {routers.map(
@@ -69,12 +63,12 @@ function ApplicationLayout() {
               )}
             </List>
 
-            <div className="the-traffic">
+            <section className="the-traffic">
               <LayoutTraffic />
-            </div>
-          </div>
+            </section>
+          </aside>
 
-          <div className="layout__right">
+          <main className="layout__right">
             {routerElements}
 
             <Fab
@@ -84,7 +78,7 @@ function ApplicationLayout() {
             >
               <AddOutlined />
             </Fab>
-          </div>
+          </main>
 
           <AddTaskModal
             open={addModalOpen}
