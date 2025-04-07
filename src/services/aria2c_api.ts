@@ -2,8 +2,11 @@ import axios, { AxiosInstance } from "axios";
 
 import { getAria2Info } from "@/services/cmd";
 
-let webSocketIns: WebSocket | null = null;
-let axiosIns: AxiosInstance | null = null;
+let instancePromise: Promise<{
+  axiosIns: AxiosInstance;
+  webSocketIns: WebSocket;
+  eventSubscribeMap: typeof eventSubscribeMap;
+}> | null = null;
 
 const eventSubscribeMap: Record<
   string,
@@ -20,32 +23,31 @@ function ensurePrefix(str: string) {
   return str;
 }
 
-async function getInstance(force = false) {
-  if (axiosIns && webSocketIns && !force) {
-    return { axiosIns, webSocketIns, eventSubscribeMap };
-  }
+async function getInstancePromise() {
+  console.log("aria2", "Initializing instances");
 
   let server = "";
-
-  const aria2Info = await getAria2Info().catch();
+  const aria2Info = await getAria2Info();
 
   if (aria2Info.server) {
     server = aria2Info.server;
+  } else {
+    throw new Error("Server URL is invalid or not retrieved");
   }
 
-  axiosIns = axios.create({
+  const axiosIns = axios.create({
     baseURL: `http://${server}`,
     timeout: 15000,
   });
 
-  webSocketIns = new WebSocket(`ws://${aria2Info.server}/jsonrpc`);
+  const webSocketIns = new WebSocket(`ws://${server}/jsonrpc`);
 
   webSocketIns.onopen = () => {
-    console.log("aria2", "OPEN");
+    console.log("aria2", "WebSocket OPEN");
   };
 
   webSocketIns.onclose = () => {
-    console.log("aria2", "CLOSE");
+    console.log("aria2", "WebSocket CLOSE");
   };
 
   webSocketIns.onmessage = (message: MessageEvent) => {
@@ -58,7 +60,20 @@ async function getInstance(force = false) {
     }
   };
 
+  webSocketIns.onerror = (error) => {
+    console.error("aria2", "WebSocket ERROR", error);
+  };
+
   return { axiosIns, webSocketIns, eventSubscribeMap };
+}
+
+async function getInstance(force = false) {
+  if (instancePromise && !force) {
+    return instancePromise;
+  }
+
+  instancePromise = getInstancePromise();
+  return instancePromise;
 }
 
 export async function aria2cCall<T>(
