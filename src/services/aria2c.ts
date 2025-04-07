@@ -6,7 +6,7 @@ let instancePromise: Promise<{
   axiosIns: AxiosInstance;
   webSocketIns: WebSocket;
   eventSubscribeMap: typeof eventSubscribeMap;
-}> | null = null;
+}> = null!;
 
 const eventSubscribeMap: Record<
   string,
@@ -68,11 +68,9 @@ async function getInstancePromise() {
 }
 
 async function getInstance(force = false) {
-  if (instancePromise && !force) {
-    return instancePromise;
+  if (!instancePromise || force) {
+    instancePromise = getInstancePromise();
   }
-
-  instancePromise = getInstancePromise();
   return instancePromise;
 }
 
