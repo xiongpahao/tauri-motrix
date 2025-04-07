@@ -89,6 +89,17 @@ async function getInstancePromise() {
 
 export function getInstance(force = false) {
   if (!instancePromise || force) {
+    instancePromise?.then(({ webSocketIns }) => {
+      switch (webSocketIns.readyState) {
+        case WebSocket.CONNECTING:
+          webSocketIns.onopen = () => webSocketIns.close();
+          break;
+        case WebSocket.OPEN:
+          webSocketIns.close();
+          break;
+      }
+    });
+
     instancePromise = getInstancePromise();
   }
   return instancePromise;
