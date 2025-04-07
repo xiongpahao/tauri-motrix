@@ -67,7 +67,7 @@ async function getInstancePromise() {
   return { axiosIns, webSocketIns, eventSubscribeMap };
 }
 
-async function getInstance(force = false) {
+export function getInstance(force = false) {
   if (!instancePromise || force) {
     instancePromise = getInstancePromise();
   }

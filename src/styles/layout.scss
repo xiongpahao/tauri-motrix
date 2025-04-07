@@ -18,6 +18,13 @@
     .the-menu {
       flex: 1 1 80%;
     }
+
+    .the-traffic {
+      flex: 0 0 60px;
+      > * {
+        padding: 0px 20px;
+      }
+    }
   }
 
   &__right {

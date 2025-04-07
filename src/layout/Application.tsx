@@ -15,6 +15,7 @@ import { SWRConfig } from "swr";
 import logoIcon from "@/assets/logo.svg?react";
 import AddTaskModal from "@/business/task/AddTaskModal";
 import LayoutItem from "@/layout/LayoutItem";
+import LayoutTraffic from "@/layout/LayoutTraffic";
 import { routers } from "@/routes/application";
 
 const theme = createTheme();
@@ -67,6 +68,10 @@ function ApplicationLayout() {
                   ),
               )}
             </List>
+
+            <div className="the-traffic">
+              <LayoutTraffic />
+            </div>
           </div>
 
           <div className="layout__right">

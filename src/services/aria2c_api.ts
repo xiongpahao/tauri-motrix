@@ -44,3 +44,14 @@ export const addTaskApi = (urls: string | string[]) => {
   }
   return aria2cCall<string>("addUri", urls);
 };
+
+export interface Aria2GlobalStat {
+  downloadSpeed: string;
+  numActive: string;
+  numWaiting: string;
+  numStopped: string;
+  uploadSpeed: string;
+}
+
+export const getGlobalStatApi = () =>
+  aria2cCall<Aria2GlobalStat>("getGlobalStat");

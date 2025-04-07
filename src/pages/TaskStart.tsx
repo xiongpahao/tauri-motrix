@@ -19,6 +19,7 @@ function TaskActivePage() {
 
   useMount(() => {
     fetchTasks();
+    console.log("fetch-tasks");
   });
 
   return (
