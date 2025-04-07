@@ -82,23 +82,15 @@ async function getInstancePromise() {
 
   webSocketIns.onerror = (error) => {
     console.error("aria2", "WebSocket ERROR", error);
+    eventSubscribeMap.error?.forEach((fn) => fn(error));
   };
 
   return { axiosIns, webSocketIns, eventSubscribeMap };
 }
 
-export function getInstance(force = false) {
+export function getAria2Instance(force = false) {
   if (!instancePromise || force) {
-    instancePromise?.then(({ webSocketIns }) => {
-      switch (webSocketIns.readyState) {
-        case WebSocket.CONNECTING:
-          webSocketIns.onopen = () => webSocketIns.close();
-          break;
-        case WebSocket.OPEN:
-          webSocketIns.close();
-          break;
-      }
-    });
+    instancePromise?.then(({ webSocketIns }) => webSocketIns.close());
 
     instancePromise = getInstancePromise();
   }
@@ -116,7 +108,7 @@ export async function aria2cCall<T>(
     params,
   };
 
-  const { axiosIns, webSocketIns } = await getInstance();
+  const { axiosIns, webSocketIns } = await getAria2Instance();
 
   if (webSocketIns.readyState === WebSocket.OPEN) {
     return new Promise<T>((resolve, reject) => {
@@ -152,7 +144,7 @@ export async function aria2cAddListener<T>(
   method: string,
   callback: (data: T) => void,
 ) {
-  const { eventSubscribeMap } = await getInstance();
+  const { eventSubscribeMap } = await getAria2Instance();
   const key = ensurePrefix(method);
 
   if (eventSubscribeMap[key]?.includes(callback)) {
@@ -167,7 +159,7 @@ export async function aria2cSetListener<T>(
   method: string,
   callback: (data: T) => void,
 ) {
-  const { eventSubscribeMap } = await getInstance();
+  const { eventSubscribeMap } = await getAria2Instance();
   const key = ensurePrefix(method);
   eventSubscribeMap[key] = [callback];
 }
@@ -176,14 +168,14 @@ export async function aria2cRemoveListener<T>(
   method: string,
   callback: (data: T) => void,
 ) {
-  const { eventSubscribeMap } = await getInstance();
+  const { eventSubscribeMap } = await getAria2Instance();
   const key = ensurePrefix(method);
   const callbacks = eventSubscribeMap[key];
   eventSubscribeMap[key] = callbacks?.filter((fn) => fn !== callback);
 }
 
 export async function aria2cRemoveAllListener(method: string) {
-  const { eventSubscribeMap } = await getInstance();
+  const { eventSubscribeMap } = await getAria2Instance();
   const key = ensurePrefix(method);
   eventSubscribeMap[key] = [];
 }
