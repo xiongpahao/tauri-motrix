@@ -2,11 +2,13 @@ import axios, { AxiosInstance } from "axios";
 
 import { getAria2Info } from "@/services/cmd";
 
-let webSocketIns: WebSocket = null!;
-let axiosIns: AxiosInstance = null!;
+let webSocketIns: WebSocket | null = null;
+let axiosIns: AxiosInstance | null = null;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const event: Record<string, Array<(data: any) => void>> = {};
+const eventSubscribeMap: Record<
+  string,
+  Array<(data: MessageEvent["data"]) => void> | undefined
+> = {};
 
 type MultiCall = [string, ...CallParam[]];
 type CallParam = string | boolean | number | object | CallParam[];
@@ -18,14 +20,9 @@ function ensurePrefix(str: string) {
   return str;
 }
 
-// function ensureNotPrefix(str: string) {
-//   const suffix = str.split("aria2.")[1];
-//   return suffix || str;
-// }
-
-export async function getAxios(force: boolean = false) {
-  if (axiosIns && !force) {
-    return axiosIns;
+async function getInstance(force = false) {
+  if (axiosIns && webSocketIns && !force) {
+    return { axiosIns, webSocketIns, eventSubscribeMap };
   }
 
   let server = "";
@@ -41,16 +38,6 @@ export async function getAxios(force: boolean = false) {
     timeout: 15000,
   });
 
-  return axiosIns;
-}
-
-export async function getWebSocket(force: boolean = false) {
-  if (webSocketIns && !force) {
-    return webSocketIns;
-  }
-
-  const aria2Info = await getAria2Info().catch();
-
   webSocketIns = new WebSocket(`ws://${aria2Info.server}/jsonrpc`);
 
   webSocketIns.onopen = () => {
@@ -65,13 +52,13 @@ export async function getWebSocket(force: boolean = false) {
     const data = JSON.parse(message.data);
     const key = data?.method;
 
-    if (!data.id && key in event) {
-      const callbacks = event[key];
-      callbacks.forEach((fn) => fn(data.params));
+    if (!data.id && key in eventSubscribeMap) {
+      const callbacks = eventSubscribeMap[key];
+      callbacks?.forEach((fn) => fn(data.params));
     }
   };
 
-  return webSocketIns;
+  return { axiosIns, webSocketIns, eventSubscribeMap };
 }
 
 export async function aria2cCall<T>(
@@ -85,29 +72,14 @@ export async function aria2cCall<T>(
     params,
   };
 
-  const instance = await getAxios();
-
-  const { data } = await instance.post("/jsonrpc", message);
+  const { axiosIns } = await getInstance();
+  const { data } = await axiosIns.post("/jsonrpc", message);
 
   if (data.error) {
     throw data.error;
   }
 
   return data.result;
-}
-
-aria2cCall<string[]>("system.listNotifications").then((res) =>
-  console.log("aria2 notifications: ", res),
-);
-
-aria2cCall<string[]>("system.listMethods").then((res) =>
-  console.log("aria2 methods: ", res),
-);
-
-export function aria2cOn<T>(method: string, callback: (data: T) => void) {
-  const key = ensurePrefix(method);
-  event[key] ??= [];
-  event[key].push(callback);
 }
 
 export function aria2cMultiCall<T>(calls: MultiCall[]) {
@@ -121,6 +93,54 @@ export function aria2cMultiCall<T>(calls: MultiCall[]) {
   ];
   return aria2cCall<T>("system.multicall", ...multi);
 }
+
+export async function aria2cAddListener<T>(
+  method: string,
+  callback: (data: T) => void,
+) {
+  const { eventSubscribeMap } = await getInstance();
+  const key = ensurePrefix(method);
+
+  if (eventSubscribeMap[key]?.includes(callback)) {
+    return;
+  }
+
+  eventSubscribeMap[key] ??= [];
+  eventSubscribeMap[key].push(callback);
+}
+
+export async function aria2cSetListener<T>(
+  method: string,
+  callback: (data: T) => void,
+) {
+  const { eventSubscribeMap } = await getInstance();
+  const key = ensurePrefix(method);
+  eventSubscribeMap[key] = [callback];
+}
+
+export async function aria2cRemoveListener<T>(
+  method: string,
+  callback: (data: T) => void,
+) {
+  const { eventSubscribeMap } = await getInstance();
+  const key = ensurePrefix(method);
+  const callbacks = eventSubscribeMap[key];
+  eventSubscribeMap[key] = callbacks?.filter((fn) => fn !== callback);
+}
+
+export async function aria2cRemoveAllListener(method: string) {
+  const { eventSubscribeMap } = await getInstance();
+  const key = ensurePrefix(method);
+  eventSubscribeMap[key] = [];
+}
+
+aria2cCall<string[]>("system.listNotifications").then((res) =>
+  console.log("aria2 notifications: ", res),
+);
+
+aria2cCall<string[]>("system.listMethods").then((res) =>
+  console.log("aria2 methods: ", res),
+);
 
 export interface Aria2Task {
   bitfield: string;
@@ -150,7 +170,7 @@ export interface Aria2File {
   }>;
 }
 
-export const downloadingTasks = (param?: {
+export const downloadingTasksApi = (param?: {
   offset?: number;
   num?: number;
   keys?: unknown;
@@ -159,9 +179,6 @@ export const downloadingTasks = (param?: {
     ["aria2.tellActive", ...[param?.keys ?? []]],
     ["aria2.tellWaiting", ...[param?.offset ?? 0, param?.num ?? 20]],
   ]).then((res) => res.flat(2));
-
-export const stoppedTasks = (args: object[]) =>
-  aria2cCall<Aria2Task[]>("tellStopped", ...args);
 
 export const addTaskApi = (urls: string | string[]) => {
   if (typeof urls === "string") {

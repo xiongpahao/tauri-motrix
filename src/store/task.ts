@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { Aria2Task, downloadingTasks } from "@/services/aria2c_api";
+import { Aria2Task, downloadingTasksApi } from "@/services/aria2c_api";
 
 export type TaskLevel = "all" | "start" | "waiting" | "stopped";
 
@@ -13,7 +13,7 @@ export const useTaskStore = create<TaskStore>((set) => ({
   tasks: [],
 
   async fetchTasks() {
-    const tasks = await downloadingTasks();
+    const tasks = await downloadingTasksApi();
     set({ tasks });
   },
 }));
