@@ -8,7 +8,6 @@ import {
 import {
   Box,
   Checkbox,
-  IconButton,
   LinearProgress,
   ListItem,
   ListItemIcon,
@@ -16,13 +15,18 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { TaskDownloadDescription } from "@/client/task_compose";
+import {
+  TaskActionButton,
+  TaskDownloadDescription,
+} from "@/client/task_compose";
+import { Aria2Task } from "@/services/aria2c_api";
 
 export interface TaskItemProps {
-  onSelect: (task: undefined) => void;
+  task: Aria2Task;
+  onSelect: (task: Aria2Task) => void;
 }
 
-function TaskItem() {
+function TaskItem({ onSelect, task }: TaskItemProps) {
   const { t } = useTranslation("task");
 
   return (
@@ -33,32 +37,37 @@ function TaskItem() {
         }}
       >
         <ListItemIcon>
-          <Checkbox edge="start" tabIndex={-1} disableRipple />
+          <Checkbox
+            edge="start"
+            tabIndex={-1}
+            disableRipple
+            onChange={() => onSelect(task)}
+          />
         </ListItemIcon>
 
         <ListItemText primary="Filename" secondary="2.36 GB / 5.91 GB" />
 
         <Box sx={{ textAlign: "end" }}>
           <Box>
-            <IconButton size="small">
+            <TaskActionButton title={t("Pause")}>
               <PlayArrowOutlined />
-            </IconButton>
+            </TaskActionButton>
 
-            <IconButton size="small" title={t("CloseAllTasks")}>
+            <TaskActionButton title={t("Close")}>
               <CloseOutlined />
-            </IconButton>
+            </TaskActionButton>
 
-            <IconButton size="small">
+            <TaskActionButton title={t("OpenFile")}>
               <FileOpenOutlined />
-            </IconButton>
+            </TaskActionButton>
 
-            <IconButton size="small">
+            <TaskActionButton title={t("CopyLink")}>
               <LinkOutlined />
-            </IconButton>
+            </TaskActionButton>
 
-            <IconButton size="small">
+            <TaskActionButton title={t("Info")}>
               <InfoOutlined />
-            </IconButton>
+            </TaskActionButton>
           </Box>
           <TaskDownloadDescription />
         </Box>

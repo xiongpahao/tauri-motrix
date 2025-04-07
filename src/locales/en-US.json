@@ -22,7 +22,15 @@
         "Display": "Display"
     },
     "task": {
-        "CloseAllTasks": "Close All Tasks"
+        "CloseAll": "Close All Tasks",
+        "Close": "Close Task",
+        "Pause": "Pause Task",
+        "Resume": "Resume Task",
+        "Delete": "Delete Task",
+        "DeleteAll": "Delete All Tasks",
+        "OpenFile": "Open Task File",
+        "CopyLink": "Copy Task Link",
+        "Info": "Open Task Info"
     },
     "common": {
         "DownloadFile": "Download File",

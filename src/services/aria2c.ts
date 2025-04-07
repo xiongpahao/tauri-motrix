@@ -1,6 +1,9 @@
 import axios, { AxiosInstance } from "axios";
 
 import { getAria2Info } from "@/services/cmd";
+import { ensurePrefix } from "@/utils/aria2c";
+
+const DEFAULT_TIMEOUT = 15000;
 
 let instancePromise: Promise<{
   axiosIns: AxiosInstance;
@@ -13,15 +16,14 @@ const eventSubscribeMap: Record<
   Array<(data: MessageEvent["data"]) => void> | undefined
 > = {};
 
-type MultiCall = [string, ...CallParam[]];
-type CallParam = string | boolean | number | object | CallParam[];
+const socketPendingMap: Record<
+  string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  { resolve: (data: any) => void; reject: (data: unknown) => void }
+> = {};
 
-function ensurePrefix(str: string) {
-  if (!str.startsWith("system.") && !str.startsWith("aria2.")) {
-    str = "aria2." + str;
-  }
-  return str;
-}
+type MultiCall = [string, ...CallParam[]];
+export type CallParam = string | boolean | number | object | CallParam[];
 
 async function getInstancePromise() {
   console.log("aria2", "Initializing instances");
@@ -36,8 +38,16 @@ async function getInstancePromise() {
   }
 
   const axiosIns = axios.create({
-    baseURL: `http://${server}`,
-    timeout: 15000,
+    baseURL: `http://${server}/jsonrpc`,
+    timeout: DEFAULT_TIMEOUT,
+  });
+
+  axiosIns.interceptors.response.use((response) => {
+    const { data } = response;
+    if (data?.error) {
+      throw data.error;
+    }
+    return data.result;
   });
 
   const webSocketIns = new WebSocket(`ws://${server}/jsonrpc`);
@@ -52,11 +62,21 @@ async function getInstancePromise() {
 
   webSocketIns.onmessage = (message: MessageEvent) => {
     const data = JSON.parse(message.data);
-    const key = data?.method;
+    const { method: key, id: messageId } = data;
 
-    if (!data.id && key in eventSubscribeMap) {
+    if (!messageId && key in eventSubscribeMap) {
       const callbacks = eventSubscribeMap[key];
       callbacks?.forEach((fn) => fn(data.params));
+    }
+
+    if (!key && messageId in socketPendingMap) {
+      const pending = socketPendingMap[messageId];
+      delete socketPendingMap[messageId];
+      if (data.error) {
+        pending.reject(data.error);
+      } else {
+        pending.resolve(data.result);
+      }
     }
   };
 
@@ -85,14 +105,24 @@ export async function aria2cCall<T>(
     params,
   };
 
-  const { axiosIns } = await getInstance();
-  const { data } = await axiosIns.post("/jsonrpc", message);
+  const { axiosIns, webSocketIns } = await getInstance();
 
-  if (data.error) {
-    throw data.error;
+  if (webSocketIns.readyState === WebSocket.OPEN) {
+    return new Promise<T>((resolve, reject) => {
+      socketPendingMap[message.id] = {
+        resolve,
+        reject,
+      };
+      webSocketIns.send(JSON.stringify(message));
+
+      setTimeout(() => {
+        reject(new Error("Request timed out."));
+        delete socketPendingMap[message.id];
+      }, DEFAULT_TIMEOUT);
+    });
   }
 
-  return data.result;
+  return axiosIns.post("", message);
 }
 
 export function aria2cMultiCall<T>(calls: MultiCall[]) {

@@ -53,10 +53,8 @@ function TaskActivePage() {
           },
         }}
       >
-        <TaskItem />
-        <TaskItem />
         {tasks.map((task) => (
-          <TaskItem key={task.gid} />
+          <TaskItem key={task.gid} task={task} onSelect={() => {}} />
         ))}
       </List>
     </BasePage>

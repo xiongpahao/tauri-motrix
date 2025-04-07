@@ -1,6 +1,6 @@
 import { ArrowDownwardOutlined, HubOutlined } from "@mui/icons-material";
-import { Box } from "@mui/material";
-import { CSSProperties, ReactNode } from "react";
+import { Box, IconButton } from "@mui/material";
+import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 
 export function TaskDownloadDescription() {
   const iconStyle: CSSProperties = { fontSize: "14px" };
@@ -37,5 +37,17 @@ export function TaskDownloadDescriptionIconWithText(props: {
       {props.icon}
       <span>{props.text}</span>
     </Box>
+  );
+}
+
+export function TaskActionButton(props: {
+  title?: string;
+  children?: ReactNode;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}) {
+  return (
+    <IconButton size="small" onClick={props.onClick} title={props.title}>
+      {props.children}
+    </IconButton>
   );
 }

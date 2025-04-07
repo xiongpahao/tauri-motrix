@@ -15,7 +15,7 @@ interface ItemProps {
   extra?: ReactNode;
   children?: ReactNode;
   secondary?: ReactNode;
-  onClick?: () => void | Promise<any>;
+  onClick?: () => void;
 }
 
 export function SettingItem(props: ItemProps) {
@@ -29,7 +29,7 @@ export function SettingItem(props: ItemProps) {
     </Box>
   );
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
   const handleClick = () => {
     // TODO
   };
