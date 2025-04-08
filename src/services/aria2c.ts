@@ -42,10 +42,9 @@ async function getInstancePromise() {
     timeout: DEFAULT_TIMEOUT,
   });
 
-  axiosIns.interceptors.response.use((response) => {
-    const { data } = response;
+  axiosIns.interceptors.response.use(({ data }) => {
     if (data?.error) {
-      throw data.error;
+      return Promise.reject(data.error);
     }
     return data.result;
   });
@@ -60,8 +59,7 @@ async function getInstancePromise() {
     console.log("aria2", "WebSocket CLOSE");
   };
 
-  webSocketIns.onmessage = (message: MessageEvent) => {
-    const data = JSON.parse(message.data);
+  const messageHandle = (data: MessageEvent["data"]) => {
     const { method: key, id: messageId } = data;
 
     if (!messageId && key in eventSubscribeMap) {
@@ -77,6 +75,23 @@ async function getInstancePromise() {
       } else {
         pending.resolve(data.result);
       }
+    }
+  };
+
+  webSocketIns.onmessage = (message: MessageEvent) => {
+    let data;
+    try {
+      data = JSON.parse(message.data);
+    } catch (err) {
+      eventSubscribeMap.error?.forEach((fn) => fn(err));
+      console.error("aria2", "WebSocket ERROR", message, err);
+      return;
+    }
+
+    if (Array.isArray(data)) {
+      data.forEach(messageHandle);
+    } else {
+      messageHandle(data);
     }
   };
 

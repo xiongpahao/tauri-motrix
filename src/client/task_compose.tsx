@@ -1,9 +1,15 @@
 import { ArrowDownwardOutlined, HubOutlined } from "@mui/icons-material";
 import { Box, IconButton } from "@mui/material";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
-export function TaskDownloadDescription() {
+export function TaskDownloadDes(props: {
+  speed: string;
+  connections: string;
+  remaining: string;
+}) {
   const iconStyle: CSSProperties = { fontSize: "14px" };
+  const { t } = useTranslation("common");
 
   return (
     <Box
@@ -17,12 +23,14 @@ export function TaskDownloadDescription() {
     >
       <TaskDownloadDescriptionIconWithText
         icon={<ArrowDownwardOutlined style={iconStyle} />}
-        text="962.5 KB/s"
+        text={props.speed}
       />
-      <span>Remaining 44m 11s</span>
+      <span>
+        {t("Remaining")} {props.remaining}
+      </span>
       <TaskDownloadDescriptionIconWithText
         icon={<HubOutlined style={iconStyle} />}
-        text="64"
+        text={props.connections}
       />
     </Box>
   );

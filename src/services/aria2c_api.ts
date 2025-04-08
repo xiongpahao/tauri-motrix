@@ -1,6 +1,13 @@
 import { aria2cCall, aria2cMultiCall } from "@/services/aria2c";
 
+export interface Aria2BitTorrent {
+  info: {
+    name: string;
+  };
+}
+
 export interface Aria2Task {
+  bittorrent?: Aria2BitTorrent;
   bitfield: string;
   completedLength: string;
   connections: string;

@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
-import { addTaskApi } from "@/services/aria2c_api";
 import { getAria2Info } from "@/services/cmd";
+import { useTaskStore } from "@/store/task";
 
 export interface AddTaskModalProps {
   open: boolean;
@@ -16,17 +16,16 @@ function AddTaskModal({ onClose, open }: AddTaskModalProps) {
 
   const [downloadLink, setDownloadLink] = useState("");
 
+  const { addTask } = useTaskStore();
+
   const { data: aria2Info } = useSWR("getAria2Info", getAria2Info);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     if (!downloadLink) {
       return;
     }
 
-    addTaskApi(downloadLink).then((res) => {
-      console.log("addTaskApi", res);
-    });
-
+    await addTask(downloadLink);
     setDownloadLink("");
     onClose();
   };

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
 import { getGlobalStatApi } from "@/services/aria2c_api";
-import parseTraffic from "@/utils/download";
+import parseByteVo from "@/utils/download";
 
 const boxSx: SxProps = {
   display: "flex",
@@ -35,8 +35,8 @@ function LayoutTraffic() {
     refreshInterval: 1000,
   });
 
-  const [up, upUnit] = parseTraffic(Number(stat?.uploadSpeed), "/s");
-  const [down, downUnit] = parseTraffic(Number(stat?.downloadSpeed), "/s");
+  const [up, upUnit] = parseByteVo(Number(stat?.uploadSpeed), "/s");
+  const [down, downUnit] = parseByteVo(Number(stat?.downloadSpeed), "/s");
 
   return (
     <Box display="flex" flexDirection="column" gap={0.75}>

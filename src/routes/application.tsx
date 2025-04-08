@@ -12,7 +12,7 @@ import SettingsPage from "@/pages/Settings";
 import TaskStoppedPage from "@/pages/TaskDone";
 import TaskHistoryPage from "@/pages/TaskHistory";
 import TaskRecyclePage from "@/pages/TaskRecycle";
-import TaskActivePage from "@/pages/TaskStart";
+import TaskStartPage from "@/pages/TaskStart";
 
 type IRoute = RouteObject & { label?: string; icon?: ReactNode };
 
@@ -25,7 +25,7 @@ export const routers: IRoute[] = [
     label: "Label-Task-Active",
     path: "/task-start",
     icon: <PlayArrowRounded />,
-    element: <TaskActivePage />,
+    element: <TaskStartPage />,
   },
   {
     label: "Label-Task-Done",
