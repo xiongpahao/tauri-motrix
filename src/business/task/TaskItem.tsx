@@ -3,6 +3,7 @@ import {
   FileOpenOutlined,
   InfoOutlined,
   LinkOutlined,
+  PauseOutlined,
   PlayArrowOutlined,
 } from "@mui/icons-material";
 import {
@@ -16,26 +17,72 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { TaskActionButton, TaskDownloadDes } from "@/client/task_compose";
+import { TASK_STATUS_ENUM } from "@/constant/task";
 import { Aria2Task } from "@/services/aria2c_api";
 import parseByteVo from "@/utils/download";
 import { getTaskName, timeFormat, timeRemaining } from "@/utils/task";
 
 export interface TaskItemProps {
   task: Aria2Task;
-  onSelect: (taskId: Aria2Task["gid"]) => void;
   selected: boolean;
+  onSelect: (taskId: string) => void;
+  onPause: (taskId: string) => void;
+  onResume: (taskId: string) => void;
+  onStop: (taskId: string) => void;
+  onOpenFile: (task: Aria2Task) => void;
+  onCopyLink: (task: Aria2Task) => void;
 }
 
-function TaskItem({ onSelect, task, selected }: TaskItemProps) {
+function TaskItem({
+  onSelect,
+  task,
+  selected,
+  onPause,
+  onResume,
+  onStop,
+  onOpenFile,
+  onCopyLink,
+}: TaskItemProps) {
   const { t } = useTranslation("task");
 
-  const { connections, gid } = task;
+  const { connections, gid, status } = task;
 
   const totalLength = Number(task.totalLength);
   const completedLength = Number(task.completedLength);
   const downloadSpeed = Number(task.downloadSpeed) || 0;
 
   const speedVo = parseByteVo(downloadSpeed, "/s").join("");
+  const isDownloading = status === TASK_STATUS_ENUM.Active;
+
+  const progress = (completedLength / totalLength) * 100 || 0;
+
+  const renderActionButton = () => (
+    <Box>
+      <TaskActionButton
+        title={t("Pause")}
+        onClick={() => (isDownloading ? onPause(gid) : onResume(gid))}
+        icon={isDownloading ? <PauseOutlined /> : <PlayArrowOutlined />}
+      />
+      <TaskActionButton
+        title={t("Close")}
+        onClick={() => onStop(gid)}
+        icon={<CloseOutlined />}
+      />
+      <TaskActionButton
+        title={t("OpenFile")}
+        icon={<FileOpenOutlined />}
+        onClick={() => onOpenFile(task)}
+      />
+
+      <TaskActionButton
+        title={t("CopyLink")}
+        icon={<LinkOutlined />}
+        onClick={() => onCopyLink(task)}
+      />
+
+      <TaskActionButton title={t("Info")} icon={<InfoOutlined />} />
+    </Box>
+  );
 
   return (
     <div>
@@ -43,27 +90,7 @@ function TaskItem({ onSelect, task, selected }: TaskItemProps) {
         sx={{ bgcolor: "background.paper" }}
         secondaryAction={
           <Box sx={{ textAlign: "end" }}>
-            <Box>
-              <TaskActionButton title={t("Pause")}>
-                <PlayArrowOutlined />
-              </TaskActionButton>
-
-              <TaskActionButton title={t("Close")}>
-                <CloseOutlined />
-              </TaskActionButton>
-
-              <TaskActionButton title={t("OpenFile")}>
-                <FileOpenOutlined />
-              </TaskActionButton>
-
-              <TaskActionButton title={t("CopyLink")}>
-                <LinkOutlined />
-              </TaskActionButton>
-
-              <TaskActionButton title={t("Info")}>
-                <InfoOutlined />
-              </TaskActionButton>
-            </Box>
+            {renderActionButton()}
             <TaskDownloadDes
               speed={speedVo}
               connections={connections}
@@ -91,7 +118,7 @@ function TaskItem({ onSelect, task, selected }: TaskItemProps) {
       </ListItem>
 
       <Box sx={{ width: "100%" }}>
-        <LinearProgress value={(completedLength / totalLength) * 100} />
+        <LinearProgress variant="determinate" value={progress} />
       </Box>
     </div>
   );

@@ -50,12 +50,12 @@ export function TaskDownloadDescriptionIconWithText(props: {
 
 export function TaskActionButton(props: {
   title?: string;
-  children?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  icon?: ReactNode;
 }) {
   return (
     <IconButton size="small" onClick={props.onClick} title={props.title}>
-      {props.children}
+      {props.icon}
     </IconButton>
   );
 }

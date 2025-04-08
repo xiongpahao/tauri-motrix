@@ -22,7 +22,10 @@ const socketPendingMap: Record<
   { resolve: (data: any) => void; reject: (data: unknown) => void }
 > = {};
 
-type MultiCall = [string, ...CallParam[]];
+type MultiCall = Array<{
+  method: string;
+  params: CallParam;
+}>;
 export type CallParam = string | boolean | number | object | CallParam[];
 
 async function getInstancePromise() {
@@ -143,9 +146,9 @@ export async function aria2cCall<T>(
   return axiosIns.post("", message);
 }
 
-export function aria2cMultiCall<T>(calls: MultiCall[]) {
+export function aria2cMultiCall<T>(calls: MultiCall) {
   const multi = [
-    calls.map(([method, ...params]) => {
+    calls.map(({ method, params }) => {
       return {
         methodName: ensurePrefix(method),
         params: params,

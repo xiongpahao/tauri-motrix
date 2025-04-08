@@ -15,8 +15,17 @@ import { useTaskStore } from "@/store/task";
 function TaskStartPage() {
   const { t } = useTranslation();
 
-  const { tasks, fetchTasks, selectedTaskIds, handleTaskSelect } =
-    useTaskStore();
+  const {
+    tasks,
+    fetchTasks,
+    selectedTaskIds,
+    handleTaskSelect,
+    handleTaskPause,
+    handleTaskResume,
+    handleTaskStop,
+    openTaskFile,
+    copyTaskLink,
+  } = useTaskStore();
 
   const noneSelected = selectedTaskIds.length === 0;
 
@@ -75,6 +84,11 @@ function TaskStartPage() {
       >
         {tasks.map((task) => (
           <TaskItem
+            onCopyLink={copyTaskLink}
+            onStop={handleTaskStop}
+            onResume={handleTaskResume}
+            onPause={handleTaskPause}
+            onOpenFile={openTaskFile}
             key={task.gid}
             task={task}
             onSelect={handleTaskSelect}

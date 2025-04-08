@@ -4,9 +4,11 @@ export interface Aria2BitTorrent {
   info: {
     name: string;
   };
+  announceList: string[];
 }
 
 export interface Aria2Task {
+  infoHash?: unknown;
   bittorrent?: Aria2BitTorrent;
   bitfield: string;
   completedLength: string;
@@ -38,19 +40,20 @@ export interface Aria2File {
 export const downloadingTasksApi = (param?: {
   offset?: number;
   num?: number;
-  keys?: unknown;
 }) =>
   aria2cMultiCall<[Aria2Task[], Aria2Task[]]>([
-    ["aria2.tellActive", ...[param?.keys ?? []]],
-    ["aria2.tellWaiting", ...[param?.offset ?? 0, param?.num ?? 20]],
-  ]).then((res) => res.flat(2));
+    {
+      method: "tellActive",
+      params: [],
+    },
+    {
+      method: "tellWaiting",
+      params: [param?.offset ?? 0, param?.num ?? 20],
+    },
+  ]);
 
-export const addTaskApi = (urls: string | string[]) => {
-  if (typeof urls === "string") {
-    urls = [urls];
-  }
-  return aria2cCall<string>("addUri", urls);
-};
+export const addTaskApi = (urls: string | string[]) =>
+  aria2cCall<string>("addUri", typeof urls === "string" ? [urls] : urls);
 
 export interface Aria2GlobalStat {
   downloadSpeed: string;
@@ -62,3 +65,9 @@ export interface Aria2GlobalStat {
 
 export const getGlobalStatApi = () =>
   aria2cCall<Aria2GlobalStat>("getGlobalStat");
+
+export const pauseTaskApi = (gid: string) => aria2cCall("pause", gid);
+
+export const resumeTaskApi = (gid: string) => aria2cCall("unpause", gid);
+
+export const stopTaskApi = (gid: string) => aria2cCall("forceRemove", gid);
