@@ -4,10 +4,11 @@ import {
   PlayArrowOutlined,
   RefreshOutlined,
 } from "@mui/icons-material";
-import { Box, IconButton, List } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import TaskItem from "@/business/task/TaskItem";
+import { TaskList } from "@/client/task_compose";
 import BasePage from "@/components/BasePage";
 import { useTaskStore } from "@/store/task";
 
@@ -67,15 +68,9 @@ function TaskStartPage() {
         </Box>
       }
     >
-      <List
-        disablePadding
-        sx={{
-          "& > :not(:last-child)": {
-            "margin-block-end": 16,
-          },
-        }}
-      >
-        {tasks.map((task) => (
+      <TaskList
+        dataSource={tasks}
+        renderItem={(task) => (
           <TaskItem
             onCopyLink={copyTaskLink}
             onStop={handleTaskStop}
@@ -87,8 +82,8 @@ function TaskStartPage() {
             onSelect={handleTaskSelect}
             selected={selectedTaskIds.includes(task.gid)}
           />
-        ))}
-      </List>
+        )}
+      />
     </BasePage>
   );
 }

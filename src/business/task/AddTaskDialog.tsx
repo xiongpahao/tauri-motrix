@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -47,26 +48,43 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
       }}
     >
       <DialogTitle>{t("DownloadFile")}</DialogTitle>
-      <DialogContent>
+      <DialogContent
+        sx={{
+          "& > *": {
+            mb: 2,
+          },
+        }}
+      >
         <TextField
           required
           variant="standard"
           label={t("DownloadLink")}
           fullWidth
           name="link"
-          sx={{ mt: 2 }}
         />
 
-        <TextField
-          type="number"
-          sx={{ mt: 2 }}
-          label={t("Splits", { ns: "task" })}
-        />
+        <Box sx={{ display: "inline-flex", width: "100%", gap: 2 }}>
+          <TextField
+            variant="standard"
+            label={t("Rename")}
+            name="filename"
+            sx={{ flex: "1 1 auto" }}
+          />
+          <TextField
+            name="split"
+            variant="standard"
+            type="number"
+            label={t("Splits", { ns: "task" })}
+            defaultValue={aria2Info?.split}
+            disabled={!aria2Info?.split}
+            sx={{ width: 50 }}
+          />
+        </Box>
 
         <TextField
+          variant="standard"
           label={t("DownloadPath")}
           fullWidth
-          sx={{ mt: 2 }}
           disabled={!aria2Info?.dir}
           defaultValue={aria2Info?.dir}
         />

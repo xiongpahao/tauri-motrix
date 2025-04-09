@@ -50,6 +50,9 @@ impl IAria2Temp {
         let download_dir = user_downloads_dir().unwrap();
         let download_dir = path_to_str(&download_dir).unwrap();
 
+        map.insert("max-connection-per-server".into(), "16".into());
+        map.insert("split".into(), "64".into());
+
         map.insert("dir".into(), download_dir.into());
 
         Self(map)
@@ -63,11 +66,23 @@ impl IAria2Temp {
             .and_then(|value| value.parse().ok())
             .unwrap_or(16801);
 
+        let split = config
+            .get("split")
+            .and_then(|value| value.parse().ok())
+            .unwrap_or(64);
+
+        let max_connection_per_server = config
+            .get("max-connection-per-server")
+            .and_then(|value| value.parse().ok())
+            .unwrap_or(16);
+
         Aria2Info {
             port,
             // TODO: temporary solution, need to be fixed
             server: format!("127.0.0.1:{}", port),
             dir: config.get("dir").unwrap().to_string(),
+            split,
+            max_connection_per_server,
         }
     }
 }
@@ -88,4 +103,6 @@ pub struct Aria2Info {
     pub port: u16,
     pub server: String,
     pub dir: String,
+    pub split: u8,
+    pub max_connection_per_server: u8,
 }

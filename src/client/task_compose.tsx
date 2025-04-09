@@ -1,5 +1,9 @@
-import { ArrowDownwardOutlined, HubOutlined } from "@mui/icons-material";
-import { Box, IconButton } from "@mui/material";
+import {
+  ArrowDownwardOutlined,
+  HourglassEmpty,
+  HubOutlined,
+} from "@mui/icons-material";
+import { Box, IconButton, List } from "@mui/material";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -57,5 +61,41 @@ export function TaskActionButton(props: {
     <IconButton size="small" onClick={props.onClick} title={props.title}>
       {props.icon}
     </IconButton>
+  );
+}
+
+export function TaskList<T>(props: {
+  dataSource: T[];
+  renderItem: (item: T) => ReactNode;
+}) {
+  const { dataSource, renderItem } = props;
+
+  if (!dataSource.length) {
+    return (
+      <Box
+        sx={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <HourglassEmpty />
+      </Box>
+    );
+  }
+
+  return (
+    <List
+      disablePadding
+      sx={{
+        "& > :not(:last-child)": {
+          "margin-block-end": 16,
+        },
+      }}
+    >
+      {dataSource.map(renderItem)}
+    </List>
   );
 }

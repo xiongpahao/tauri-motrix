@@ -13,7 +13,7 @@ import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import logoIcon from "@/assets/logo.svg?react";
-import AddTaskDialog from "@/business/task/AddTaskModal";
+import AddTaskDialog from "@/business/task/AddTaskDialog";
 import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
 import { routers } from "@/routes/application";
