@@ -5,7 +5,6 @@ import {
 } from "@mui/icons-material";
 import { Box, IconButton, List } from "@mui/material";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
-import { useTranslation } from "react-i18next";
 
 export function TaskDownloadDes(props: {
   speed: string;
@@ -13,7 +12,6 @@ export function TaskDownloadDes(props: {
   remaining: string;
 }) {
   const iconStyle: CSSProperties = { fontSize: "14px" };
-  const { t } = useTranslation("common");
 
   return (
     <Box
@@ -23,16 +21,15 @@ export function TaskDownloadDes(props: {
         fontSize: "12px",
         alignItems: "center",
         color: "#9B9B9B",
+        textAlign: "end",
       }}
     >
-      <TaskDownloadDescriptionIconWithText
+      <TaskDesIconWithText
         icon={<ArrowDownwardOutlined style={iconStyle} />}
         text={props.speed}
       />
-      <span>
-        {t("Remaining")} {props.remaining}
-      </span>
-      <TaskDownloadDescriptionIconWithText
+      <span>{props.remaining}</span>
+      <TaskDesIconWithText
         icon={<HubOutlined style={iconStyle} />}
         text={props.connections}
       />
@@ -40,10 +37,7 @@ export function TaskDownloadDes(props: {
   );
 }
 
-export function TaskDownloadDescriptionIconWithText(props: {
-  icon: ReactNode;
-  text: string;
-}) {
+export function TaskDesIconWithText(props: { icon: ReactNode; text: string }) {
   return (
     <Box sx={{ display: "flex", alignItems: "center", gap: 0.2 }}>
       {props.icon}

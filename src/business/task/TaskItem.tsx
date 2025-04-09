@@ -52,6 +52,10 @@ function TaskItem({
   const downloadSpeed = Number(task.downloadSpeed) || 0;
 
   const speedVo = parseByteVo(downloadSpeed, "/s").join("");
+
+  const remainingVo = `${t("Remaining", { ns: "common" })} ${timeFormat(
+    timeRemaining(totalLength, completedLength, downloadSpeed),
+  )}`;
   const isDownloading = status === TASK_STATUS_ENUM.Active;
 
   const progress = (completedLength / totalLength) * 100 || 0;
@@ -71,13 +75,13 @@ function TaskItem({
       <TaskActionButton
         title={t("OpenFile")}
         icon={<FileOpenOutlined />}
-        onClick={() => onOpenFile(task.gid)}
+        onClick={() => onOpenFile(gid)}
       />
 
       <TaskActionButton
         title={t("CopyLink")}
         icon={<LinkOutlined />}
-        onClick={() => onCopyLink(task.gid)}
+        onClick={() => onCopyLink(gid)}
       />
 
       <TaskActionButton title={t("Info")} icon={<InfoOutlined />} />
@@ -87,16 +91,14 @@ function TaskItem({
   return (
     <div>
       <ListItem
-        sx={{ bgcolor: "background.paper" }}
+        sx={({ palette }) => ({ bgcolor: palette.background.paper })}
         secondaryAction={
-          <Box sx={{ textAlign: "end" }}>
+          <Box>
             {renderActionButton()}
             <TaskDownloadDes
               speed={speedVo}
               connections={connections}
-              remaining={timeFormat(
-                timeRemaining(totalLength, completedLength, downloadSpeed),
-              )}
+              remaining={remainingVo}
             />
           </Box>
         }
@@ -117,7 +119,7 @@ function TaskItem({
         />
       </ListItem>
 
-      <Box sx={{ width: "100%" }}>
+      <Box width="100%">
         <LinearProgress variant="determinate" value={progress} />
       </Box>
     </div>
