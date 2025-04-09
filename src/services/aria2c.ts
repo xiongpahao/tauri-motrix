@@ -18,8 +18,11 @@ const eventSubscribeMap: Record<
 
 const socketPendingMap: Record<
   string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  { resolve: (data: any) => void; reject: (data: unknown) => void }
+  {
+    resolve: (data: MessageEvent["data"]) => void;
+    reject: (data: unknown) => void;
+    timer: number;
+  }
 > = {};
 
 type MultiCall = Array<{
@@ -72,6 +75,7 @@ async function getInstancePromise() {
 
     if (!key && messageId in socketPendingMap) {
       const pending = socketPendingMap[messageId];
+      clearTimeout(pending.timer);
       delete socketPendingMap[messageId];
       if (data.error) {
         pending.reject(data.error);
@@ -130,16 +134,13 @@ export async function aria2cCall<T>(
 
   if (webSocketIns.readyState === WebSocket.OPEN) {
     return new Promise<T>((resolve, reject) => {
-      socketPendingMap[message.id] = {
-        resolve,
-        reject,
-      };
-      webSocketIns.send(JSON.stringify(message));
-
-      setTimeout(() => {
-        reject(new Error("Request timed out."));
+      const timer = setTimeout(() => {
         delete socketPendingMap[message.id];
+        reject(new Error("Request timed out."));
       }, DEFAULT_TIMEOUT);
+
+      socketPendingMap[message.id] = { resolve, reject, timer };
+      webSocketIns.send(JSON.stringify(message));
     });
   }
 

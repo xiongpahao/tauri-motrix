@@ -120,8 +120,8 @@ export class Aria2 {
     if (webSocketIns?.readyState === WebSocket.OPEN) {
       return new Promise<T>((resolve, reject) => {
         const timer = setTimeout(() => {
-          reject(new Error("Request timed out."));
           delete socketPendingMap[message.id];
+          reject(new Error("Request timed out."));
         }, instanceConfig.timeout);
         socketPendingMap[message.id] = { resolve, reject, timer };
         webSocketIns.send(JSON.stringify(message));

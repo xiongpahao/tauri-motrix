@@ -17,7 +17,6 @@ function TaskStartPage() {
 
   const {
     tasks,
-    fetchTasks,
     selectedTaskIds,
     handleTaskSelect,
     handleTaskPause,
@@ -28,11 +27,6 @@ function TaskStartPage() {
   } = useTaskStore();
 
   const noneSelected = selectedTaskIds.length === 0;
-
-  useMount(() => {
-    fetchTasks();
-    console.log("fetch-tasks");
-  });
 
   return (
     <BasePage
