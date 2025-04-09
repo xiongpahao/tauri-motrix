@@ -5,45 +5,55 @@ import {
   MultiCall,
 } from "./util";
 
-const DEFAULT_TIMEOUT = 15000;
-
 export type EventSubscribeMap = Record<
   string,
   Array<(data: MessageEvent["data"]) => void> | undefined
 >;
 
+export type SocketPendingMap = Record<
+  string,
+  {
+    resolve: (data: MessageEvent["data"]) => void;
+    reject: (data: unknown) => void;
+    timer: number;
+  }
+>;
+
 export interface Aria2InstanceConfig {
   server: string;
   eventSubscribeMap?: EventSubscribeMap;
+  socketPendingMap?: SocketPendingMap;
+  timeout: number;
+  isHttps?: boolean;
+  isWss?: boolean;
 }
 
 export class Aria2 {
-  eventSubscribeMap: Record<
-    string,
-    Array<(data: MessageEvent["data"]) => void> | undefined
-  > = {};
+  eventSubscribeMap: EventSubscribeMap;
+  socketPendingMap: SocketPendingMap;
 
-  socketPendingMap: Record<
-    string,
-    {
-      resolve: (data: MessageEvent["data"]) => void;
-      reject: (data: unknown) => void;
-    }
-  > = {};
-
-  webSocketIns: WebSocket;
+  webSocketIns?: WebSocket;
   fetcher: ReturnType<typeof createFetcherFactory>;
 
-  constructor(instanceConfig: Aria2InstanceConfig) {
-    const { server, eventSubscribeMap } = instanceConfig;
+  constructor(private instanceConfig: Aria2InstanceConfig) {
+    const { server, eventSubscribeMap, socketPendingMap, isHttps, timeout } =
+      instanceConfig;
 
-    if (eventSubscribeMap) {
-      this.eventSubscribeMap = eventSubscribeMap;
-    }
+    this.fetcher = createFetcherFactory(
+      `http${isHttps ? "s" : ""}://${server}/jsonrpc`,
+      timeout,
+    );
 
-    const webSocketIns = new WebSocket(`ws://${server}/jsonrpc`);
+    this.eventSubscribeMap = eventSubscribeMap || {};
+    this.socketPendingMap = socketPendingMap || {};
+  }
+
+  open() {
+    const { server, isWss } = this.instanceConfig;
+    const webSocketIns = new WebSocket(
+      `ws${isWss ? "s" : ""}://${server}/jsonrpc`,
+    );
     this.webSocketIns = webSocketIns;
-    this.fetcher = createFetcherFactory(server);
 
     webSocketIns.onopen = () => {
       console.log("aria2", "WebSocket OPEN");
@@ -54,24 +64,17 @@ export class Aria2 {
     };
 
     webSocketIns.onmessage = (message: MessageEvent) => {
-      const { eventSubscribeMap, socketPendingMap } = this;
-
-      const data = JSON.parse(message.data);
-      const { method: key, id: messageId } = data;
-
-      if (!messageId && key in eventSubscribeMap) {
-        const callbacks = eventSubscribeMap[key];
-        callbacks?.forEach((fn) => fn(data.params));
+      let data;
+      try {
+        data = JSON.parse(message.data);
+      } catch (err) {
+        console.error("aria2", "JSON parse failed", err, message);
+        return;
       }
-
-      if (!key && messageId in socketPendingMap) {
-        const pending = socketPendingMap[messageId];
-        delete socketPendingMap[messageId];
-        if (data.error) {
-          pending.reject(data.error);
-        } else {
-          pending.resolve(data.result);
-        }
+      if (Array.isArray(data)) {
+        data.forEach((item) => this.#handleMessage(item));
+      } else {
+        this.#handleMessage(data);
       }
     };
 
@@ -83,6 +86,27 @@ export class Aria2 {
     };
   }
 
+  #handleMessage(data: MessageEvent["data"]) {
+    const { eventSubscribeMap, socketPendingMap } = this;
+    const { method: key, id: messageId } = data;
+
+    if (!messageId && key in eventSubscribeMap) {
+      const callbacks = eventSubscribeMap[key];
+      callbacks?.forEach((fn) => fn(data.params));
+    }
+
+    if (!key && messageId in socketPendingMap) {
+      const pending = socketPendingMap[messageId];
+      clearTimeout(pending.timer);
+      delete socketPendingMap[messageId];
+      if (data.error) {
+        pending.reject(data.error);
+      } else {
+        pending.resolve(data.result);
+      }
+    }
+  }
+
   call<T>(method: string, ...params: CallParam[]): Promise<T> {
     const message = {
       jsonrpc: "2.0",
@@ -91,20 +115,16 @@ export class Aria2 {
       params,
     };
 
-    const { socketPendingMap, webSocketIns, fetcher } = this;
+    const { socketPendingMap, webSocketIns, fetcher, instanceConfig } = this;
 
-    if (webSocketIns.readyState === WebSocket.OPEN) {
+    if (webSocketIns?.readyState === WebSocket.OPEN) {
       return new Promise<T>((resolve, reject) => {
-        socketPendingMap[message.id] = {
-          resolve,
-          reject,
-        };
-        webSocketIns.send(JSON.stringify(message));
-
-        setTimeout(() => {
+        const timer = setTimeout(() => {
           reject(new Error("Request timed out."));
           delete socketPendingMap[message.id];
-        }, DEFAULT_TIMEOUT);
+        }, instanceConfig.timeout);
+        socketPendingMap[message.id] = { resolve, reject, timer };
+        webSocketIns.send(JSON.stringify(message));
       });
     }
 
@@ -162,6 +182,6 @@ export class Aria2 {
   }
 
   close() {
-    this.webSocketIns.close();
+    this.webSocketIns?.close();
   }
 }

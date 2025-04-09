@@ -6,19 +6,27 @@ export type MultiCall = Array<{
 }>;
 
 export const createFetcherFactory =
-  (server: string) =>
+  (url: string, timeout: number) =>
   <T>(data: object) =>
-    fetch(`http://${server}/jsonrpc`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.error) {
-          return Promise.reject(res.error);
-        }
-        return res.result as T;
-      });
+    new Promise<T>((resolve, reject) => {
+      const timer = setTimeout(() => {
+        reject(new Error("Request timeout"));
+      }, timeout);
+
+      fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res.error) {
+            return Promise.reject(res.error);
+          }
+          resolve(res.result as T);
+        })
+        .catch((err) => reject(err))
+        .finally(() => clearTimeout(timer));
+    });
 
 export function ensurePrefix(str: string) {
   if (!str.startsWith("system.") && !str.startsWith("aria2.")) {
@@ -29,4 +37,5 @@ export function ensurePrefix(str: string) {
 
 export const defaultConfigObj = {
   server: "127.0.0.1:6800",
+  timeout: 15000,
 };
