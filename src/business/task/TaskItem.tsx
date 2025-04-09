@@ -29,8 +29,8 @@ export interface TaskItemProps {
   onPause: (taskId: string) => void;
   onResume: (taskId: string) => void;
   onStop: (taskId: string) => void;
-  onOpenFile: (task: Aria2Task) => void;
-  onCopyLink: (task: Aria2Task) => void;
+  onOpenFile: (taskId: string) => void;
+  onCopyLink: (task: string) => void;
 }
 
 function TaskItem({
@@ -71,13 +71,13 @@ function TaskItem({
       <TaskActionButton
         title={t("OpenFile")}
         icon={<FileOpenOutlined />}
-        onClick={() => onOpenFile(task)}
+        onClick={() => onOpenFile(task.gid)}
       />
 
       <TaskActionButton
         title={t("CopyLink")}
         icon={<LinkOutlined />}
-        onClick={() => onCopyLink(task)}
+        onClick={() => onCopyLink(task.gid)}
       />
 
       <TaskActionButton title={t("Info")} icon={<InfoOutlined />} />

@@ -1,5 +1,12 @@
-import { Box, Button, Modal, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
+import { FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
@@ -11,47 +18,49 @@ export interface AddTaskModalProps {
   onClose: () => void;
 }
 
-function AddTaskModal({ onClose, open }: AddTaskModalProps) {
+function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
   const { t } = useTranslation("common");
-
-  const [downloadLink, setDownloadLink] = useState("");
 
   const { addTask } = useTaskStore();
 
   const { data: aria2Info } = useSWR("getAria2Info", getAria2Info);
 
-  const onSubmit = async () => {
-    if (!downloadLink) {
-      return;
-    }
+  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
 
-    await addTask(downloadLink);
-    setDownloadLink("");
+    const link = formData.get("link") as string;
+
+    await addTask(link);
     onClose();
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <Box
-        sx={{
-          width: 400,
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          bgcolor: "background.paper",
-          px: 4,
-          py: 3,
-        }}
-      >
-        <Typography>{t("DownloadFile")}</Typography>
-
+    <Dialog
+      open={open}
+      onClose={onClose}
+      slotProps={{
+        paper: {
+          component: "form",
+          onSubmit,
+        },
+      }}
+    >
+      <DialogTitle>{t("DownloadFile")}</DialogTitle>
+      <DialogContent>
         <TextField
+          required
+          variant="standard"
           label={t("DownloadLink")}
           fullWidth
-          onChange={(e) => setDownloadLink(e.target.value)}
-          value={downloadLink}
+          name="link"
           sx={{ mt: 2 }}
+        />
+
+        <TextField
+          type="number"
+          sx={{ mt: 2 }}
+          label={t("Splits", { ns: "task" })}
         />
 
         <TextField
@@ -61,18 +70,17 @@ function AddTaskModal({ onClose, open }: AddTaskModalProps) {
           disabled={!aria2Info?.dir}
           defaultValue={aria2Info?.dir}
         />
-
-        <Box sx={{ display: "flex", mt: 2, justifyContent: "end", gap: 2 }}>
-          <Button variant="contained" onClick={onSubmit}>
-            {t("Submit")}
-          </Button>
-          <Button variant="outlined" onClick={onClose}>
-            {t("Cancel")}
-          </Button>
-        </Box>
-      </Box>
-    </Modal>
+      </DialogContent>
+      <DialogActions>
+        <Button autoFocus onClick={onClose}>
+          {t("Cancel")}
+        </Button>
+        <Button autoFocus type="submit">
+          {t("Submit")}
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
 
-export default AddTaskModal;
+export default AddTaskDialog;

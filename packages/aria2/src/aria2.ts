@@ -49,18 +49,21 @@ export class Aria2 {
   }
 
   open() {
-    const { server, isWss } = this.instanceConfig;
+    const { eventSubscribeMap, instanceConfig } = this;
+    const { server, isWss } = instanceConfig;
     const webSocketIns = new WebSocket(
       `ws${isWss ? "s" : ""}://${server}/jsonrpc`,
     );
     this.webSocketIns = webSocketIns;
 
-    webSocketIns.onopen = () => {
+    webSocketIns.onopen = (event) => {
       console.log("aria2", "WebSocket OPEN");
+      eventSubscribeMap.open?.forEach((fn) => fn(event));
     };
 
-    webSocketIns.onclose = () => {
+    webSocketIns.onclose = (event) => {
       console.log("aria2", "WebSocket CLOSE");
+      eventSubscribeMap.close?.forEach((fn) => fn(event));
     };
 
     webSocketIns.onmessage = (message: MessageEvent) => {
@@ -79,8 +82,6 @@ export class Aria2 {
     };
 
     webSocketIns.onerror = (error) => {
-      const { eventSubscribeMap } = this;
-
       console.error("aria2", "WebSocket ERROR", error);
       eventSubscribeMap.error?.forEach((fn) => fn(error));
     };

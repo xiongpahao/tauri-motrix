@@ -34,7 +34,9 @@
         "CopyLink": "Copy Task Link",
         "Info": "Open Task Info",
         "RefreshAll": "Refresh All Tasks",
-        "StartAll": "Start All Tasks"
+        "StartAll": "Start All Tasks",
+        "Splits": "Splits",
+        "ConfirmDelete": "Are you sure you want to remove download task \"{{taskName}}\"?"
     },
     "common": {
         "DownloadFile": "Download File",

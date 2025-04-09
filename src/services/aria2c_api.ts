@@ -41,7 +41,7 @@ export const downloadingTasksApi = (param?: {
   offset?: number;
   num?: number;
 }) =>
-  aria2cMultiCall<[Aria2Task[], Aria2Task[]]>([
+  aria2cMultiCall<[[Aria2Task[]], [Aria2Task[]]]>([
     {
       method: "tellActive",
       params: [],
@@ -67,7 +67,13 @@ export const getGlobalStatApi = () =>
   aria2cCall<Aria2GlobalStat>("getGlobalStat");
 
 export const pauseTaskApi = (gid: string) => aria2cCall("pause", gid);
+export const pauseAllTaskApi = () => aria2cCall("pauseAll");
+export const batchPauseTaskApi = (gids: string[]) =>
+  aria2cMultiCall(gids.map((gid) => ({ method: "pause", params: [gid] })));
 
 export const resumeTaskApi = (gid: string) => aria2cCall("unpause", gid);
+export const resumeAllTaskApi = () => aria2cCall("unpauseAll");
+export const batchResumeTaskApi = (gids: string[]) =>
+  aria2cMultiCall(gids.map((gid) => ({ method: "unpause", params: [gid] })));
 
-export const stopTaskApi = (gid: string) => aria2cCall("forceRemove", gid);
+export const removeTaskApi = (gid: string) => aria2cCall("remove", gid);
