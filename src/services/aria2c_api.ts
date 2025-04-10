@@ -123,12 +123,12 @@ export const pauseAllTaskApi = async () => {
 
 export const batchPauseTaskApi = async (gids: string[]) => {
   const { multiCall } = await getAria2();
-  multiCall(gids.map((gid) => ({ method: "pause", params: [gid] })));
+  return multiCall(gids.map((gid) => ({ method: "pause", params: [gid] })));
 };
 
 export const resumeTaskApi = async (gid: string) => {
   const { call } = await getAria2();
-  call("unpause", gid);
+  return call("unpause", gid);
 };
 
 export const resumeAllTaskApi = async () => {
@@ -138,7 +138,7 @@ export const resumeAllTaskApi = async () => {
 
 export const batchResumeTaskApi = async (gids: string[]) => {
   const { multiCall } = await getAria2();
-  multiCall(gids.map((gid) => ({ method: "unpause", params: [gid] })));
+  return multiCall(gids.map((gid) => ({ method: "unpause", params: [gid] })));
 };
 
 export const removeTaskApi = async (gid: string) => {
