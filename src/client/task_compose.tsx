@@ -1,10 +1,8 @@
-import {
-  ArrowDownwardOutlined,
-  HourglassEmpty,
-  HubOutlined,
-} from "@mui/icons-material";
+import { ArrowDownwardOutlined, HubOutlined } from "@mui/icons-material";
 import { Box, IconButton, List } from "@mui/material";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
+
+import { BaseEmpty } from "@/components/BaseEmpty";
 
 export function TaskDownloadDes(props: {
   speed: string;
@@ -65,19 +63,7 @@ export function TaskList<T>(props: {
   const { dataSource, renderItem } = props;
 
   if (!dataSource.length) {
-    return (
-      <Box
-        sx={{
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <HourglassEmpty />
-      </Box>
-    );
+    return <BaseEmpty text="task.Empty" />;
   }
 
   return (

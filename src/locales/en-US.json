@@ -36,7 +36,8 @@
         "RefreshAll": "Refresh All Tasks",
         "StartAll": "Start All Tasks",
         "Splits": "Splits",
-        "ConfirmDelete": "Are you sure you want to remove download task \"{{taskName}}\"?"
+        "ConfirmDelete": "Are you sure you want to remove download task \"{{taskName}}\"?",
+        "Empty": "No download list"
     },
     "common": {
         "DownloadFile": "Download File",
@@ -45,6 +46,7 @@
         "Submit": " Submit",
         "Cancel": " Cancel",
         "Remaining": "Remaining",
-        "Rename": "Rename"
+        "Rename": "Rename",
+        "Empty": "Empty"
     }
 }

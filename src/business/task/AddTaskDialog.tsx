@@ -20,7 +20,7 @@ export interface AddTaskModalProps {
 }
 
 function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation();
 
   const { addTask } = useTaskStore();
 
@@ -47,26 +47,31 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
         },
       }}
     >
-      <DialogTitle>{t("DownloadFile")}</DialogTitle>
+      <DialogTitle>{t("common.DownloadFile")}</DialogTitle>
       <DialogContent
         sx={{
-          "& > *": {
+          "& > :not(:last-child)": {
             mb: 2,
+          },
+          "& .MuiBox-root": {
+            display: "inline-flex",
+            width: "100%",
+            gap: 2,
           },
         }}
       >
         <TextField
           required
           variant="standard"
-          label={t("DownloadLink")}
+          label={t("common.DownloadLink")}
           fullWidth
           name="link"
         />
 
-        <Box sx={{ display: "inline-flex", width: "100%", gap: 2 }}>
+        <Box>
           <TextField
             variant="standard"
-            label={t("Rename")}
+            label={t("common.Rename")}
             name="filename"
             sx={{ flex: "1 1 auto" }}
           />
@@ -74,16 +79,16 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
             name="split"
             variant="standard"
             type="number"
-            label={t("Splits", { ns: "task" })}
+            label={t("task.Splits")}
             defaultValue={aria2Info?.split}
             disabled={!aria2Info?.split}
-            sx={{ width: 50 }}
+            sx={{ width: 80 }}
           />
         </Box>
 
         <TextField
           variant="standard"
-          label={t("DownloadPath")}
+          label={t("common.DownloadPath")}
           fullWidth
           disabled={!aria2Info?.dir}
           defaultValue={aria2Info?.dir}
@@ -91,10 +96,10 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
       </DialogContent>
       <DialogActions>
         <Button autoFocus onClick={onClose}>
-          {t("Cancel")}
+          {t("common.Cancel")}
         </Button>
         <Button autoFocus type="submit">
-          {t("Submit")}
+          {t("common.Submit")}
         </Button>
       </DialogActions>
     </Dialog>
