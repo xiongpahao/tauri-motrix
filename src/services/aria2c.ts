@@ -125,7 +125,7 @@ export async function aria2cCall<T>(
 ): Promise<T> {
   const message = {
     jsonrpc: "2.0",
-    id: Date.now().toString(),
+    id: crypto.randomUUID(),
     method: ensurePrefix(method),
     params,
   };

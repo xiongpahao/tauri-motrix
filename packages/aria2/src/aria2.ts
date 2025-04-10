@@ -7,7 +7,7 @@ import {
 
 export type EventSubscribeMap = Record<
   string,
-  Array<(data: MessageEvent["data"]) => void> | undefined
+  Array<(data: MessageEvent["data"]) => void> | void
 >;
 
 export type SocketPendingMap = Record<
@@ -111,7 +111,7 @@ export class Aria2 {
   call<T>(method: string, ...params: CallParam[]): Promise<T> {
     const message = {
       jsonrpc: "2.0",
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       method: ensurePrefix(method),
       params,
     };
@@ -171,7 +171,7 @@ export class Aria2 {
   removeAllListener(method: string) {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
-    eventSubscribeMap[key] = [];
+    delete eventSubscribeMap[key];
   }
 
   listNotifications() {

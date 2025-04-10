@@ -5,7 +5,7 @@ import {
   PlayArrowOutlined,
   RefreshOutlined,
 } from "@mui/icons-material";
-import { Box, Fab, IconButton } from "@mui/material";
+import { Box, Fab, IconButton, Zoom } from "@mui/material";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -73,13 +73,15 @@ function TaskStartPage() {
         </Box>
       }
       fab={
-        <Fab
-          sx={{ position: "absolute", bottom: 16, right: 16 }}
-          color="primary"
-          onClick={() => setAddOpen(true)}
-        >
-          <AddOutlined />
-        </Fab>
+        <Zoom in timeout={300}>
+          <Fab
+            sx={{ position: "absolute", bottom: 16, right: 16 }}
+            color="primary"
+            onClick={() => setAddOpen(true)}
+          >
+            <AddOutlined />
+          </Fab>
+        </Zoom>
       }
     >
       <TaskList
