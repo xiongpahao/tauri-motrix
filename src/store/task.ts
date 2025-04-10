@@ -14,6 +14,8 @@ import {
 } from "@/services/aria2c_api";
 import { getTaskFullPath, getTaskName, getTaskUri } from "@/utils/task";
 
+import { DownloadOption } from "./../services/aria2c_api";
+
 interface TaskStore {
   tasks: Array<Aria2Task>;
   selectedTaskIds: Array<string>;
@@ -24,7 +26,7 @@ interface TaskStore {
   handleTaskStop: (taskId: string) => void;
   openTaskFile: (taskId: string) => void;
   copyTaskLink: (taskId: string) => void;
-  addTask: (url: string) => void;
+  addTask: (url: string, option: DownloadOption) => void;
   getTaskByGid: (gid: string) => Aria2Task;
 }
 
@@ -37,8 +39,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     set({ tasks });
   },
 
-  async addTask(url) {
-    await addTaskApi(url);
+  async addTask(url, option) {
+    await addTaskApi(url, option);
     await get().fetchTasks();
   },
 

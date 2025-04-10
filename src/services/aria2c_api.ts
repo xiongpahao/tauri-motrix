@@ -2,8 +2,6 @@ import { Aria2, create, EventSubscribeMap } from "@tauri-motrix/aria2";
 
 import { getAria2Info } from "@/services/cmd";
 
-const DEFAULT_TIMEOUT = 15000;
-
 let instancePromise: Promise<Aria2> = null!;
 
 const eventSubscribeMap: EventSubscribeMap = {};
@@ -22,7 +20,6 @@ async function getInstancePromise() {
 
   const instance = create({
     server,
-    timeout: DEFAULT_TIMEOUT,
     eventSubscribeMap,
   });
 
@@ -93,9 +90,26 @@ export const downloadingTasksApi = async (param?: {
   ]);
 };
 
-export const addTaskApi = async (urls: string | string[]) => {
+export interface DownloadOption {
+  dir?: string;
+  out?: string;
+  // referer?: string;
+  // header?: string[];
+  // maxConnection?: number;
+  // maxSplit?: number;
+  split?: number;
+}
+
+export const addTaskApi = async (
+  urls: string | string[],
+  option: DownloadOption,
+) => {
   const { call } = await getAria2();
-  return call<string>("addUri", typeof urls === "string" ? [urls] : urls);
+  return call<string>(
+    "addUri",
+    typeof urls === "string" ? [urls] : urls,
+    option,
+  );
 };
 
 export interface Aria2GlobalStat {
@@ -147,6 +161,6 @@ export const removeTaskApi = async (gid: string) => {
 };
 
 getAria2().then(({ listMethods, listNotifications }) => {
-  listMethods().then((res) => console.log("aria2 notifications: ", res));
-  listNotifications().then((res) => console.log("aria2 methods: ", res));
+  listMethods().then((res) => console.log("aria2 methods: ", res));
+  listNotifications().then((res) => console.log("aria2 notifications: ", res));
 });

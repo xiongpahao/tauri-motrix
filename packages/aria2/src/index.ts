@@ -1,7 +1,7 @@
 import { Aria2, Aria2InstanceConfig } from "./aria2";
 import { defaultOption } from "./util";
 
-export const create = (instanceConfig?: Aria2InstanceConfig) =>
+export const create = (instanceConfig?: Partial<Aria2InstanceConfig>) =>
   new Aria2({ ...defaultOption, ...instanceConfig });
 
 // type DefaultAria2 = {

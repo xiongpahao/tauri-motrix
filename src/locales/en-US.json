@@ -37,7 +37,8 @@
         "StartAll": "Start All Tasks",
         "Splits": "Splits",
         "ConfirmDelete": "Are you sure you want to remove download task \"{{taskName}}\"?",
-        "Empty": "No download list"
+        "Empty": "No download list",
+        "DirPick": "Please select task download path"
     },
     "common": {
         "DownloadFile": "Download File",

@@ -1,3 +1,4 @@
+import { FolderOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -5,9 +6,11 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  IconButton,
   TextField,
 } from "@mui/material";
-import { FormEvent } from "react";
+import { open as dialogOpen } from "@tauri-apps/plugin-dialog";
+import { FormEvent, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
@@ -26,14 +29,35 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
 
   const { data: aria2Info } = useSWR("getAria2Info", getAria2Info);
 
+  const dirInputRef = useRef<HTMLInputElement>(null);
+
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
     const link = formData.get("link") as string;
+    const out = formData.get("filename") as string;
+    const dir = formData.get("dir") as string;
+    const split = Number(formData.get("split"));
 
-    await addTask(link);
+    await addTask(link, {
+      dir,
+      split,
+      out,
+    });
     onClose();
+  };
+
+  const onFolderPick = async () => {
+    const folder = await dialogOpen({
+      directory: true,
+      multiple: false,
+      title: t("task.DirPick"),
+    });
+
+    if (folder) {
+      dirInputRef.current!.value = folder;
+    }
   };
 
   return (
@@ -86,13 +110,20 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
           />
         </Box>
 
-        <TextField
-          variant="standard"
-          label={t("common.DownloadPath")}
-          fullWidth
-          disabled={!aria2Info?.dir}
-          defaultValue={aria2Info?.dir}
-        />
+        <Box>
+          <TextField
+            inputRef={dirInputRef}
+            name="dir"
+            variant="standard"
+            label={t("common.DownloadPath")}
+            fullWidth
+            disabled
+            defaultValue={aria2Info?.dir}
+          />
+          <IconButton onClick={onFolderPick}>
+            <FolderOutlined />
+          </IconButton>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button autoFocus onClick={onClose}>

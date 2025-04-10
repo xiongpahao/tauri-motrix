@@ -21,9 +21,9 @@ export type SocketPendingMap = Record<
 
 export interface Aria2InstanceConfig {
   server: string;
+  timeout: number;
   eventSubscribeMap?: EventSubscribeMap;
   socketPendingMap?: SocketPendingMap;
-  timeout: number;
   isHttps?: boolean;
   isWss?: boolean;
 }
