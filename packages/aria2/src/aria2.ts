@@ -48,9 +48,8 @@ export class Aria2 {
     this.socketPendingMap = socketPendingMap || {};
   }
 
-  open() {
-    const { eventSubscribeMap, instanceConfig } = this;
-    const { server, isWss } = instanceConfig;
+  open = () => {
+    const { server, isWss } = this.instanceConfig;
     const webSocketIns = new WebSocket(
       `ws${isWss ? "s" : ""}://${server}/jsonrpc`,
     );
@@ -58,12 +57,12 @@ export class Aria2 {
 
     webSocketIns.onopen = (event) => {
       console.log("aria2", "WebSocket OPEN");
-      eventSubscribeMap.open?.forEach((fn) => fn(event));
+      this.#dispatchEvent("open", event);
     };
 
     webSocketIns.onclose = (event) => {
       console.log("aria2", "WebSocket CLOSE");
-      eventSubscribeMap.close?.forEach((fn) => fn(event));
+      this.#dispatchEvent("close", event);
     };
 
     webSocketIns.onmessage = (message: MessageEvent) => {
@@ -72,28 +71,28 @@ export class Aria2 {
         data = JSON.parse(message.data);
       } catch (err) {
         console.error("aria2", "JSON parse failed", err, message);
+        this.#dispatchEvent("error", err);
         return;
       }
-      if (Array.isArray(data)) {
-        data.forEach((item) => this.#handleMessage(item));
-      } else {
-        this.#handleMessage(data);
-      }
+
+      this.#handleMessage(data);
     };
 
     webSocketIns.onerror = (error) => {
       console.error("aria2", "WebSocket ERROR", error);
-      eventSubscribeMap.error?.forEach((fn) => fn(error));
+      this.#dispatchEvent("error", error);
     };
-  }
+  };
 
-  #handleMessage(data: MessageEvent["data"]) {
-    const { eventSubscribeMap, socketPendingMap } = this;
+  #handleMessage = (data: MessageEvent["data"]) => {
+    if (Array.isArray(data)) {
+      return data.forEach((item) => this.#handleMessage(item));
+    }
+    const { socketPendingMap } = this;
     const { method: key, id: messageId } = data;
 
-    if (!messageId && key in eventSubscribeMap) {
-      const callbacks = eventSubscribeMap[key];
-      callbacks?.forEach((fn) => fn(data.params));
+    if (!messageId) {
+      this.#dispatchEvent(key, data.params);
     }
 
     if (!key && messageId in socketPendingMap) {
@@ -106,9 +105,9 @@ export class Aria2 {
         pending.resolve(data.result);
       }
     }
-  }
+  };
 
-  call<T>(method: string, ...params: CallParam[]): Promise<T> {
+  call = <T>(method: string, ...params: CallParam[]): Promise<T> => {
     const message = {
       jsonrpc: "2.0",
       id: crypto.randomUUID(),
@@ -130,9 +129,9 @@ export class Aria2 {
     }
 
     return fetcher<T>(message);
-  }
+  };
 
-  multiCall<T>(calls: MultiCall) {
+  multiCall = <T>(calls: MultiCall) => {
     const multi = [
       calls.map(({ method, params }) => {
         return {
@@ -142,9 +141,14 @@ export class Aria2 {
       }),
     ];
     return this.call<T>("system.multicall", ...multi);
-  }
+  };
 
-  addListener<T>(method: string, callback: (data: T) => void) {
+  #dispatchEvent = (name: string, data: unknown) => {
+    const callbacks = this.eventSubscribeMap[name];
+    callbacks?.forEach((fn) => fn(data));
+  };
+
+  addListener = <T>(method: string, callback: (data: T) => void) => {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
 
@@ -154,35 +158,35 @@ export class Aria2 {
 
     eventSubscribeMap[key] ??= [];
     eventSubscribeMap[key].push(callback);
-  }
-  setListener<T>(method: string, callback: (data: T) => void) {
+  };
+  setListener = <T>(method: string, callback: (data: T) => void) => {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
     eventSubscribeMap[key] = [callback];
-  }
+  };
 
-  removeListener<T>(method: string, callback: (data: T) => void) {
+  removeListener = <T>(method: string, callback: (data: T) => void) => {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
     const callbacks = eventSubscribeMap[key];
     eventSubscribeMap[key] = callbacks?.filter((fn) => fn !== callback);
-  }
+  };
 
-  removeAllListener(method: string) {
+  removeAllListener = (method: string) => {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
     delete eventSubscribeMap[key];
-  }
+  };
 
-  listNotifications() {
-    return this.call<string[]>("aria2.listNotifications");
-  }
+  listNotifications = () => {
+    return this.call<string[]>("system.listNotifications");
+  };
 
-  listMethods() {
-    return this.call<string[]>("aria2.listMethods");
-  }
+  listMethods = () => {
+    return this.call<string[]>("system.listMethods");
+  };
 
-  close() {
+  close = () => {
     this.webSocketIns?.close();
-  }
+  };
 }

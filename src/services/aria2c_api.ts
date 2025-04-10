@@ -1,4 +1,43 @@
-import { aria2cCall, aria2cMultiCall } from "@/services/aria2c";
+import { Aria2, create, EventSubscribeMap } from "@tauri-motrix/aria2";
+
+import { getAria2Info } from "@/services/cmd";
+
+const DEFAULT_TIMEOUT = 15000;
+
+let instancePromise: Promise<Aria2> = null!;
+
+const eventSubscribeMap: EventSubscribeMap = {};
+
+async function getInstancePromise() {
+  console.log("aria2", "Initializing instances");
+
+  let server = "";
+  const aria2Info = await getAria2Info();
+
+  if (aria2Info.server) {
+    server = aria2Info.server;
+  } else {
+    throw new Error("Server URL is invalid or not retrieved");
+  }
+
+  const instance = create({
+    server,
+    timeout: DEFAULT_TIMEOUT,
+    eventSubscribeMap,
+  });
+
+  instance.open();
+
+  return instance;
+}
+
+export function getAria2(force = false) {
+  if (!instancePromise || force) {
+    instancePromise?.then(({ close }) => close());
+    instancePromise = getInstancePromise();
+  }
+  return instancePromise;
+}
 
 export interface Aria2BitTorrent {
   info: {
@@ -37,11 +76,12 @@ export interface Aria2File {
   }>;
 }
 
-export const downloadingTasksApi = (param?: {
+export const downloadingTasksApi = async (param?: {
   offset?: number;
   num?: number;
-}) =>
-  aria2cMultiCall<[[Aria2Task[]], [Aria2Task[]]]>([
+}) => {
+  const { multiCall } = await getAria2();
+  return multiCall<[[Aria2Task[]], [Aria2Task[]]]>([
     {
       method: "tellActive",
       params: [],
@@ -51,9 +91,12 @@ export const downloadingTasksApi = (param?: {
       params: [param?.offset ?? 0, param?.num ?? 20],
     },
   ]);
+};
 
-export const addTaskApi = (urls: string | string[]) =>
-  aria2cCall<string>("addUri", typeof urls === "string" ? [urls] : urls);
+export const addTaskApi = async (urls: string | string[]) => {
+  const { call } = await getAria2();
+  return call<string>("addUri", typeof urls === "string" ? [urls] : urls);
+};
 
 export interface Aria2GlobalStat {
   downloadSpeed: string;
@@ -63,17 +106,47 @@ export interface Aria2GlobalStat {
   uploadSpeed: string;
 }
 
-export const getGlobalStatApi = () =>
-  aria2cCall<Aria2GlobalStat>("getGlobalStat");
+export const getGlobalStatApi = async () => {
+  const { call } = await getAria2();
+  return call<Aria2GlobalStat>("getGlobalStat");
+};
 
-export const pauseTaskApi = (gid: string) => aria2cCall("pause", gid);
-export const pauseAllTaskApi = () => aria2cCall("pauseAll");
-export const batchPauseTaskApi = (gids: string[]) =>
-  aria2cMultiCall(gids.map((gid) => ({ method: "pause", params: [gid] })));
+export const pauseTaskApi = async (gid: string) => {
+  const { call } = await getAria2();
+  return call("pause", gid);
+};
 
-export const resumeTaskApi = (gid: string) => aria2cCall("unpause", gid);
-export const resumeAllTaskApi = () => aria2cCall("unpauseAll");
-export const batchResumeTaskApi = (gids: string[]) =>
-  aria2cMultiCall(gids.map((gid) => ({ method: "unpause", params: [gid] })));
+export const pauseAllTaskApi = async () => {
+  const { call } = await getAria2();
+  return call("pauseAll");
+};
 
-export const removeTaskApi = (gid: string) => aria2cCall("remove", gid);
+export const batchPauseTaskApi = async (gids: string[]) => {
+  const { multiCall } = await getAria2();
+  multiCall(gids.map((gid) => ({ method: "pause", params: [gid] })));
+};
+
+export const resumeTaskApi = async (gid: string) => {
+  const { call } = await getAria2();
+  call("unpause", gid);
+};
+
+export const resumeAllTaskApi = async () => {
+  const { call } = await getAria2();
+  return call("unpauseAll");
+};
+
+export const batchResumeTaskApi = async (gids: string[]) => {
+  const { multiCall } = await getAria2();
+  multiCall(gids.map((gid) => ({ method: "unpause", params: [gid] })));
+};
+
+export const removeTaskApi = async (gid: string) => {
+  const { call } = await getAria2();
+  return call("remove", gid);
+};
+
+getAria2().then(({ listMethods, listNotifications }) => {
+  listMethods().then((res) => console.log("aria2 notifications: ", res));
+  listNotifications().then((res) => console.log("aria2 methods: ", res));
+});

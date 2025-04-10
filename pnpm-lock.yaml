@@ -32,6 +32,9 @@ importers:
       '@tauri-apps/plugin-opener':
         specifier: ^2.2.5
         version: 2.2.5
+      '@tauri-motrix/aria2':
+        specifier: workspace:*
+        version: link:packages/aria2
       axios:
         specifier: ^1.7.9
         version: 1.7.9

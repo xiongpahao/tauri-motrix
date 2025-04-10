@@ -35,7 +35,7 @@ export function ensurePrefix(str: string) {
   return str;
 }
 
-export const defaultConfigObj = {
+export const defaultOption = {
   server: "127.0.0.1:6800",
   timeout: 15000,
 };
