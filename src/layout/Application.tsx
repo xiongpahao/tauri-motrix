@@ -1,19 +1,15 @@
-import { AddOutlined } from "@mui/icons-material";
 import {
   createTheme,
-  Fab,
   List,
   Paper,
   SvgIcon,
   ThemeProvider,
 } from "@mui/material";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import logoIcon from "@/assets/logo.svg?react";
-import AddTaskDialog from "@/business/task/AddTaskDialog";
 import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
 import { routers } from "@/routes/application";
@@ -22,8 +18,6 @@ const theme = createTheme();
 
 function ApplicationLayout() {
   const { t } = useTranslation();
-
-  const [addModalOpen, setAddModalOpen] = useState(false);
 
   const routerElements = useRoutes(routers);
 
@@ -68,22 +62,7 @@ function ApplicationLayout() {
             </section>
           </aside>
 
-          <main className="layout__right">
-            {routerElements}
-
-            <Fab
-              sx={{ position: "absolute", bottom: 16, right: 16 }}
-              color="primary"
-              onClick={() => setAddModalOpen(true)}
-            >
-              <AddOutlined />
-            </Fab>
-          </main>
-
-          <AddTaskDialog
-            open={addModalOpen}
-            onClose={() => setAddModalOpen(false)}
-          />
+          <main className="layout__right">{routerElements}</main>
         </Paper>
       </ThemeProvider>
     </SWRConfig>

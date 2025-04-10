@@ -1,12 +1,15 @@
 import {
+  AddOutlined,
   CloseOutlined,
   PauseOutlined,
   PlayArrowOutlined,
   RefreshOutlined,
 } from "@mui/icons-material";
-import { Box, IconButton } from "@mui/material";
+import { Box, Fab, IconButton } from "@mui/material";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import AddTaskDialog from "@/business/task/AddTaskDialog";
 import TaskItem from "@/business/task/TaskItem";
 import { TaskList } from "@/client/task_compose";
 import BasePage from "@/components/BasePage";
@@ -25,6 +28,8 @@ function TaskStartPage() {
     openTaskFile,
     copyTaskLink,
   } = useTaskStore();
+
+  const [addOpen, setAddOpen] = useState(false);
 
   const noneSelected = selectedTaskIds.length === 0;
 
@@ -67,6 +72,15 @@ function TaskStartPage() {
           </IconButton>
         </Box>
       }
+      fab={
+        <Fab
+          sx={{ position: "absolute", bottom: 16, right: 16 }}
+          color="primary"
+          onClick={() => setAddOpen(true)}
+        >
+          <AddOutlined />
+        </Fab>
+      }
     >
       <TaskList
         dataSource={tasks}
@@ -84,6 +98,8 @@ function TaskStartPage() {
           />
         )}
       />
+
+      <AddTaskDialog open={addOpen} onClose={() => setAddOpen(false)} />
     </BasePage>
   );
 }

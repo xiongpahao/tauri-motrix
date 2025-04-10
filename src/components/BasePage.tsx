@@ -7,27 +7,24 @@ interface Props {
   contentStyle?: React.CSSProperties;
   children?: ReactNode;
   full?: boolean;
+  fab?: ReactNode; // floating action button
 }
 
 //isDark ? "#1e1f27" :
-function BasePage({ title, header, children, contentStyle, full }: Props) {
+function BasePage({ title, header, children, contentStyle, full, fab }: Props) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
   return (
     <div className="base-page">
-      <header data-tauri-drag-region="true" style={{ userSelect: "none" }}>
-        <Typography
-          // sx={{ fontSize: "20px", fontWeight: "700 " }}
-          data-tauri-drag-region="true"
-        >
-          {title}
-        </Typography>
-
+      <header>
+        <Typography>{title}</Typography>
         {header}
       </header>
 
-      <div className={full ? "base-container no-padding" : "base-container"}>
+      <article
+        className={full ? "base-container no-padding" : "base-container"}
+      >
         <section
           style={{
             backgroundColor: isDark ? "#1e1f27" : "var(--background-color)",
@@ -36,8 +33,9 @@ function BasePage({ title, header, children, contentStyle, full }: Props) {
           <div className="base-content" style={contentStyle}>
             {children}
           </div>
+          {fab}
         </section>
-      </div>
+      </article>
     </div>
   );
 }
