@@ -71,7 +71,7 @@ export function TaskList<T>(props: {
       disablePadding
       sx={{
         "& > :not(:last-child)": {
-          "margin-block-end": 16,
+          marginBlockEnd: 16,
         },
       }}
     >

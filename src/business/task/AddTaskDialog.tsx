@@ -10,12 +10,19 @@ import {
   TextField,
 } from "@mui/material";
 import { open as dialogOpen } from "@tauri-apps/plugin-dialog";
-import { FormEvent, useRef } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
 import { getAria2Info } from "@/services/cmd";
 import { useTaskStore } from "@/store/task";
+
+interface IFormInput {
+  link: string;
+  out: string;
+  split: number;
+  dir: string;
+}
 
 export interface AddTaskModalProps {
   open: boolean;
@@ -29,16 +36,22 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
 
   const { data: aria2Info } = useSWR("getAria2Info", getAria2Info);
 
-  const dirInputRef = useRef<HTMLInputElement>(null);
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    defaultValues: {
+      link: "",
+      out: "",
+      split: 64,
+      dir: aria2Info?.dir || "",
+    },
+  });
 
-  const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-
-    const link = formData.get("link") as string;
-    const out = formData.get("filename") as string;
-    const dir = formData.get("dir") as string;
-    const split = Number(formData.get("split"));
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+    const { link, out, split, dir } = data;
 
     await addTask(link, {
       dir,
@@ -56,7 +69,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
     });
 
     if (folder) {
-      dirInputRef.current!.value = folder;
+      setValue("dir", folder);
     }
   };
 
@@ -67,7 +80,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
       slotProps={{
         paper: {
           component: "form",
-          onSubmit,
+          onSubmit: handleSubmit(onSubmit),
         },
       }}
     >
@@ -84,42 +97,73 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
           },
         }}
       >
-        <TextField
-          required
-          variant="standard"
-          label={t("common.DownloadLink")}
-          fullWidth
+        <Controller
+          rules={{
+            required: "Download link is required",
+          }}
+          control={control}
           name="link"
+          render={({ field }) => (
+            <TextField
+              variant="standard"
+              label={t("common.DownloadLink")}
+              fullWidth
+              error={!!errors.link}
+              helperText={errors.link?.message}
+              {...field}
+            />
+          )}
         />
 
         <Box>
-          <TextField
-            variant="standard"
-            label={t("common.Rename")}
-            name="filename"
-            sx={{ flex: "1 1 auto" }}
+          <Controller
+            name="out"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                variant="standard"
+                label={t("common.Rename")}
+                sx={{ flex: "1 1 auto" }}
+                {...field}
+              />
+            )}
           />
-          <TextField
+          <Controller
             name="split"
-            variant="standard"
-            type="number"
-            label={t("task.Splits")}
-            defaultValue={aria2Info?.split}
-            disabled={!aria2Info?.split}
-            sx={{ width: 80 }}
+            rules={{
+              min: 1,
+              max: 64,
+            }}
+            control={control}
+            render={({ field }) => (
+              <TextField
+                variant="standard"
+                type="number"
+                label={t("task.Splits")}
+                sx={{ width: 80 }}
+                error={!!errors.split}
+                helperText={errors.split?.message}
+                {...field}
+              />
+            )}
           />
         </Box>
 
         <Box>
-          <TextField
-            inputRef={dirInputRef}
+          <Controller
+            control={control}
             name="dir"
-            variant="standard"
-            label={t("common.DownloadPath")}
-            fullWidth
-            disabled
-            defaultValue={aria2Info?.dir}
+            render={({ field }) => (
+              <TextField
+                variant="standard"
+                label={t("common.DownloadPath")}
+                fullWidth
+                disabled
+                {...field}
+              />
+            )}
           />
+
           <IconButton onClick={onFolderPick}>
             <FolderOutlined />
           </IconButton>

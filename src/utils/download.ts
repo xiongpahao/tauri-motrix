@@ -5,7 +5,7 @@ const parseByteVo = (num?: number | string, suffix = "") => {
     num = Number(num);
   }
   if (typeof num !== "number" || isNaN(num)) return ["NaN", ""];
-  if (num < 1000) return [`${Math.round(num)}`, "B"];
+  if (num < 1000) return [`${Math.round(num)}`, "B" + suffix];
   const exp = Math.min(Math.floor(Math.log2(num) / 10), UNITS.length - 1);
   const dat = num / Math.pow(1024, exp);
   const ret = dat >= 1000 ? dat.toFixed(0) : dat.toPrecision(3);

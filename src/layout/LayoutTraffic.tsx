@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
 import { getGlobalStatApi } from "@/services/aria2c_api";
+import { useTaskStore } from "@/store/task";
 import parseByteVo from "@/utils/download";
 
 const boxSx: SxProps = {
@@ -31,9 +32,17 @@ const unitSx: SxProps = {
 
 function LayoutTraffic() {
   const { t } = useTranslation();
-  const { data: stat } = useSWR("getGlobalStat", getGlobalStatApi, {
-    refreshInterval: 1000,
-  });
+  const { updateInterval, interval } = useTaskStore();
+
+  const { data: stat } = useSWR(
+    "getGlobalStat",
+    async () => {
+      const globalStat = await getGlobalStatApi();
+      updateInterval(globalStat);
+      return globalStat;
+    },
+    { refreshInterval: interval },
+  );
 
   const [up, upUnit] = parseByteVo(Number(stat?.uploadSpeed), "/s");
   const [down, downUnit] = parseByteVo(Number(stat?.downloadSpeed), "/s");
