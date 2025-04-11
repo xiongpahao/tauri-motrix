@@ -4,6 +4,7 @@ import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { t } from "i18next";
 import { create } from "zustand";
 
+import { TASK_STATUS_ENUM } from "@/constant/task";
 import {
   addTaskApi,
   Aria2GlobalStat,
@@ -13,6 +14,8 @@ import {
   pauseTaskApi,
   removeTaskApi,
   resumeTaskApi,
+  stoppedTasksApi,
+  waitingTasksApi,
 } from "@/services/aria2c_api";
 import { getTaskFullPath, getTaskName, getTaskUri } from "@/utils/task";
 
@@ -24,10 +27,12 @@ const MIN_INTERVAL = 500;
 
 interface TaskStore {
   tasks: Array<Aria2Task>;
+  fetchType: TASK_STATUS_ENUM;
   selectedTaskIds: Array<string>;
   timer?: number;
   interval: number;
   fetchTasks: () => void;
+  setFetchType: (type: TASK_STATUS_ENUM) => void;
   handleTaskSelect: (taskId: string) => void;
   handleTaskPause: (taskId: string) => void;
   handleTaskResume: (taskId: string) => void;
@@ -48,14 +53,41 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   selectedTaskIds: [],
   timer: undefined,
   interval: DEFAULT_INTERVAL,
+  fetchType: TASK_STATUS_ENUM.Active,
   async fetchTasks() {
-    const tasks = await downloadingTasksApi().then((res) => res?.flat(2));
+    const { fetchType } = get();
+
+    let tasks;
+    switch (fetchType) {
+      case TASK_STATUS_ENUM.Active:
+        tasks = await downloadingTasksApi().then((res) => res?.flat(2));
+        break;
+
+      case TASK_STATUS_ENUM.Waiting:
+        tasks = await waitingTasksApi();
+        break;
+
+      case TASK_STATUS_ENUM.Stopped:
+        tasks = await stoppedTasksApi();
+        break;
+    }
 
     set({ tasks });
   },
 
   async addTask(url, option) {
-    await addTaskApi(url, option);
+    const optionDto: typeof option = {};
+    if (option.dir) {
+      optionDto.dir = option.dir;
+    }
+    if (option.out) {
+      optionDto.out = option.out;
+    }
+    if (option.split) {
+      optionDto.split = option.split;
+    }
+
+    await addTaskApi(url, optionDto);
     await get().fetchTasks();
   },
 
@@ -71,6 +103,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
 
     set({ selectedTaskIds: Array.from(idsSet) });
+  },
+  async setFetchType(type: TASK_STATUS_ENUM) {
+    set({ fetchType: type, selectedTaskIds: [] });
+    await get().fetchTasks();
   },
   async handleTaskPause(taskId: string) {
     await pauseTaskApi(taskId);

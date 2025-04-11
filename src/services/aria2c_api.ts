@@ -90,6 +90,22 @@ export const downloadingTasksApi = async (param?: {
   ]);
 };
 
+export const waitingTasksApi = async (param?: {
+  offset?: number;
+  num?: number;
+}) => {
+  const { call } = await getAria2();
+  return call<Aria2Task[]>("tellWaiting", param?.offset ?? 0, param?.num ?? 20);
+};
+
+export const stoppedTasksApi = async (param?: {
+  offset?: number;
+  num?: number;
+}) => {
+  const { call } = await getAria2();
+  return call<Aria2Task[]>("tellStopped", param?.offset ?? 0, param?.num ?? 20);
+};
+
 export interface DownloadOption {
   dir?: string;
   out?: string;

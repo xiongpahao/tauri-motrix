@@ -6,6 +6,7 @@ import {
   RefreshOutlined,
 } from "@mui/icons-material";
 import { Box, Fab, IconButton, Zoom } from "@mui/material";
+import { useMount } from "ahooks";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -13,6 +14,7 @@ import AddTaskDialog from "@/business/task/AddTaskDialog";
 import TaskItem from "@/business/task/TaskItem";
 import { TaskList } from "@/client/task_compose";
 import BasePage from "@/components/BasePage";
+import { TASK_STATUS_ENUM } from "@/constant/task";
 import { useTaskStore } from "@/store/task";
 
 function TaskStartPage() {
@@ -27,11 +29,16 @@ function TaskStartPage() {
     handleTaskStop,
     openTaskFile,
     copyTaskLink,
+    setFetchType,
   } = useTaskStore();
 
   const [addOpen, setAddOpen] = useState(false);
 
   const noneSelected = selectedTaskIds.length === 0;
+
+  useMount(() => {
+    setFetchType(TASK_STATUS_ENUM.Active);
+  });
 
   return (
     <BasePage

@@ -19,7 +19,6 @@ export function TaskDownloadDes(props: {
         fontSize: "12px",
         alignItems: "center",
         color: "#9B9B9B",
-        textAlign: "end",
       }}
     >
       <TaskDesIconWithText

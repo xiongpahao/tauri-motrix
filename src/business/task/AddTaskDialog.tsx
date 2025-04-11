@@ -18,9 +18,9 @@ import { useTaskStore } from "@/store/task";
 
 interface IFormInput {
   link: string;
-  out?: string;
+  out: string;
   split?: number;
-  dir?: string;
+  dir: string;
 }
 
 export interface AddTaskModalProps {
@@ -41,10 +41,11 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
     setValue,
     formState: { errors },
   } = useForm<IFormInput>({
-    defaultValues: {
+    values: {
       link: "",
       split: 64,
-      dir: aria2?.dir,
+      dir: aria2?.dir ?? "",
+      out: "",
     },
   });
 
@@ -97,9 +98,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
         }}
       >
         <Controller
-          rules={{
-            required: "Download link is required",
-          }}
+          rules={{ required: true }}
           control={control}
           name="link"
           render={({ field }) => (
@@ -122,7 +121,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
               <TextField
                 variant="standard"
                 label={t("common.Rename")}
-                sx={{ flex: "1 1 auto" }}
+                fullWidth
                 {...field}
               />
             )}
@@ -130,8 +129,14 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
           <Controller
             name="split"
             rules={{
-              min: 1,
-              max: 64,
+              min: {
+                value: 1,
+                message: t("task.SplitMin", { min: 1 }),
+              },
+              max: {
+                value: 64,
+                message: t("task.SplitMax", { max: 64 }),
+              },
             }}
             control={control}
             render={({ field }) => (
@@ -139,7 +144,6 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
                 variant="standard"
                 type="number"
                 label={t("task.Splits")}
-                sx={{ width: 80 }}
                 error={!!errors.split}
                 helperText={errors.split?.message}
                 {...field}

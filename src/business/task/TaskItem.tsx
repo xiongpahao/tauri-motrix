@@ -93,7 +93,7 @@ function TaskItem({
       <ListItem
         sx={({ palette }) => ({ bgcolor: palette.background.paper })}
         secondaryAction={
-          <Box>
+          <Box sx={{ textAlign: "end" }}>
             {renderActionButton()}
             <TaskDownloadDes
               speed={speedVo}

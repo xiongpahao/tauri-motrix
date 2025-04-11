@@ -38,7 +38,9 @@
         "Splits": "Splits",
         "ConfirmDelete": "Are you sure you want to remove download task \"{{taskName}}\"?",
         "Empty": "No download list",
-        "DirPick": "Please select task download path"
+        "DirPick": "Please select task download path",
+        "SplitMin": "Split number must be greater than {{min}}",
+        "SplitMax": "Split number must be less than {{max}}"
     },
     "common": {
         "DownloadFile": "Download File",
