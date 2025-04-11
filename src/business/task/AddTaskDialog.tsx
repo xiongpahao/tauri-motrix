@@ -12,16 +12,15 @@ import {
 import { open as dialogOpen } from "@tauri-apps/plugin-dialog";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import useSWR from "swr";
 
-import { getAria2Info } from "@/services/cmd";
+import { useAria2 } from "@/hooks/aria2";
 import { useTaskStore } from "@/store/task";
 
 interface IFormInput {
   link: string;
-  out: string;
-  split: number;
-  dir: string;
+  out?: string;
+  split?: number;
+  dir?: string;
 }
 
 export interface AddTaskModalProps {
@@ -34,7 +33,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
 
   const { addTask } = useTaskStore();
 
-  const { data: aria2Info } = useSWR("getAria2Info", getAria2Info);
+  const { aria2 } = useAria2();
 
   const {
     control,
@@ -44,9 +43,8 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
   } = useForm<IFormInput>({
     defaultValues: {
       link: "",
-      out: "",
       split: 64,
-      dir: aria2Info?.dir || "",
+      dir: aria2?.dir,
     },
   });
 
@@ -58,6 +56,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
       split,
       out,
     });
+
     onClose();
   };
 

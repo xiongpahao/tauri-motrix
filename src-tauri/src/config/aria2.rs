@@ -58,31 +58,32 @@ impl IAria2Temp {
         Self(map)
     }
 
-    pub fn get_client_info(&self) -> Aria2Info {
-        let config = &self.0;
+    pub fn guard_port(config: &HashMap<String, String>) -> u16 {
+        let raw_value = config.get("rpc-listen-port");
 
-        let port = config
-            .get("rpc-listen-port")
+        let mut port = raw_value
             .and_then(|value| value.parse().ok())
             .unwrap_or(16801);
 
-        let split = config
-            .get("split")
-            .and_then(|value| value.parse().ok())
-            .unwrap_or(64);
+        if port == 0 {
+            port = 16801;
+        }
 
-        let max_connection_per_server = config
-            .get("max-connection-per-server")
-            .and_then(|value| value.parse().ok())
-            .unwrap_or(16);
+        port
+    }
+
+    pub fn guard_server(config: &HashMap<String, String>) -> String {
+        let port = Self::guard_port(config);
+        format!("127.0.0.1:{}", port)
+    }
+
+    pub fn get_client_info(&self) -> Aria2Info {
+        let config = &self.0;
 
         Aria2Info {
-            port,
+            port: Self::guard_port(config),
             // TODO: temporary solution, need to be fixed
-            server: format!("127.0.0.1:{}", port),
-            dir: config.get("dir").unwrap().to_string(),
-            split,
-            max_connection_per_server,
+            server: Self::guard_server(config),
         }
     }
 }
@@ -102,7 +103,4 @@ impl fmt::Display for IAria2Temp {
 pub struct Aria2Info {
     pub port: u16,
     pub server: String,
-    pub dir: String,
-    pub split: u8,
-    pub max_connection_per_server: u8,
 }

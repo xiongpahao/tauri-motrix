@@ -18,7 +18,10 @@ pub fn run() {
             });
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![cmd::get_aria2_info])
+        .invoke_handler(tauri::generate_handler![
+            cmd::get_aria2_info,
+            cmd::get_aria2_config
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

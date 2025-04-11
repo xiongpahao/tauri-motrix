@@ -145,7 +145,7 @@ export const isMagnetTask = (task: Aria2Task) => {
   return bittorrent && !bittorrent.info;
 };
 
-export const getTaskUri = (task, withTracker = false) => {
+export const getTaskUri = (task: Aria2Task, withTracker = false) => {
   const { files } = task;
   let result = "";
   if (checkTaskIsBT(task)) {

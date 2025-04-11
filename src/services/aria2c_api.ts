@@ -160,6 +160,13 @@ export const removeTaskApi = async (gid: string) => {
   return call("remove", gid);
 };
 
+export const getVersionApi = async () => {
+  const instance = await getAria2();
+  return instance.call<{ version: string; enabledFeatures: string[] }>(
+    "getVersion",
+  );
+};
+
 getAria2().then(({ listMethods, listNotifications }) => {
   listMethods().then((res) => console.log("aria2 methods: ", res));
   listNotifications().then((res) => console.log("aria2 notifications: ", res));
