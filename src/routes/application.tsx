@@ -1,8 +1,8 @@
 import {
   DoneRounded,
-  HistoryRounded,
+  // HistoryRounded,
   PlayArrowRounded,
-  RecyclingRounded,
+  // RecyclingRounded,
   SettingsRounded,
 } from "@mui/icons-material";
 import { ReactNode } from "react";
@@ -10,8 +10,8 @@ import { Navigate, RouteObject } from "react-router-dom";
 
 import SettingsPage from "@/pages/Settings";
 import TaskStoppedPage from "@/pages/TaskDone";
-import TaskHistoryPage from "@/pages/TaskHistory";
-import TaskRecyclePage from "@/pages/TaskRecycle";
+// import TaskHistoryPage from "@/pages/TaskHistory";
+// import TaskRecyclePage from "@/pages/TaskRecycle";
 import TaskStartPage from "@/pages/TaskStart";
 
 type IRoute = RouteObject & { label?: string; icon?: ReactNode };
@@ -33,18 +33,18 @@ export const routers: IRoute[] = [
     icon: <DoneRounded />,
     element: <TaskStoppedPage />,
   },
-  {
-    label: "Label-Task-History",
-    path: "/task-history",
-    icon: <HistoryRounded />,
-    element: <TaskHistoryPage />,
-  },
-  {
-    label: "Label-Task-Recycle",
-    path: "/task-recycle",
-    icon: <RecyclingRounded />,
-    element: <TaskRecyclePage />,
-  },
+  // {
+  //   label: "Label-Task-History",
+  //   path: "/task-history",
+  //   icon: <HistoryRounded />,
+  //   element: <TaskHistoryPage />,
+  // },
+  // {
+  //   label: "Label-Task-Recycle",
+  //   path: "/task-recycle",
+  //   icon: <RecyclingRounded />,
+  //   element: <TaskRecyclePage />,
+  // },
   {
     label: "Label-Settings",
     path: "/settings",

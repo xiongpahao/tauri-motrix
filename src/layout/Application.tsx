@@ -14,7 +14,11 @@ import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
 import { routers } from "@/routes/application";
 
-const theme = createTheme();
+const theme = createTheme({
+  colorSchemes: {
+    dark: true,
+  },
+});
 
 function ApplicationLayout() {
   const { t } = useTranslation();

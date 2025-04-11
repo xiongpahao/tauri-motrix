@@ -1,25 +1,25 @@
-import { Button, ButtonGroup } from "@mui/material";
+import { Button, ButtonGroup, useColorScheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { THEME_MODES, ThemeMode } from "@/constant/theme";
+import { THEME_MODES } from "@/constant/theme";
 
-interface ThemeModeSwitchProps {
-  value?: ThemeMode;
-  onChange?: (value: ThemeMode) => void;
-}
-
-function ThemeModeSwitch({ onChange, value }: ThemeModeSwitchProps) {
+function ThemeModeSwitch() {
   const { t } = useTranslation();
+  const { mode, setMode } = useColorScheme();
+
+  if (!mode) {
+    return null;
+  }
 
   return (
     <ButtonGroup size="small" sx={{ my: "4px" }}>
-      {THEME_MODES.map((mode) => (
+      {THEME_MODES.map((value) => (
         <Button
-          key={mode}
-          onClick={() => onChange?.(mode)}
-          variant={mode === value ? "contained" : "outlined"}
+          key={value}
+          onClick={() => setMode(value)}
+          variant={value === mode ? "contained" : "outlined"}
         >
-          {t(`ThemeMode.${mode}`)}
+          {t(`ThemeMode.${value}`)}
         </Button>
       ))}
     </ButtonGroup>

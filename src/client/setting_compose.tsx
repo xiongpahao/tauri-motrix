@@ -50,7 +50,7 @@ export function SettingItem(props: ItemProps) {
   }
 
   return (
-    <ListItem sx={{ pt: "5px", pb: "5px" }}>
+    <ListItem sx={{ pt: "5px", pb: "5px", display: "inline-flex", gap: 2 }}>
       <ListItemText primary={primary} secondary={secondary} />
       {children}
     </ListItem>

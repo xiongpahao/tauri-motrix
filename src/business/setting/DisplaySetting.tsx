@@ -4,9 +4,10 @@ import { useTranslation } from "react-i18next";
 import ThemeModeSwitch from "@/business/setting/ThemeModeSwitch";
 import { SettingItem, SettingList } from "@/client/setting_compose";
 import { AVAILABLE_LANGUAGES } from "@/constant/language";
+import { getLanguage } from "@/utils/i18n";
 
 function AppearanceSetting() {
-  const { t } = useTranslation("setting");
+  const { t, i18n } = useTranslation("setting");
 
   return (
     <SettingList title={t("Display")}>
@@ -23,7 +24,13 @@ function AppearanceSetting() {
       </SettingItem>
 
       <SettingItem label={t("Language")}>
-        <Select size="small" value="en-US">
+        <Select
+          size="small"
+          value={getLanguage(i18n.language)}
+          onChange={(value) => {
+            i18n.changeLanguage(value.target.value);
+          }}
+        >
           {AVAILABLE_LANGUAGES.map(({ label, value }) => (
             <MenuItem value={value} key={value}>
               {label}
