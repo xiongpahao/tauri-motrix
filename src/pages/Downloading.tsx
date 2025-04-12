@@ -1,18 +1,17 @@
 import {
-  AddOutlined,
   CloseOutlined,
   PauseOutlined,
   PlayArrowOutlined,
   RefreshOutlined,
 } from "@mui/icons-material";
-import { Box, Fab, IconButton, Zoom } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useMount } from "ahooks";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import AddTaskDialog from "@/business/task/AddTaskDialog";
 import TaskItem from "@/business/task/TaskItem";
-import { TaskList } from "@/client/task_compose";
+import { TaskFab, TaskList } from "@/client/task_compose";
 import BasePage from "@/components/BasePage";
 import { TASK_STATUS_ENUM } from "@/constant/task";
 import { useTaskStore } from "@/store/task";
@@ -79,17 +78,7 @@ function DownloadingPage() {
           </IconButton>
         </Box>
       }
-      fab={
-        <Zoom in timeout={300}>
-          <Fab
-            sx={{ position: "absolute", bottom: 16, right: 16 }}
-            color="primary"
-            onClick={() => setAddOpen(true)}
-          >
-            <AddOutlined />
-          </Fab>
-        </Zoom>
-      }
+      fab={<TaskFab onClick={() => setAddOpen(true)} />}
     >
       <TaskList
         dataSource={tasks}

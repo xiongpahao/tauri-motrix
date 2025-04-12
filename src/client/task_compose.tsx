@@ -1,5 +1,9 @@
-import { ArrowDownwardOutlined, HubOutlined } from "@mui/icons-material";
-import { Box, IconButton, List } from "@mui/material";
+import {
+  AddOutlined,
+  ArrowDownwardOutlined,
+  HubOutlined,
+} from "@mui/icons-material";
+import { Box, Fab, IconButton, List, Zoom } from "@mui/material";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 
 import { BaseEmpty } from "@/components/BaseEmpty";
@@ -76,5 +80,21 @@ export function TaskList<T>(props: {
     >
       {dataSource.map(renderItem)}
     </List>
+  );
+}
+
+export function TaskFab(props: {
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}) {
+  return (
+    <Zoom in timeout={300}>
+      <Fab
+        sx={{ position: "absolute", bottom: 16, right: 16 }}
+        color="primary"
+        onClick={props.onClick}
+      >
+        <AddOutlined />
+      </Fab>
+    </Zoom>
   );
 }
