@@ -50,6 +50,7 @@
         "Cancel": " Cancel",
         "Remaining": "Remaining",
         "Rename": "Rename",
-        "Empty": "Empty"
+        "Empty": "Empty",
+        "PickFolder": "Pick folder"
     }
 }

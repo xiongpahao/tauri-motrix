@@ -107,7 +107,6 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
               label={t("common.DownloadLink")}
               fullWidth
               error={!!errors.link}
-              helperText={errors.link?.message}
               {...field}
             />
           )}
@@ -162,12 +161,13 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
                 label={t("common.DownloadPath")}
                 fullWidth
                 disabled
+                error={!!errors.dir}
                 {...field}
               />
             )}
           />
 
-          <IconButton onClick={onFolderPick}>
+          <IconButton onClick={onFolderPick} title={t("common.PickFolder")}>
             <FolderOutlined />
           </IconButton>
         </Box>
