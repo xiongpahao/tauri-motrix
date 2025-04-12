@@ -2,6 +2,7 @@ import {
   createTheme,
   List,
   Paper,
+  styled,
   SvgIcon,
   ThemeProvider,
 } from "@mui/material";
@@ -20,6 +21,34 @@ const theme = createTheme({
   },
 });
 
+const Main = styled("main")(() => ({
+  flex: "1 1 100%",
+}));
+
+const TheLogo = styled("section")(() => ({
+  display: "flex",
+  flex: "0 0 58px",
+  justifyContent: "center",
+  alignItems: "center",
+}));
+
+const TheMenu = styled(List)(() => ({
+  flex: "1 1 80%",
+}));
+
+const TheTraffic = styled("section")(() => ({
+  flex: "0 0 60px",
+  "& > *": {
+    paddingInline: "20px",
+  },
+}));
+
+const Aside = styled("aside")(() => ({
+  display: "flex",
+  flex: "1 0 200px",
+  flexDirection: "column",
+}));
+
 function ApplicationLayout() {
   const { t } = useTranslation();
 
@@ -33,19 +62,21 @@ function ApplicationLayout() {
     <SWRConfig>
       <ThemeProvider theme={theme}>
         <Paper
-          className="layout"
           sx={[
             ({ palette }) => ({
               bgcolor: palette.background.paper,
+              display: "flex",
+              width: "100%",
+              height: "100vh",
             }),
           ]}
         >
-          <aside className="layout__left">
-            <section className="the-logo" data-tauri-drag-region>
+          <Aside>
+            <TheLogo data-tauri-drag-region>
               <SvgIcon sx={{ width: 62 }} component={logoIcon} inheritViewBox />
-            </section>
+            </TheLogo>
 
-            <List className="the-menu">
+            <TheMenu>
               {routers.map(
                 (router) =>
                   router.path &&
@@ -59,14 +90,14 @@ function ApplicationLayout() {
                     </LayoutItem>
                   ),
               )}
-            </List>
+            </TheMenu>
 
-            <section className="the-traffic">
+            <TheTraffic>
               <LayoutTraffic />
-            </section>
-          </aside>
+            </TheTraffic>
+          </Aside>
 
-          <main className="layout__right">{routerElements}</main>
+          <Main>{routerElements}</Main>
         </Paper>
       </ThemeProvider>
     </SWRConfig>
