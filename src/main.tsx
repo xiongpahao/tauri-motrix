@@ -1,5 +1,5 @@
 import "@/utils/i18n";
-import "@/styles/root.scss";
+import "./main.scss";
 
 import React from "react";
 import ReactDOM from "react-dom/client";
