@@ -1,8 +1,8 @@
-import { Aria2, create, EventSubscribeMap } from "@tauri-motrix/aria2";
+import { Aria2Instance, create, EventSubscribeMap } from "@tauri-motrix/aria2";
 
 import { getAria2Info } from "@/services/cmd";
 
-let instancePromise: Promise<Aria2> = null!;
+let instancePromise: Promise<Aria2Instance> = null!;
 
 const eventSubscribeMap: EventSubscribeMap = {};
 
@@ -177,10 +177,8 @@ export const removeTaskApi = async (gid: string) => {
 };
 
 export const getVersionApi = async () => {
-  const instance = await getAria2();
-  return instance.call<{ version: string; enabledFeatures: string[] }>(
-    "getVersion",
-  );
+  const { call } = await getAria2();
+  return call<{ version: string; enabledFeatures: string[] }>("getVersion");
 };
 
 getAria2().then(({ listMethods, listNotifications }) => {

@@ -17,7 +17,7 @@ import BasePage from "@/components/BasePage";
 import { TASK_STATUS_ENUM } from "@/constant/task";
 import { useTaskStore } from "@/store/task";
 
-function TaskStartPage() {
+function DownloadingPage() {
   const { t } = useTranslation();
 
   const {
@@ -113,4 +113,4 @@ function TaskStartPage() {
   );
 }
 
-export default TaskStartPage;
+export default DownloadingPage;

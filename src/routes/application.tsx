@@ -8,11 +8,11 @@ import {
 import { ReactNode } from "react";
 import { Navigate, RouteObject } from "react-router-dom";
 
-import SettingsPage from "@/pages/Settings";
-import TaskStoppedPage from "@/pages/TaskDone";
 // import TaskHistoryPage from "@/pages/TaskHistory";
 // import TaskRecyclePage from "@/pages/TaskRecycle";
-import TaskStartPage from "@/pages/TaskStart";
+import DownloadingPage from "@/pages/Downloading";
+import SettingsPage from "@/pages/Settings";
+import TaskStoppedPage from "@/pages/TaskDone";
 
 type IRoute = RouteObject & { label?: string; icon?: ReactNode };
 
@@ -25,7 +25,7 @@ export const routers: IRoute[] = [
     label: "Label-Task-Active",
     path: "/task-start",
     icon: <PlayArrowRounded />,
-    element: <TaskStartPage />,
+    element: <DownloadingPage />,
   },
   {
     label: "Label-Task-Done",

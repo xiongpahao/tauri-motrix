@@ -1,38 +1,46 @@
 import { Aria2, Aria2InstanceConfig } from "./aria2";
 import { defaultOption } from "./util";
 
-export const create = (instanceConfig?: Partial<Aria2InstanceConfig>) =>
-  new Aria2({ ...defaultOption, ...instanceConfig });
+export interface Aria2Instance
+  extends Omit<Aria2, "handleMessage" | "dispatchEvent"> {
+  <T>(...arr: Parameters<Aria2["call"]>): Promise<T>;
+  create(config?: Partial<Aria2InstanceConfig>): Aria2Instance;
+}
 
-// type DefaultAria2 = {
-//   [key in keyof Aria2]: Aria2[key];
-// } & {
-//   <T>(method: string): Promise<T>;
-// };
+function createInstance(instanceConfig: Aria2InstanceConfig): Aria2Instance {
+  const context = new Aria2(instanceConfig);
 
-// const instance = create();
+  const instance: Aria2Instance = (...arr) => context.call(...arr);
 
-// const call: DefaultAria2 = (method: string) => {
-//   instance.open();
-//   return instance.call(method);
-// };
+  instance.eventSubscribeMap = context.eventSubscribeMap;
+  instance.socketPendingMap = context.socketPendingMap;
+  instance.fetcher = context.fetcher;
+  instance.webSocketIns = context.webSocketIns;
+  instance.instanceConfig = context.instanceConfig;
 
-// call.call = instance.call.bind(instance);
-// call.open = instance.open.bind(instance);
-// call.close = instance.close.bind(instance);
-// call.eventSubscribeMap = instance.eventSubscribeMap;
-// call.socketPendingMap = instance.socketPendingMap;
-// call.fetcher = instance.fetcher;
-// call.webSocketIns = instance.webSocketIns;
-// call.addListener = instance.addListener.bind(instance);
-// call.removeListener = instance.removeListener.bind(instance);
-// call.removeAllListener = instance.removeAllListener.bind(instance);
-// call.setListener = instance.setListener.bind(instance);
-// call.listNotifications = instance.listNotifications.bind(instance);
-// call.listMethods = instance.listMethods.bind(instance);
-// call.multiCall = instance.multiCall.bind(instance);
+  instance.open = Aria2.prototype.open.bind(context);
+  instance.close = Aria2.prototype.close.bind(context);
+  instance.call = Aria2.prototype.call.bind(context);
+  instance.multiCall = Aria2.prototype.multiCall.bind(context);
+  instance.addListener = Aria2.prototype.addListener.bind(context);
+  instance.setListener = Aria2.prototype.setListener.bind(context);
+  instance.removeListener = Aria2.prototype.removeListener.bind(context);
+  instance.removeAllListener = Aria2.prototype.removeAllListener.bind(context);
+  instance.listNotifications = Aria2.prototype.listNotifications.bind(context);
+  instance.listMethods = Aria2.prototype.listMethods.bind(context);
 
-// export default call;
+  instance.create = function create(config) {
+    return createInstance({ ...instanceConfig, ...config });
+  };
+
+  return instance;
+}
+
+const aria2 = createInstance(defaultOption);
+
+export const create = aria2.create;
+
+export default aria2;
 
 export { Aria2 };
 

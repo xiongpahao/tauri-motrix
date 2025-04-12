@@ -35,7 +35,9 @@ export class Aria2 {
   webSocketIns?: WebSocket;
   fetcher: ReturnType<typeof createFetcherFactory>;
 
-  constructor(private instanceConfig: Aria2InstanceConfig) {
+  instanceConfig: Aria2InstanceConfig;
+
+  constructor(instanceConfig: Aria2InstanceConfig) {
     const { server, eventSubscribeMap, socketPendingMap, isHttps, timeout } =
       instanceConfig;
 
@@ -46,9 +48,10 @@ export class Aria2 {
 
     this.eventSubscribeMap = eventSubscribeMap || {};
     this.socketPendingMap = socketPendingMap || {};
+    this.instanceConfig = instanceConfig;
   }
 
-  open = () => {
+  open() {
     const { server, isWss } = this.instanceConfig;
     const webSocketIns = new WebSocket(
       `ws${isWss ? "s" : ""}://${server}/jsonrpc`,
@@ -82,9 +85,9 @@ export class Aria2 {
       console.error("aria2", "WebSocket ERROR", error);
       this.#dispatchEvent("error", error);
     };
-  };
+  }
 
-  #handleMessage = (data: MessageEvent["data"]) => {
+  #handleMessage(data: MessageEvent["data"]) {
     if (Array.isArray(data)) {
       return data.forEach((item) => this.#handleMessage(item));
     }
@@ -105,9 +108,9 @@ export class Aria2 {
         pending.resolve(data.result);
       }
     }
-  };
+  }
 
-  call = <T>(method: string, ...params: CallParam[]): Promise<T> => {
+  call<T>(method: string, ...params: CallParam[]): Promise<T> {
     const message = {
       jsonrpc: "2.0",
       id: crypto.randomUUID(),
@@ -129,9 +132,9 @@ export class Aria2 {
     }
 
     return fetcher<T>(message);
-  };
+  }
 
-  multiCall = <T>(calls: MultiCall) => {
+  multiCall<T>(calls: MultiCall) {
     const multi = [
       calls.map(({ method, params }) => {
         return {
@@ -141,14 +144,14 @@ export class Aria2 {
       }),
     ];
     return this.call<T>("system.multicall", ...multi);
-  };
+  }
 
-  #dispatchEvent = (name: string, data: unknown) => {
+  #dispatchEvent(name: string, data: unknown) {
     const callbacks = this.eventSubscribeMap[name];
     callbacks?.forEach((fn) => fn(data));
-  };
+  }
 
-  addListener = <T>(method: string, callback: (data: T) => void) => {
+  addListener<T>(method: string, callback: (data: T) => void) {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
 
@@ -158,35 +161,35 @@ export class Aria2 {
 
     eventSubscribeMap[key] ??= [];
     eventSubscribeMap[key].push(callback);
-  };
-  setListener = <T>(method: string, callback: (data: T) => void) => {
+  }
+  setListener<T>(method: string, callback: (data: T) => void) {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
     eventSubscribeMap[key] = [callback];
-  };
+  }
 
-  removeListener = <T>(method: string, callback: (data: T) => void) => {
+  removeListener<T>(method: string, callback: (data: T) => void) {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
     const callbacks = eventSubscribeMap[key];
     eventSubscribeMap[key] = callbacks?.filter((fn) => fn !== callback);
-  };
+  }
 
-  removeAllListener = (method: string) => {
+  removeAllListener(method: string) {
     const { eventSubscribeMap } = this;
     const key = ensurePrefix(method);
     delete eventSubscribeMap[key];
-  };
+  }
 
-  listNotifications = () => {
+  listNotifications() {
     return this.call<string[]>("system.listNotifications");
-  };
+  }
 
-  listMethods = () => {
+  listMethods() {
     return this.call<string[]>("system.listMethods");
-  };
+  }
 
-  close = () => {
+  close() {
     this.webSocketIns?.close();
-  };
+  }
 }
