@@ -13,8 +13,8 @@ import { TASK_STATUS_ENUM } from "@/constant/task";
 interface TaskAllActionProps {
   selectedTaskIds: string[];
   fetchType: TASK_STATUS_ENUM;
-  onPause: (taskId?: string) => void;
-  onResume: (taskId?: string) => void;
+  onPause: () => void;
+  onResume: () => void;
 }
 
 function TaskAllAction({

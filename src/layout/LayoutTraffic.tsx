@@ -5,7 +5,7 @@ import useSWR from "swr";
 
 import { getGlobalStatApi } from "@/services/aria2c_api";
 import { useTaskStore } from "@/store/task";
-import parseByteVo from "@/utils/download";
+import { parseByteVo } from "@/utils/download";
 
 const SpeedIndicatorRow = styled("section")(() => ({
   display: "flex",

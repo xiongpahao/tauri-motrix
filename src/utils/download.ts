@@ -1,6 +1,6 @@
 const UNITS = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
-const parseByteVo = (num?: number | string, suffix = "") => {
+export const parseByteVo = (num?: number | string, suffix = "") => {
   if (typeof num === "string") {
     num = Number(num);
   }
@@ -13,5 +13,3 @@ const parseByteVo = (num?: number | string, suffix = "") => {
 
   return [ret, unit];
 };
-
-export default parseByteVo;

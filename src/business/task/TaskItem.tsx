@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import TaskItemAction from "@/business/task/TaskItemAction";
 import { TaskDownloadDes } from "@/client/task_compose";
 import { Aria2Task } from "@/services/aria2c_api";
-import parseByteVo from "@/utils/download";
+import { parseByteVo } from "@/utils/download";
 import { getTaskName, timeFormat, timeRemaining } from "@/utils/task";
 
 export interface TaskItemProps {
