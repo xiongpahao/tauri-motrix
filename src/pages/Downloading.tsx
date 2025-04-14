@@ -1,15 +1,9 @@
-import {
-  CloseOutlined,
-  PauseOutlined,
-  PlayArrowOutlined,
-  RefreshOutlined,
-} from "@mui/icons-material";
-import { Box, IconButton } from "@mui/material";
 import { useMount } from "ahooks";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import AddTaskDialog from "@/business/task/AddTaskDialog";
+import TaskAllAction from "@/business/task/TaskAllAction";
 import TaskItem from "@/business/task/TaskItem";
 import { TaskFab, TaskList } from "@/client/task_compose";
 import BasePage from "@/components/BasePage";
@@ -22,6 +16,7 @@ function DownloadingPage() {
   const {
     tasks,
     selectedTaskIds,
+    fetchType,
     handleTaskSelect,
     handleTaskPause,
     handleTaskResume,
@@ -33,8 +28,6 @@ function DownloadingPage() {
 
   const [addOpen, setAddOpen] = useState(false);
 
-  const noneSelected = selectedTaskIds.length === 0;
-
   useMount(() => {
     setFetchType(TASK_STATUS_ENUM.Active);
   });
@@ -43,40 +36,10 @@ function DownloadingPage() {
     <BasePage
       title={t("Task-Start")}
       header={
-        <Box>
-          <IconButton
-            size="small"
-            title={t("task.CloseAll")}
-            disabled={noneSelected}
-          >
-            <CloseOutlined />
-          </IconButton>
-
-          <IconButton
-            size="small"
-            disabled={noneSelected}
-            title={t("task.RefreshAll")}
-          >
-            <RefreshOutlined />
-          </IconButton>
-
-          <IconButton
-            size="small"
-            disabled={noneSelected}
-            title={t("task.ResumeAll")}
-          >
-            <PlayArrowOutlined />
-          </IconButton>
-
-          <IconButton
-            size="small"
-            title={t("task.PauseAll")}
-            onClick={() => {}}
-            disabled={noneSelected}
-          >
-            <PauseOutlined />
-          </IconButton>
-        </Box>
+        <TaskAllAction
+          selectedTaskIds={selectedTaskIds}
+          fetchType={fetchType}
+        />
       }
       fab={<TaskFab onClick={() => setAddOpen(true)} />}
     >

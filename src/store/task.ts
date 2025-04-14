@@ -67,7 +67,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         tasks = await waitingTasksApi();
         break;
 
-      case TASK_STATUS_ENUM.Stopped:
+      case TASK_STATUS_ENUM.Done:
         tasks = await stoppedTasksApi();
         break;
     }

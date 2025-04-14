@@ -1,5 +1,8 @@
 export const enum TASK_STATUS_ENUM {
   Active = "active",
   Waiting = "waiting",
-  Stopped = "stopped",
+  Pause = "paused",
+  Done = "complete",
+  Recycle = "removed",
+  Error = "error",
 }

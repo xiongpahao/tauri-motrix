@@ -1,12 +1,4 @@
 import {
-  CloseOutlined,
-  FileOpenOutlined,
-  InfoOutlined,
-  LinkOutlined,
-  PauseOutlined,
-  PlayArrowOutlined,
-} from "@mui/icons-material";
-import {
   Box,
   Checkbox,
   LinearProgress,
@@ -16,8 +8,8 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { TaskActionButton, TaskDownloadDes } from "@/client/task_compose";
-import { TASK_STATUS_ENUM } from "@/constant/task";
+import TaskItemAction from "@/business/task/TaskItemAction";
+import { TaskDownloadDes } from "@/client/task_compose";
 import { Aria2Task } from "@/services/aria2c_api";
 import parseByteVo from "@/utils/download";
 import { getTaskName, timeFormat, timeRemaining } from "@/utils/task";
@@ -56,45 +48,28 @@ function TaskItem({
   const remainingVo = `${t("Remaining", { ns: "common" })} ${timeFormat(
     timeRemaining(totalLength, completedLength, downloadSpeed),
   )}`;
-  const isDownloading = status === TASK_STATUS_ENUM.Active;
 
   const progress = (completedLength / totalLength) * 100 || 0;
-
-  const renderActionButton = () => (
-    <Box>
-      <TaskActionButton
-        title={t("Pause")}
-        onClick={() => (isDownloading ? onPause(gid) : onResume(gid))}
-        icon={isDownloading ? <PauseOutlined /> : <PlayArrowOutlined />}
-      />
-      <TaskActionButton
-        title={t("Close")}
-        onClick={() => onStop(gid)}
-        icon={<CloseOutlined />}
-      />
-      <TaskActionButton
-        title={t("OpenFile")}
-        icon={<FileOpenOutlined />}
-        onClick={() => onOpenFile(gid)}
-      />
-
-      <TaskActionButton
-        title={t("CopyLink")}
-        icon={<LinkOutlined />}
-        onClick={() => onCopyLink(gid)}
-      />
-
-      <TaskActionButton title={t("Info")} icon={<InfoOutlined />} />
-    </Box>
-  );
 
   return (
     <div>
       <ListItem
         sx={({ palette }) => ({ bgcolor: palette.background.paper })}
         secondaryAction={
-          <Box sx={{ textAlign: "end" }}>
-            {renderActionButton()}
+          <Box
+            sx={{
+              "& .MuiBox-root": { justifyContent: "end", textAlign: "end" },
+            }}
+          >
+            <TaskItemAction
+              onResume={onResume}
+              onStop={onStop}
+              gid={task.gid}
+              status={status}
+              onCopyLink={onCopyLink}
+              onOpenFile={onOpenFile}
+              onPause={onPause}
+            />
             <TaskDownloadDes
               speed={speedVo}
               connections={connections}
@@ -119,9 +94,9 @@ function TaskItem({
         />
       </ListItem>
 
-      <Box width="100%">
+      {progress > 0 && progress < 100 && (
         <LinearProgress variant="determinate" value={progress} />
-      </Box>
+      )}
     </div>
   );
 }

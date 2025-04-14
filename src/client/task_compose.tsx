@@ -51,9 +51,15 @@ export function TaskActionButton(props: {
   title?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   icon?: ReactNode;
+  disabled?: boolean;
 }) {
   return (
-    <IconButton size="small" onClick={props.onClick} title={props.title}>
+    <IconButton
+      size="small"
+      onClick={props.onClick}
+      title={props.title}
+      disabled={props.disabled}
+    >
       {props.icon}
     </IconButton>
   );

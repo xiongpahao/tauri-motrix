@@ -50,7 +50,7 @@ impl IAria2Temp {
         let download_dir = user_downloads_dir().unwrap();
         let download_dir = path_to_str(&download_dir).unwrap();
 
-        map.insert("max-connection-per-server".into(), "16".into());
+        map.insert("max-connection-per-server".into(), "128".into());
         map.insert("split".into(), "64".into());
 
         map.insert("dir".into(), download_dir.into());

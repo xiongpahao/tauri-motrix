@@ -1,13 +1,14 @@
 import { useMount } from "ahooks";
 import { useTranslation } from "react-i18next";
 
+import TaskAllAction from "@/business/task/TaskAllAction";
 import TaskItem from "@/business/task/TaskItem";
 import { TaskList } from "@/client/task_compose";
 import BasePage from "@/components/BasePage";
 import { TASK_STATUS_ENUM } from "@/constant/task";
 import { useTaskStore } from "@/store/task";
 
-function TaskStoppedPage() {
+function DonePage() {
   const { t } = useTranslation();
 
   const {
@@ -18,18 +19,28 @@ function TaskStoppedPage() {
     handleTaskResume,
     handleTaskSelect,
     handleTaskStop,
+    fetchType,
   } = useTaskStore();
 
   useMount(() => {
-    setFetchType(TASK_STATUS_ENUM.Stopped);
+    setFetchType(TASK_STATUS_ENUM.Done);
   });
 
   return (
-    <BasePage title={t("Task-Done")}>
+    <BasePage
+      title={t("Task-Done")}
+      header={
+        <TaskAllAction
+          selectedTaskIds={selectedTaskIds}
+          fetchType={fetchType}
+        />
+      }
+    >
       <TaskList
         dataSource={tasks}
         renderItem={(task) => (
           <TaskItem
+            key={task.gid}
             task={task}
             onSelect={handleTaskSelect}
             onPause={handleTaskPause}
@@ -45,4 +56,4 @@ function TaskStoppedPage() {
   );
 }
 
-export default TaskStoppedPage;
+export default DonePage;
