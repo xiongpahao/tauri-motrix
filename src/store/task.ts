@@ -4,6 +4,7 @@ import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { t } from "i18next";
 import { create } from "zustand";
 
+import { Notice } from "@/components/Notice";
 import { TASK_STATUS_ENUM } from "@/constant/task";
 import {
   addTaskApi,
@@ -15,6 +16,7 @@ import {
   removeTaskApi,
   resumeTaskApi,
   stoppedTasksApi,
+  taskItemApi,
   waitingTasksApi,
 } from "@/services/aria2c_api";
 import { getTaskFullPath, getTaskName, getTaskUri } from "@/utils/task";
@@ -150,26 +152,30 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
   async registerEvent() {
     const { addListener } = await getAria2();
+    type WrapGid = [{ gid: string }];
 
-    addListener("onDownloadStart", (gid) => {
-      console.log("onDownloadStart", gid);
-    });
+    const createMessageFactory =
+      (key: string) =>
+      async ([{ gid }]: WrapGid) => {
+        const task = await taskItemApi({ gid });
+        const taskName = getTaskName(task);
+        Notice.success(t(key, { taskName }));
+      };
 
-    addListener("onDownloadStop", (gid) => {
-      console.log("onDownloadStop", gid);
-    });
+    addListener("onDownloadStart", createMessageFactory("task.StartMessage"));
+    addListener("onDownloadStop", createMessageFactory("task.StopMessage"));
 
-    addListener("onDownloadComplete", (gid) => {
-      console.log("onDownloadComplete", gid);
-    });
+    // addListener("onDownloadComplete", (gid) => {
+    //   console.log("onDownloadComplete", gid);
+    // });
 
-    addListener("onDownloadError", (gid) => {
-      console.log("onDownloadError", gid);
-    });
+    // addListener("onDownloadError", (gid) => {
+    //   console.log("onDownloadError", gid);
+    // });
 
-    addListener("onBtDownloadComplete", (gid) => {
-      console.log("onBtDownloadComplete", gid);
-    });
+    // addListener("onBtDownloadComplete", (gid) => {
+    //   console.log("onBtDownloadComplete", gid);
+    // });
   },
   polling() {
     const { interval, polling, fetchTasks } = get();
@@ -200,4 +206,5 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
 setTimeout(() => {
   useTaskStore.getState().polling();
+  useTaskStore.getState().registerEvent();
 }, 100);

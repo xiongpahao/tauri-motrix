@@ -61,7 +61,7 @@ export function TaskActionButton(props: {
 
 export function TaskList<T>(props: {
   dataSource: T[];
-  renderItem: (item: T) => ReactNode;
+  renderItem: (item: T, index: number, arr: T[]) => ReactNode;
 }) {
   const { dataSource, renderItem } = props;
 
@@ -74,7 +74,7 @@ export function TaskList<T>(props: {
       disablePadding
       sx={{
         "& > :not(:last-child)": {
-          marginBlockEnd: 16,
+          marginBlockEnd: "16px",
         },
       }}
     >

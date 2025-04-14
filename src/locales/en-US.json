@@ -40,7 +40,9 @@
         "Empty": "No download list",
         "DirPick": "Please select task download path",
         "SplitMin": "Split number must be greater than {{min}}",
-        "SplitMax": "Split number must be less than {{max}}"
+        "SplitMax": "Split number must be less than {{max}}",
+        "StartMessage": "Task \"{{taskName}}\" started",
+        "StopMessage": "Task \"{{taskName}}\" stopped"
     },
     "common": {
         "DownloadFile": "Download File",
