@@ -10,6 +10,8 @@ import {
   addTaskApi,
   Aria2GlobalStat,
   Aria2Task,
+  batchPauseTaskApi,
+  batchResumeTaskApi,
   downloadingTasksApi,
   getAria2,
   pauseTaskApi,
@@ -19,6 +21,7 @@ import {
   taskItemApi,
   waitingTasksApi,
 } from "@/services/aria2c_api";
+import { compactUndefined } from "@/utils/compact_undefined";
 import { getTaskFullPath, getTaskName, getTaskUri } from "@/utils/task";
 
 import { DownloadOption } from "./../services/aria2c_api";
@@ -36,8 +39,8 @@ interface TaskStore {
   fetchTasks: () => void;
   setFetchType: (type: TASK_STATUS_ENUM) => void;
   handleTaskSelect: (taskId: string) => void;
-  handleTaskPause: (taskId: string) => void;
-  handleTaskResume: (taskId: string) => void;
+  handleTaskPause: (taskId?: string) => void;
+  handleTaskResume: (taskId?: string) => void;
   handleTaskStop: (taskId: string) => void;
   openTaskFile: (taskId: string) => void;
   copyTaskLink: (taskId: string) => void;
@@ -76,18 +79,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   async addTask(url, option) {
-    const optionDto: typeof option = {};
-    if (option.dir) {
-      optionDto.dir = option.dir;
-    }
-    if (option.out) {
-      optionDto.out = option.out;
-    }
-    if (option.split) {
-      optionDto.split = option.split;
-    }
-
-    await addTaskApi(url, optionDto);
+    await addTaskApi(url, compactUndefined(option));
     await get().fetchTasks();
   },
 
@@ -108,12 +100,22 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     set({ fetchType: type, selectedTaskIds: [] });
     await get().fetchTasks();
   },
-  async handleTaskPause(taskId: string) {
-    await pauseTaskApi(taskId);
+  async handleTaskPause(taskId?: string) {
+    if (taskId) {
+      await pauseTaskApi(taskId);
+    } else {
+      const { selectedTaskIds } = get();
+      await batchPauseTaskApi(selectedTaskIds);
+    }
     await get().fetchTasks();
   },
   async handleTaskResume(taskId) {
-    await resumeTaskApi(taskId);
+    if (taskId) {
+      await resumeTaskApi(taskId);
+    } else {
+      const { selectedTaskIds } = get();
+      await batchResumeTaskApi(selectedTaskIds);
+    }
     await get().fetchTasks();
   },
   async handleTaskStop(taskId) {
@@ -205,6 +207,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 }));
 
 setTimeout(() => {
-  useTaskStore.getState().polling();
   useTaskStore.getState().registerEvent();
+  useTaskStore.getState().polling();
 }, 100);

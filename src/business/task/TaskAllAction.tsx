@@ -13,9 +13,16 @@ import { TASK_STATUS_ENUM } from "@/constant/task";
 interface TaskAllActionProps {
   selectedTaskIds: string[];
   fetchType: TASK_STATUS_ENUM;
+  onPause: (taskId?: string) => void;
+  onResume: (taskId?: string) => void;
 }
 
-function TaskAllAction({ selectedTaskIds, fetchType }: TaskAllActionProps) {
+function TaskAllAction({
+  selectedTaskIds,
+  fetchType,
+  onPause,
+  onResume,
+}: TaskAllActionProps) {
   const { t } = useTranslation("task");
 
   const noneSelected = selectedTaskIds.length === 0;
@@ -40,13 +47,14 @@ function TaskAllAction({ selectedTaskIds, fetchType }: TaskAllActionProps) {
             disabled={noneSelected}
             title={t("task.ResumeAll")}
             icon={<PlayArrowOutlined />}
+            onClick={() => onResume()}
           />
 
           <TaskActionButton
             title={t("task.PauseAll")}
-            onClick={() => {}}
             disabled={noneSelected}
             icon={<PauseOutlined />}
+            onClick={() => onPause()}
           />
         </>
       )}

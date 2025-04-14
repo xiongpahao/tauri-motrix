@@ -37,6 +37,8 @@ function DownloadingPage() {
       title={t("Task-Start")}
       header={
         <TaskAllAction
+          onPause={handleTaskPause}
+          onResume={handleTaskResume}
           selectedTaskIds={selectedTaskIds}
           fetchType={fetchType}
         />

@@ -31,6 +31,8 @@ function DonePage() {
       title={t("Task-Done")}
       header={
         <TaskAllAction
+          onPause={handleTaskPause}
+          onResume={handleTaskResume}
           selectedTaskIds={selectedTaskIds}
           fetchType={fetchType}
         />
