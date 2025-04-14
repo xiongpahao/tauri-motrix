@@ -4,10 +4,12 @@ import { useTranslation } from "react-i18next";
 import ThemeModeSwitch from "@/business/setting/ThemeModeSwitch";
 import { SettingItem, SettingList } from "@/client/setting_compose";
 import { AVAILABLE_LANGUAGES } from "@/constant/language";
+import { useMotrix } from "@/hooks/motrix";
 import { getLanguage } from "@/utils/i18n";
 
 function AppearanceSetting() {
   const { t, i18n } = useTranslation("setting");
+  const { motrix } = useMotrix();
 
   return (
     <SettingList title={t("Display")}>
@@ -15,12 +17,8 @@ function AppearanceSetting() {
         <ThemeModeSwitch />
       </SettingItem>
 
-      <SettingItem label={t("HideAppMenu")}>
-        <Switch />
-      </SettingItem>
-
       <SettingItem label={t("AutoHideWindow")}>
-        <Switch />
+        <Switch checked={motrix?.app_hide_window} />
       </SettingItem>
 
       <SettingItem label={t("Language")}>

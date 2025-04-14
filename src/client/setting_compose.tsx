@@ -1,26 +1,19 @@
-import { ChevronRightRounded } from "@mui/icons-material";
 import {
   Box,
-  CircularProgress,
   List,
   ListItem,
-  ListItemButton,
   ListItemText,
   ListSubheader,
 } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 
-interface ItemProps {
+export function SettingItem(props: {
   label: ReactNode;
   extra?: ReactNode;
   children?: ReactNode;
   secondary?: ReactNode;
-  onClick?: () => void;
-}
-
-export function SettingItem(props: ItemProps) {
-  const { label, extra, children, secondary, onClick } = props;
-  const clickable = !!onClick;
+}) {
+  const { label, extra, children, secondary } = props;
 
   const primary = (
     <Box sx={{ display: "flex", alignItems: "center", fontSize: "14px" }}>
@@ -28,26 +21,6 @@ export function SettingItem(props: ItemProps) {
       {extra ? extra : null}
     </Box>
   );
-
-  const [isLoading] = useState(false);
-  const handleClick = () => {
-    // TODO
-  };
-
-  if (clickable) {
-    return (
-      <ListItem disablePadding>
-        <ListItemButton onClick={handleClick} disabled={isLoading}>
-          <ListItemText primary={primary} secondary={secondary} />
-          {isLoading ? (
-            <CircularProgress color="inherit" size={20} />
-          ) : (
-            <ChevronRightRounded />
-          )}
-        </ListItemButton>
-      </ListItem>
-    );
-  }
 
   return (
     <ListItem sx={{ pt: "5px", pb: "5px", display: "inline-flex", gap: 2 }}>

@@ -6,6 +6,8 @@ use crate::utils::{dirs, help};
 pub struct IMotrix {
     /// aria2c run name for sidecar
     pub aria2_engine: Option<String>,
+
+    pub app_hide_window: Option<bool>,
 }
 
 impl IMotrix {
@@ -22,6 +24,7 @@ impl IMotrix {
     pub fn template() -> Self {
         IMotrix {
             aria2_engine: Some("aria2c".into()),
+            app_hide_window: Some(false),
             ..Self::default()
         }
     }

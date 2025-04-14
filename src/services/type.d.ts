@@ -22,3 +22,8 @@ interface Aria2Config {
 
   "rpc-listen-port": string;
 }
+
+interface MotrixConfig {
+  aria2_engine: string;
+  app_hide_window: boolean;
+}

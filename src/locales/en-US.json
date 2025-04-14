@@ -15,7 +15,6 @@
         "system": "System"
     },
     "setting": {
-        "HideAppMenu": "Hide App Menu (Windows & Linux Only)",
         "AutoHideWindow": "Auto Hide Window",
         "ThemeMode": "Theme Mode",
         "Language": "Language",
