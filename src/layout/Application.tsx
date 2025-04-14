@@ -1,7 +1,7 @@
 import {
+  Box,
   createTheme,
   List,
-  Paper,
   styled,
   SvgIcon,
   ThemeProvider,
@@ -61,7 +61,7 @@ function ApplicationLayout() {
   return (
     <SWRConfig>
       <ThemeProvider theme={theme}>
-        <Paper
+        <Box
           sx={[
             ({ palette }) => ({
               bgcolor: palette.background.paper,
@@ -98,7 +98,7 @@ function ApplicationLayout() {
           </Aside>
 
           <Main>{routerElements}</Main>
-        </Paper>
+        </Box>
       </ThemeProvider>
     </SWRConfig>
   );
