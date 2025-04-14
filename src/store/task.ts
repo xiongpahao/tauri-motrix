@@ -42,9 +42,7 @@ interface TaskStore {
   addTask: (url: string, option: DownloadOption) => void;
   getTaskByGid: (gid: string) => Aria2Task;
   registerEvent: () => void;
-  startPolling: () => void;
   polling: () => void;
-  stopPolling: () => void;
   updateInterval: (stat?: Aria2GlobalStat) => void;
 }
 
@@ -174,21 +172,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     });
   },
   polling() {
-    const { fetchTasks } = get();
-    fetchTasks();
-  },
-  startPolling() {
-    const { polling, interval, startPolling } = get();
+    const { interval, polling, fetchTasks } = get();
     const timer = setTimeout(() => {
+      fetchTasks();
       polling();
-      startPolling();
     }, interval);
     set({ timer });
-  },
-  stopPolling() {
-    const { timer } = get();
-    clearTimeout(timer);
-    set({ timer: undefined });
   },
   updateInterval(stat?: Aria2GlobalStat) {
     const { interval: currentInterval } = get();
@@ -210,5 +199,5 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 }));
 
 setTimeout(() => {
-  useTaskStore.getState().startPolling();
+  useTaskStore.getState().polling();
 }, 100);
