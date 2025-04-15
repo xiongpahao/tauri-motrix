@@ -1,4 +1,11 @@
-import { List, Paper, styled, SvgIcon, ThemeProvider } from "@mui/material";
+import {
+  boxClasses,
+  List,
+  Paper,
+  styled,
+  SvgIcon,
+  ThemeProvider,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
@@ -55,15 +62,15 @@ function ApplicationLayout() {
               display: "grid",
               gridTemplateRows: "auto 1fr",
               gridAutoColumns: "auto 1fr",
-              [`& > :nth-child(1)`]: {
+              [`& > .${boxClasses.root}`]: {
                 gridColumn: "1 / 3",
                 gridRow: "1",
               },
-              [`& > :nth-child(2)`]: {
+              [`& > aside`]: {
                 gridColumn: "1",
                 gridRow: "2",
               },
-              [`& > :nth-child(3)`]: {
+              [`& > main`]: {
                 gridColumn: "2",
                 gridRow: "2",
               },

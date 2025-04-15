@@ -1,4 +1,5 @@
 import {
+  alpha,
   ListItem,
   ListItemButton,
   ListItemIcon,
@@ -19,8 +20,35 @@ function LayoutItem({ children, icon, to }: LayoutItemProps) {
   const match = useMatch({ path: resolved.pathname, end: true });
 
   return (
-    <ListItem>
-      <ListItemButton selected={!!match} onClick={() => navigate(to)}>
+    <ListItem sx={{ py: "4px" }} disablePadding>
+      <ListItemButton
+        sx={({ palette }) => ({
+          borderRadius: 2,
+          marginInline: 1.25,
+          paddingInline: 1,
+          "& .MuiListItemText-primary": {
+            color: palette.text.primary,
+            fontWeight: "700",
+          },
+          "&.Mui-selected .MuiListItemText-primary": {
+            color: palette.mode === "light" ? "#1f1f1f" : "#ffffff",
+          },
+          "&.Mui-selected": {
+            bgcolor:
+              palette.mode === "light"
+                ? alpha(palette.primary.main, 0.15)
+                : alpha(palette.primary.main, 0.35),
+          },
+          "&.Mui-selected:hover": {
+            bgcolor:
+              palette.mode === "light"
+                ? alpha(palette.primary.main, 0.15)
+                : alpha(palette.primary.main, 0.35),
+          },
+        })}
+        selected={!!match}
+        onClick={() => navigate(to)}
+      >
         <ListItemIcon>{icon}</ListItemIcon>
         <ListItemText>{children}</ListItemText>
       </ListItemButton>
