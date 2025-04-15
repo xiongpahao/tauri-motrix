@@ -18,7 +18,7 @@ function AppearanceSetting() {
       </SettingItem>
 
       <SettingItem label={t("AutoHideWindow")}>
-        <Switch checked={motrix?.app_hide_window} />
+        <Switch checked={!!motrix?.app_hide_window} />
       </SettingItem>
 
       <SettingItem label={t("Language")}>

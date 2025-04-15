@@ -75,7 +75,7 @@ function TaskItem({
 
         <Box
           sx={{
-            "& > :first-child": { textAlign: "end" },
+            "& > :first-of-type": { textAlign: "end" },
             "& > :last-child": {
               paddingRight: "5px",
               justifyContent: "end",
