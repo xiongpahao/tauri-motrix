@@ -19,7 +19,9 @@ function DonePage() {
     handleTaskResume,
     handleTaskSelect,
     handleTaskStop,
+    copyTaskLink,
     fetchType,
+    openTaskFile,
   } = useTaskStore();
 
   useMount(() => {
@@ -35,6 +37,7 @@ function DonePage() {
           onResume={handleTaskResume}
           selectedTaskIds={selectedTaskIds}
           fetchType={fetchType}
+          onStop={handleTaskStop}
         />
       }
     >
@@ -48,8 +51,8 @@ function DonePage() {
             onPause={handleTaskPause}
             onStop={handleTaskStop}
             onResume={handleTaskResume}
-            onOpenFile={() => {}}
-            onCopyLink={() => {}}
+            onOpenFile={openTaskFile}
+            onCopyLink={copyTaskLink}
             selected={selectedTaskIds.includes(task.gid)}
           />
         )}

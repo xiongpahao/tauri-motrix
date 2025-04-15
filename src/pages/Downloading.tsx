@@ -39,6 +39,7 @@ function DownloadingPage() {
         <TaskAllAction
           onPause={handleTaskPause}
           onResume={handleTaskResume}
+          onStop={handleTaskStop}
           selectedTaskIds={selectedTaskIds}
           fetchType={fetchType}
         />

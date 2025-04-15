@@ -28,6 +28,7 @@ function AppearanceSetting() {
           onChange={(value) => {
             i18n.changeLanguage(value.target.value);
           }}
+          sx={{ width: 110, "> div": { py: "7.5px" } }}
         >
           {AVAILABLE_LANGUAGES.map(({ label, value }) => (
             <MenuItem value={value} key={value}>

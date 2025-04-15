@@ -11,6 +11,7 @@ import {
   Aria2GlobalStat,
   Aria2Task,
   batchPauseTaskApi,
+  batchRemoveTaskApi,
   batchResumeTaskApi,
   downloadingTasksApi,
   getAria2,
@@ -41,11 +42,12 @@ interface TaskStore {
   handleTaskSelect: (taskId: string) => void;
   handleTaskPause: (taskId?: string) => void;
   handleTaskResume: (taskId?: string) => void;
-  handleTaskStop: (taskId: string) => void;
+  handleTaskStop: (taskId?: string) => void;
   openTaskFile: (taskId: string) => void;
   copyTaskLink: (taskId: string) => void;
   addTask: (url: string, option: DownloadOption) => void;
   getTaskByGid: (gid: string) => Aria2Task;
+  getSelectedTasks: () => Array<Aria2Task>;
   registerEvent: () => void;
   polling: () => void;
   updateInterval: (stat?: Aria2GlobalStat) => void;
@@ -119,20 +121,38 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     await get().fetchTasks();
   },
   async handleTaskStop(taskId) {
-    const task = get().getTaskByGid(taskId);
-    const taskName = getTaskName(task);
+    const { getTaskByGid, selectedTaskIds, fetchTasks } = get();
 
-    const result = await confirm(t("task.ConfirmDelete", { taskName }), {
-      title: t("task.Delete"),
-      kind: "warning",
-    });
+    let result: boolean;
+    if (!taskId) {
+      result = await confirm(
+        t("task.ConfirmDeleteBatch", {
+          tasksLength: selectedTaskIds.length,
+          title: t("task.Delete"),
+          kind: "warning",
+        }),
+      );
+    } else {
+      const task = getTaskByGid(taskId);
+      const taskName = getTaskName(task);
+
+      result = await confirm(t("task.ConfirmDelete", { taskName }), {
+        title: t("task.Delete"),
+        kind: "warning",
+      });
+    }
 
     if (!result) {
       return;
     }
 
-    await removeTaskApi(taskId);
-    await get().fetchTasks();
+    if (!taskId) {
+      await batchRemoveTaskApi(selectedTaskIds);
+    } else {
+      await removeTaskApi(taskId);
+    }
+
+    await fetchTasks();
   },
   async openTaskFile(taskId) {
     const task = get().getTaskByGid(taskId);
@@ -151,6 +171,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       throw new Error("Task not found");
     }
     return task;
+  },
+  getSelectedTasks() {
+    const { tasks, selectedTaskIds } = get();
+    return tasks.filter((task) => selectedTaskIds.includes(task.gid));
   },
   async registerEvent() {
     const { addListener } = await getAria2();

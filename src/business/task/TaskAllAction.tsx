@@ -2,7 +2,6 @@ import {
   CloseOutlined,
   PauseOutlined,
   PlayArrowOutlined,
-  RefreshOutlined,
 } from "@mui/icons-material";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -15,6 +14,7 @@ interface TaskAllActionProps {
   fetchType: TASK_STATUS_ENUM;
   onPause: () => void;
   onResume: () => void;
+  onStop: () => void;
 }
 
 function TaskAllAction({
@@ -22,6 +22,7 @@ function TaskAllAction({
   fetchType,
   onPause,
   onResume,
+  onStop,
 }: TaskAllActionProps) {
   const { t } = useTranslation("task");
 
@@ -33,12 +34,7 @@ function TaskAllAction({
         title={t("task.CloseAll")}
         disabled={noneSelected}
         icon={<CloseOutlined />}
-      />
-
-      <TaskActionButton
-        disabled={noneSelected}
-        title={t("task.RefreshAll")}
-        icon={<RefreshOutlined />}
+        onClick={() => onStop()}
       />
 
       {fetchType === TASK_STATUS_ENUM.Active && (
