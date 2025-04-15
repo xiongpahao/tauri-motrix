@@ -1,4 +1,12 @@
-import { List, Paper, styled, SvgIcon, ThemeProvider } from "@mui/material";
+import {
+  Box,
+  boxClasses,
+  List,
+  Paper,
+  styled,
+  SvgIcon,
+  ThemeProvider,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
@@ -7,6 +15,7 @@ import logoIcon from "@/assets/logo.svg?react";
 import { useCustomTheme } from "@/hooks/theme";
 import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
+import TitleBar from "@/layout/Titlebar";
 import { routers } from "@/routes/application";
 
 const Main = styled("main")(() => ({
@@ -55,12 +64,27 @@ function ApplicationLayout() {
           sx={[
             ({ palette }) => ({
               bgcolor: palette.background.paper,
-              display: "flex",
-              width: "100%",
               height: "100vh",
+              display: "grid",
+              gridTemplateRows: "auto 1fr",
+              gridAutoColumns: "auto 1fr",
+              [`& > :nth-child(1)`]: {
+                gridColumn: "1 / 3",
+                gridRow: "1",
+              },
+              [`& > :nth-child(2)`]: {
+                gridColumn: "1",
+                gridRow: "2",
+              },
+              [`& > :nth-child(3)`]: {
+                gridColumn: "2",
+                gridRow: "2",
+              },
             }),
           ]}
         >
+          <TitleBar />
+
           <Aside>
             <TheLogo>
               <SvgIcon sx={{ width: 62 }} component={logoIcon} inheritViewBox />
