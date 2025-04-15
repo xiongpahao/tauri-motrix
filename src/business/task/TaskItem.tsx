@@ -57,32 +57,7 @@ function TaskItem({
 
   return (
     <div>
-      <ListItem
-        sx={({ palette }) => ({ bgcolor: palette.background.paper })}
-        secondaryAction={
-          <Box
-            sx={{
-              "& .MuiBox-root": { justifyContent: "end", textAlign: "end" },
-            }}
-          >
-            <TaskItemAction
-              onResume={onResume}
-              onStop={onStop}
-              gid={task.gid}
-              status={status}
-              onCopyLink={onCopyLink}
-              onOpenFile={onOpenFile}
-              onPause={onPause}
-              onShowInfo={() => setOpenInfo(true)}
-            />
-            <TaskDownloadDes
-              speed={speedVo}
-              connections={connections}
-              remaining={remainingVo}
-            />
-          </Box>
-        }
-      >
+      <ListItem sx={({ palette }) => ({ bgcolor: palette.background.paper })}>
         <ListItemIcon>
           <Checkbox
             edge="start"
@@ -97,6 +72,32 @@ function TaskItem({
           primary={getTaskName(task)}
           secondary={`${parseByteVo(completedLength).join("")} / ${parseByteVo(totalLength).join("")}`}
         />
+
+        <Box
+          sx={{
+            "& > :first-child": { textAlign: "end" },
+            "& > :last-child": {
+              paddingRight: "5px",
+              justifyContent: "end",
+            },
+          }}
+        >
+          <TaskItemAction
+            onResume={onResume}
+            onStop={onStop}
+            gid={task.gid}
+            status={status}
+            onCopyLink={onCopyLink}
+            onOpenFile={onOpenFile}
+            onPause={onPause}
+            onShowInfo={() => setOpenInfo(true)}
+          />
+          <TaskDownloadDes
+            speed={speedVo}
+            connections={connections}
+            remaining={remainingVo}
+          />
+        </Box>
       </ListItem>
 
       {progress > 0 && progress < 100 && (
