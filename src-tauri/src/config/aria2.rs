@@ -47,6 +47,12 @@ impl IAria2Temp {
         map.insert("save-session".into(), save_session.into());
         map.insert("input-file".into(), save_session.into());
 
+        // File system
+        map.insert("save-session-interval".into(), "10".into());
+        map.insert("no-file-allocation-limit".into(), "64M".into());
+        map.insert("disk-cache".into(), "64M".into());
+        map.insert("auto-save-interval".into(), "10".into());
+
         let download_dir = user_downloads_dir().unwrap();
         let download_dir = path_to_str(&download_dir).unwrap();
 
