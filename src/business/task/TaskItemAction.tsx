@@ -5,7 +5,6 @@ import {
   LinkOutlined,
   PauseOutlined,
   PlayArrowOutlined,
-  RefreshOutlined,
 } from "@mui/icons-material";
 import { Box } from "@mui/material";
 import { useMemo } from "react";
@@ -47,7 +46,7 @@ function TaskItemAction({
             onClick={() => onPause(gid)}
           />
         );
-      case TASK_STATUS_ENUM.Waiting:
+      case TASK_STATUS_ENUM.Pause:
         return (
           <TaskActionButton
             title={t("Resume")}
@@ -55,10 +54,10 @@ function TaskItemAction({
             onClick={() => onResume(gid)}
           />
         );
-      case TASK_STATUS_ENUM.Done:
-        return (
-          <TaskActionButton title={t("Resume")} icon={<RefreshOutlined />} />
-        );
+      // case TASK_STATUS_ENUM.Done:
+      //   return (
+      //     <TaskActionButton title={t("Resume")} icon={<RefreshOutlined />} />
+      //   );
     }
   }, [onPause, onResume, status, t, gid]);
 

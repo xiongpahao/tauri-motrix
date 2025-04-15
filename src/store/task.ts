@@ -134,7 +134,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       );
     } else {
       const task = getTaskByGid(taskId);
-      const taskName = getTaskName(task);
+      const taskName = getTaskName(task, "unknown", 16);
 
       result = await confirm(t("task.ConfirmDelete", { taskName }), {
         title: t("task.Delete"),
@@ -148,6 +148,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     if (!taskId) {
       await batchRemoveTaskApi(selectedTaskIds);
+      set({ selectedTaskIds: [] });
     } else {
       await removeTaskApi(taskId);
     }
@@ -184,7 +185,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       (key: string) =>
       async ([{ gid }]: WrapGid) => {
         const task = await taskItemApi({ gid });
-        const taskName = getTaskName(task);
+        const taskName = getTaskName(task, "unknown", 16);
         Notice.success(t(key, { taskName }));
       };
 

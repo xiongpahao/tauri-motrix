@@ -3,7 +3,11 @@ import { resolve } from "@tauri-apps/api/path";
 import { Aria2Task } from "@/services/aria2c_api";
 // code from Motrix repo
 
-export const getTaskName = (task: Aria2Task, defaultName = "", maxLen = 64) => {
+export const getTaskName = (
+  task: Aria2Task,
+  defaultName = "",
+  maxLen?: number,
+) => {
   let result = defaultName;
   if (!task) {
     return result;
@@ -13,10 +17,14 @@ export const getTaskName = (task: Aria2Task, defaultName = "", maxLen = 64) => {
   const total = files.length;
 
   if (bittorrent && bittorrent.info && bittorrent.info.name) {
-    result = ellipsis(bittorrent.info.name, maxLen);
+    const { name } = bittorrent.info;
+    result = maxLen ? ellipsis(name, maxLen) : name;
   } else if (total === 1) {
     result = getFileNameFromFile(files[0]);
-    result = ellipsis(result, maxLen);
+
+    if (maxLen) {
+      result = ellipsis(result, maxLen);
+    }
   }
 
   return result;
