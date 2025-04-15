@@ -16,7 +16,7 @@ const ThePage = styled("div")(() => ({
   width: "100%",
 }));
 
-const Header = styled("header")(() => ({
+const Header = styled("header")(({ theme }) => ({
   userSelect: "none",
   flex: "0 0 58px",
   width: "100%",
@@ -27,6 +27,7 @@ const Header = styled("header")(() => ({
   alignItems: "center",
   justifyContent: "space-between",
   borderBottom: "1px solid var(--divider-color)",
+  backgroundColor: theme.palette.background.paper,
 }));
 
 const TheContainer = styled("article")<{ full?: boolean }>(

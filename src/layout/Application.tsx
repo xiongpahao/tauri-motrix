@@ -35,10 +35,11 @@ const TheTraffic = styled("section")(() => ({
   },
 }));
 
-const Aside = styled("aside")(() => ({
+const Aside = styled("aside")(({ theme }) => ({
   width: "200px",
   display: "flex",
   flexDirection: "column",
+  backgroundColor: theme.palette.background.paper,
 }));
 
 function ApplicationLayout() {
@@ -55,27 +56,25 @@ function ApplicationLayout() {
     <SWRConfig>
       <ThemeProvider theme={theme}>
         <Paper
-          sx={[
-            ({ palette }) => ({
-              bgcolor: palette.background.paper,
-              height: "100vh",
-              display: "grid",
-              gridTemplateRows: "auto 1fr",
-              gridAutoColumns: "auto 1fr",
-              [`& > .${boxClasses.root}`]: {
-                gridColumn: "1 / 3",
-                gridRow: "1",
-              },
-              [`& > aside`]: {
-                gridColumn: "1",
-                gridRow: "2",
-              },
-              [`& > main`]: {
-                gridColumn: "2",
-                gridRow: "2",
-              },
-            }),
-          ]}
+          sx={({ palette }) => ({
+            bgcolor: palette.background.paper,
+            height: "100vh",
+            display: "grid",
+            gridTemplateRows: "auto 1fr",
+            gridAutoColumns: "auto 1fr",
+            [`& > .${boxClasses.root}`]: {
+              gridColumn: "1 / 3",
+              gridRow: "1",
+            },
+            [`& > aside`]: {
+              gridColumn: "1",
+              gridRow: "2",
+            },
+            [`& > main`]: {
+              gridColumn: "2",
+              gridRow: "2",
+            },
+          })}
         >
           <TitleBar />
 
