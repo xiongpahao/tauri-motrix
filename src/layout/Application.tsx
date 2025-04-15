@@ -1,11 +1,4 @@
-import {
-  Box,
-  List,
-  Paper,
-  styled,
-  SvgIcon,
-  ThemeProvider,
-} from "@mui/material";
+import { List, Paper, styled, SvgIcon, ThemeProvider } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
