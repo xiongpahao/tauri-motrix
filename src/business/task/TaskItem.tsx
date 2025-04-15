@@ -47,16 +47,14 @@ function TaskItem({
   const { connections, gid, status } = task;
 
   const totalLength = Number(task.totalLength);
-  const completedLength = Number(task.completedLength);
+  const completedLength = Number(task.completedLength) || 0;
   const downloadSpeed = Number(task.downloadSpeed) || 0;
+  const progress = (completedLength / totalLength) * 100 || 0;
 
   const speedVo = parseByteVo(downloadSpeed, "/s").join("");
-
   const remainingVo = `${t("Remaining", { ns: "common" })} ${timeFormat(
     timeRemaining(totalLength, completedLength, downloadSpeed),
   )}`;
-
-  const progress = (completedLength / totalLength) * 100 || 0;
 
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down("sm"));
@@ -77,15 +75,14 @@ function TaskItem({
 
   const progressText = useMemo(() => {
     if (isSm) {
-      const rate = completedLength / totalLength;
-      return `${+rate.toFixed(2) * 100}%`;
+      return `${progress.toFixed(0)}%`;
     }
 
     const completed = parseByteVo(completedLength).join("");
     const total = parseByteVo(totalLength).join("");
 
     return `${completed} / ${total}`;
-  }, [completedLength, isSm, totalLength]);
+  }, [completedLength, isSm, progress, totalLength]);
 
   return (
     <div>
