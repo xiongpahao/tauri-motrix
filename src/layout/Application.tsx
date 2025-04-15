@@ -10,10 +10,6 @@ import LayoutTraffic from "@/layout/LayoutTraffic";
 import TitleBar from "@/layout/Titlebar";
 import { routers } from "@/routes/application";
 
-const Main = styled("main")(() => ({
-  flex: "1 1 100%",
-}));
-
 const TheLogo = styled("section")(() => ({
   display: "flex",
   flex: "0 0 58px",
@@ -33,8 +29,8 @@ const TheTraffic = styled("section")(() => ({
 }));
 
 const Aside = styled("aside")(() => ({
+  width: "200px",
   display: "flex",
-  flex: "1 0 200px",
   flexDirection: "column",
 }));
 
@@ -52,7 +48,6 @@ function ApplicationLayout() {
     <SWRConfig>
       <ThemeProvider theme={theme}>
         <Paper
-          square
           sx={[
             ({ palette }) => ({
               bgcolor: palette.background.paper,
@@ -78,7 +73,7 @@ function ApplicationLayout() {
           <TitleBar />
 
           <Aside>
-            <TheLogo>
+            <TheLogo data-tauri-drag-region>
               <SvgIcon sx={{ width: 62 }} component={logoIcon} inheritViewBox />
             </TheLogo>
 
@@ -103,7 +98,7 @@ function ApplicationLayout() {
             </TheTraffic>
           </Aside>
 
-          <Main>{routerElements}</Main>
+          <main>{routerElements}</main>
         </Paper>
       </ThemeProvider>
     </SWRConfig>

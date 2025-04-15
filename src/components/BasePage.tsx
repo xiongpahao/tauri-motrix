@@ -45,7 +45,7 @@ const TheContainer = styled("article")<{ full?: boolean }>(
 function BasePage({ title, header, children, full, fab }: Props) {
   return (
     <ThePage className="base-page">
-      <Header>
+      <Header data-tauri-drag-region>
         <Typography>{title}</Typography>
         {header}
       </Header>
