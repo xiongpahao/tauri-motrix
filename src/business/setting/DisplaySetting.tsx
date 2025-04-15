@@ -8,20 +8,20 @@ import { useMotrix } from "@/hooks/motrix";
 import { getLanguage } from "@/utils/i18n";
 
 function AppearanceSetting() {
-  const { t, i18n } = useTranslation("setting");
+  const { t, i18n } = useTranslation();
   const { motrix } = useMotrix();
 
   return (
-    <SettingList title={t("Display")}>
-      <SettingItem label={t("ThemeMode")}>
+    <SettingList title={t("setting.Display")}>
+      <SettingItem label={t("setting.ThemeMode")}>
         <ThemeModeSwitch />
       </SettingItem>
 
-      <SettingItem label={t("AutoHideWindow")}>
+      <SettingItem label={t("setting.AutoHideWindow")}>
         <Switch checked={!!motrix?.app_hide_window} />
       </SettingItem>
 
-      <SettingItem label={t("Language")}>
+      <SettingItem label={t("setting.Language")}>
         <Select
           size="small"
           value={getLanguage(i18n.language)}

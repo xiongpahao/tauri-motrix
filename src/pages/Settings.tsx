@@ -1,4 +1,4 @@
-import { Grid, useTheme } from "@mui/material";
+import { Grid, useColorScheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import AppearanceSetting from "@/business/setting/DisplaySetting";
@@ -7,9 +7,9 @@ import BasePage from "@/components/BasePage";
 function SettingsPage() {
   const { t } = useTranslation();
 
-  const theme = useTheme();
+  const { mode } = useColorScheme();
 
-  const isDark = theme.palette.mode === "dark";
+  const isDark = mode === "dark";
 
   return (
     <BasePage title={t("Settings")}>
@@ -33,14 +33,14 @@ function SettingsPage() {
           <AppearanceSetting />
         </Grid>
 
-        <Grid
+        {/* <Grid
           size={{
             md: 6,
             sm: 12,
           }}
         >
           111
-        </Grid>
+        </Grid> */}
       </Grid>
     </BasePage>
   );

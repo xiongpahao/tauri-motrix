@@ -1,7 +1,7 @@
 import {
   Box,
-  createTheme,
   List,
+  Paper,
   styled,
   SvgIcon,
   ThemeProvider,
@@ -11,15 +11,10 @@ import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import logoIcon from "@/assets/logo.svg?react";
+import { useCustomTheme } from "@/hooks/theme";
 import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
 import { routers } from "@/routes/application";
-
-const theme = createTheme({
-  colorSchemes: {
-    dark: true,
-  },
-});
 
 const Main = styled("main")(() => ({
   flex: "1 1 100%",
@@ -51,6 +46,7 @@ const Aside = styled("aside")(() => ({
 
 function ApplicationLayout() {
   const { t } = useTranslation();
+  const { theme } = useCustomTheme();
 
   const routerElements = useRoutes(routers);
 
@@ -61,7 +57,8 @@ function ApplicationLayout() {
   return (
     <SWRConfig>
       <ThemeProvider theme={theme}>
-        <Box
+        <Paper
+          square
           sx={[
             ({ palette }) => ({
               bgcolor: palette.background.paper,
@@ -72,7 +69,7 @@ function ApplicationLayout() {
           ]}
         >
           <Aside>
-            <TheLogo data-tauri-drag-region>
+            <TheLogo>
               <SvgIcon sx={{ width: 62 }} component={logoIcon} inheritViewBox />
             </TheLogo>
 
@@ -98,7 +95,7 @@ function ApplicationLayout() {
           </Aside>
 
           <Main>{routerElements}</Main>
-        </Box>
+        </Paper>
       </ThemeProvider>
     </SWRConfig>
   );

@@ -34,14 +34,14 @@ function TaskItemAction({
   onStop,
   onShowInfo,
 }: TaskItemActionProps) {
-  const { t } = useTranslation("task");
+  const { t } = useTranslation();
 
   const statusActionElem = useMemo(() => {
     switch (status) {
       case TASK_STATUS_ENUM.Active:
         return (
           <TaskActionButton
-            title={t("Pause")}
+            title={t("task.Pause")}
             icon={<PauseOutlined />}
             onClick={() => onPause(gid)}
           />
@@ -49,7 +49,7 @@ function TaskItemAction({
       case TASK_STATUS_ENUM.Pause:
         return (
           <TaskActionButton
-            title={t("Resume")}
+            title={t("task.Resume")}
             icon={<PlayArrowOutlined />}
             onClick={() => onResume(gid)}
           />
@@ -65,24 +65,24 @@ function TaskItemAction({
     <Box>
       {statusActionElem}
       <TaskActionButton
-        title={t("Close")}
+        title={t("task.Close")}
         onClick={() => onStop(gid)}
         icon={<CloseOutlined />}
       />
       <TaskActionButton
-        title={t("OpenFile")}
+        title={t("task.OpenFile")}
         icon={<FileOpenOutlined />}
         onClick={() => onOpenFile(gid)}
       />
 
       <TaskActionButton
-        title={t("CopyLink")}
+        title={t("task.CopyLink")}
         icon={<LinkOutlined />}
         onClick={() => onCopyLink(gid)}
       />
 
       <TaskActionButton
-        title={t("Info")}
+        title={t("task.Info")}
         icon={<InfoOutlined />}
         onClick={() => onShowInfo(gid)}
       />
