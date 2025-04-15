@@ -22,6 +22,7 @@ export interface TaskItemActionProps
   > {
   status: string;
   gid: string;
+  onShowInfo: (taskId: string) => void;
 }
 
 function TaskItemAction({
@@ -32,6 +33,7 @@ function TaskItemAction({
   onPause,
   onResume,
   onStop,
+  onShowInfo,
 }: TaskItemActionProps) {
   const { t } = useTranslation("task");
 
@@ -80,7 +82,11 @@ function TaskItemAction({
         onClick={() => onCopyLink(gid)}
       />
 
-      <TaskActionButton title={t("Info")} icon={<InfoOutlined />} />
+      <TaskActionButton
+        title={t("Info")}
+        icon={<InfoOutlined />}
+        onClick={() => onShowInfo(gid)}
+      />
     </Box>
   );
 }

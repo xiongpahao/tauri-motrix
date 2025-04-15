@@ -6,9 +6,11 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import TaskItemAction from "@/business/task/TaskItemAction";
+import TaskItemDrawer from "@/business/task/TaskItemDrawer";
 import { TaskDownloadDes } from "@/client/task_compose";
 import { Aria2Task } from "@/services/aria2c_api";
 import { parseByteVo } from "@/utils/download";
@@ -51,6 +53,8 @@ function TaskItem({
 
   const progress = (completedLength / totalLength) * 100 || 0;
 
+  const [openInfo, setOpenInfo] = useState(false);
+
   return (
     <div>
       <ListItem
@@ -69,6 +73,7 @@ function TaskItem({
               onCopyLink={onCopyLink}
               onOpenFile={onOpenFile}
               onPause={onPause}
+              onShowInfo={() => setOpenInfo(true)}
             />
             <TaskDownloadDes
               speed={speedVo}
@@ -97,6 +102,12 @@ function TaskItem({
       {progress > 0 && progress < 100 && (
         <LinearProgress variant="determinate" value={progress} />
       )}
+
+      <TaskItemDrawer
+        open={openInfo}
+        task={task}
+        onClose={() => setOpenInfo(false)}
+      />
     </div>
   );
 }

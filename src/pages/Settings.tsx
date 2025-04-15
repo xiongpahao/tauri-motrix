@@ -1,4 +1,4 @@
-import { Box, Grid, useTheme } from "@mui/material";
+import { Grid, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import AppearanceSetting from "@/business/setting/DisplaySetting";
@@ -10,20 +10,37 @@ function SettingsPage() {
   const theme = useTheme();
 
   const isDark = theme.palette.mode === "dark";
-  const boxSx = {
-    borderRadius: 2,
-    marginBottom: 1.5,
-    backgroundColor: isDark ? "#282a36" : "#ffffff",
-  };
 
   return (
     <BasePage title={t("Settings")}>
-      <Grid container spacing={2}>
-        <Box sx={boxSx}>
+      <Grid
+        container
+        spacing={2}
+        sx={{
+          "& .MuiGrid-root": {
+            borderRadius: 2,
+            marginBottom: 1.5,
+            backgroundColor: isDark ? "#282a36" : "#ffffff",
+          },
+        }}
+      >
+        <Grid
+          size={{
+            md: 6,
+            sm: 12,
+          }}
+        >
           <AppearanceSetting />
-        </Box>
+        </Grid>
 
-        <Box sx={boxSx}></Box>
+        <Grid
+          size={{
+            md: 6,
+            sm: 12,
+          }}
+        >
+          111
+        </Grid>
       </Grid>
     </BasePage>
   );

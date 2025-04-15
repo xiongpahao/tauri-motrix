@@ -114,10 +114,10 @@ export const taskItemApi = async (param: { gid: string }) => {
 export interface DownloadOption {
   dir?: string;
   out?: string;
-  // referer?: string;
-  // header?: string[];
-  // maxConnection?: number;
-  // maxSplit?: number;
+  referer?: string;
+  header?: string[];
+  maxConnection?: number;
+  maxSplit?: number;
   split?: number;
 }
 
