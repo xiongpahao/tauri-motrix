@@ -14,7 +14,7 @@ import logoIcon from "@/assets/logo.svg?react";
 import { useCustomTheme } from "@/hooks/theme";
 import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
-import TitleBar from "@/layout/Titlebar";
+import TitleBar from "@/layout/TitleBar";
 import { routers } from "@/routes/application";
 
 const TheLogo = styled("section")(() => ({
@@ -56,6 +56,9 @@ function ApplicationLayout() {
     <SWRConfig>
       <ThemeProvider theme={theme}>
         <Paper
+          onContextMenu={(e) => {
+            e.preventDefault();
+          }}
           sx={({ palette }) => ({
             bgcolor: palette.background.paper,
             height: "100vh",

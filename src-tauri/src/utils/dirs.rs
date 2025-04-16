@@ -51,6 +51,10 @@ pub fn app_resources_dir() -> Result<PathBuf> {
     }
 }
 
+pub fn app_logs_dir() -> Result<PathBuf> {
+    Ok(app_home_dir()?.join("logs"))
+}
+
 pub fn user_downloads_dir() -> Result<PathBuf> {
     let app_handle = handle::Handle::global().app_handle().unwrap();
 

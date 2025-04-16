@@ -34,4 +34,6 @@ fs2 = "0.4.3"
 tauri-plugin-shell = "2.2.1"
 tauri-plugin-clipboard-manager = "2"
 tauri-plugin-dialog = "2"
+chrono = "0.4.40"
+log4rs = "1.3.0"
 
