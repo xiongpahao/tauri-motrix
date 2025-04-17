@@ -208,7 +208,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }, interval);
     set({ timer: newTimer });
   },
-  updateInterval(stat?: Aria2GlobalStat) {
+  updateInterval(stat) {
     const { interval: currentInterval } = get();
     const numActive =
       stat?.numActive && !isNaN(Number(stat.numActive))
