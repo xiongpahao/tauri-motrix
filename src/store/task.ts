@@ -5,7 +5,6 @@ import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { t } from "i18next";
 import { create } from "zustand";
 
-import { Notice } from "@/components/Notice";
 import { TASK_STATUS_ENUM } from "@/constant/task";
 import {
   addTaskApi,
@@ -23,10 +22,10 @@ import {
   taskItemApi,
   waitingTasksApi,
 } from "@/services/aria2c_api";
+import { DownloadOption } from "@/services/aria2c_api";
 import { compactUndefined } from "@/utils/compact_undefined";
 import { getTaskFullPath, getTaskName, getTaskUri } from "@/utils/task";
-
-import { DownloadOption } from "./../services/aria2c_api";
+import { createSimpleMessageFactory, WrapGid } from "@/utils/task";
 
 const DEFAULT_INTERVAL = 1000;
 const MAX_INTERVAL = 6000;
@@ -36,6 +35,7 @@ interface TaskStore {
   tasks: Array<Aria2Task>;
   fetchType: TASK_STATUS_ENUM;
   selectedTaskIds: Array<string>;
+  selectedTasks: Array<Aria2Task>;
   timer?: number;
   interval: number;
   fetchTasks: () => void;
@@ -48,10 +48,12 @@ interface TaskStore {
   copyTaskLink: (taskId: string) => void;
   addTask: (url: string, option: DownloadOption) => void;
   getTaskByGid: (gid: string) => Aria2Task;
-  getSelectedTasks: () => Array<Aria2Task>;
   registerEvent: () => void;
   polling: () => void;
   updateInterval: (stat?: Aria2GlobalStat) => void;
+  onDownloadStart: (wrap: WrapGid) => void;
+  onDownloadStop: (wrap: WrapGid) => void;
+  onDownloadComplete: (wrap: WrapGid) => void;
 }
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
@@ -60,6 +62,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   timer: undefined,
   interval: DEFAULT_INTERVAL,
   fetchType: TASK_STATUS_ENUM.Active,
+  get selectedTasks() {
+    const { tasks, selectedTaskIds } = get();
+    return tasks.filter((task) => selectedTaskIds.includes(task.gid));
+  },
   async fetchTasks() {
     const { fetchType } = get();
 
@@ -80,12 +86,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     set({ tasks });
   },
-
   async addTask(url, option) {
     await addTaskApi(url, compactUndefined(option));
     await get().fetchTasks();
   },
-
   handleTaskSelect(taskId: string) {
     const { selectedTaskIds } = get();
 
@@ -174,49 +178,35 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
     return task;
   },
-  getSelectedTasks() {
-    const { tasks, selectedTaskIds } = get();
-    return tasks.filter((task) => selectedTaskIds.includes(task.gid));
+  onDownloadStart: createSimpleMessageFactory("task.StartMessage"),
+  onDownloadStop: createSimpleMessageFactory("task.StopMessage"),
+  async onDownloadComplete([{ gid }]) {
+    get().fetchTasks();
+    const task = await taskItemApi({ gid });
+    const title = getTaskName(task, "unknown", 16);
+
+    sendNotification({ title, body: t("common.Complete") });
   },
   async registerEvent() {
-    const { fetchTasks } = get();
-    const { setListener } = await getAria2();
-    type WrapGid = [{ gid: string }];
+    const { onDownloadComplete, onDownloadStart, onDownloadStop } = get();
+    const { addListener } = await getAria2();
 
-    const createMessageFactory =
-      (key: string) =>
-      async ([{ gid }]: WrapGid) => {
-        const task = await taskItemApi({ gid });
-        const taskName = getTaskName(task, "unknown", 16);
-        Notice.success(t(key, { taskName }));
-      };
-
-    setListener("onDownloadStart", createMessageFactory("task.StartMessage"));
-    setListener("onDownloadStop", createMessageFactory("task.StopMessage"));
-
-    setListener<WrapGid>("onDownloadComplete", async ([{ gid }]) => {
-      fetchTasks();
-      const task = await taskItemApi({ gid });
-      const title = getTaskName(task, "unknown", 16);
-
-      sendNotification({ title, body: t("common.Complete") });
-    });
-
-    // addListener("onDownloadError", (gid) => {
-    //   console.log("onDownloadError", gid);
-    // });
-
-    // addListener("onBtDownloadComplete", (gid) => {
-    //   console.log("onBtDownloadComplete", gid);
-    // });
+    addListener("onDownloadStart", onDownloadStart);
+    addListener("onDownloadStop", onDownloadStop);
+    addListener("onDownloadComplete", onDownloadComplete);
   },
   polling() {
-    const { interval, polling, fetchTasks } = get();
-    const timer = setTimeout(() => {
+    const { interval, polling, fetchTasks, timer, registerEvent } = get();
+    if (!timer) {
+      registerEvent();
+    }
+    clearTimeout(timer);
+
+    const newTimer = setTimeout(() => {
       fetchTasks();
       polling();
     }, interval);
-    set({ timer });
+    set({ timer: newTimer });
   },
   updateInterval(stat?: Aria2GlobalStat) {
     const { interval: currentInterval } = get();
@@ -238,6 +228,5 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 }));
 
 setTimeout(() => {
-  useTaskStore.getState().registerEvent();
   useTaskStore.getState().polling();
 }, 100);

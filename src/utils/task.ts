@@ -1,6 +1,8 @@
 import { resolve } from "@tauri-apps/api/path";
+import { t } from "i18next";
 
-import { Aria2Task } from "@/services/aria2c_api";
+import { Notice } from "@/components/Notice";
+import { Aria2Task, taskItemApi } from "@/services/aria2c_api";
 // code from Motrix repo
 
 export const getTaskName = (
@@ -204,3 +206,13 @@ export const buildMagnetLink = (
 
   return result;
 };
+
+export type WrapGid = [{ gid: string }];
+
+export const createSimpleMessageFactory =
+  (key: string) =>
+  async ([{ gid }]: WrapGid) => {
+    const task = await taskItemApi({ gid });
+    const taskName = getTaskName(task, "unknown", 16);
+    Notice.success(t(key, { taskName }));
+  };
