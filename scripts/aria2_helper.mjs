@@ -3,17 +3,23 @@ import process from "process";
 import { isWin, SIDECAR_HOST, TARGET_KEY } from "./environment.mjs";
 import { createFetchOptionsFactory, log_error, log_info } from "./utils.mjs";
 
-const ARIA2_URL_PREFIX = "https://github.com/aria2/aria2/releases/download";
+// There is no arm64 version in official repository at latest.
+// The official aria2 release version also is unsupported 128 threads.
+// It's recommended to switch to the community repo.
 
-const ARIA2_REPO_TAG_API_URL = "https://api.github.com/repos/aria2/aria2/tags";
+const ARIA2_URL_PREFIX =
+  "https://github.com/Taoister39/aria2-windows-arm64/releases/download";
+
+const ARIA2_REPO_TAG_API_URL =
+  "https://api.github.com/repos/Taoister39/aria2-windows-arm64/tags";
 
 const ARIA2_MAP = {
-  "win32-x64": "win-64bit-build1",
-  "win32-ia32": "win-32bit-build1",
-  // There is no arm64 version in official repository at latest.
-  // It's recommended to switch to the community repo.
-  "win32-arm64": "win-64bit-build1",
-  "aarch64-unknown-linux-gnu": "aarch64-linux-android-build1",
+  "win32-x64": "winx64",
+  // "win32-ia32": "winx86",
+  "win32-arm64": "winarm64",
+  // "win32-arm": "winarm",
+  // TODO
+  // "aarch64-unknown-linux-gnu": "aarch64-linux-android-build1",
 };
 
 // ensure aria2 task
