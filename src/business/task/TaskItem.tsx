@@ -159,6 +159,7 @@ function TaskItem({
           left: 0,
           right: 0,
           marginInline: 2,
+          borderRadius: 4,
         }}
         variant="determinate"
         color={progressColor}
