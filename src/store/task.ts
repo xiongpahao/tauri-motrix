@@ -1,5 +1,6 @@
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import { confirm } from "@tauri-apps/plugin-dialog";
+import { sendNotification } from "@tauri-apps/plugin-notification";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { t } from "i18next";
 import { create } from "zustand";
@@ -42,7 +43,7 @@ interface TaskStore {
   handleTaskSelect: (taskId: string) => void;
   handleTaskPause: (taskId?: string) => void;
   handleTaskResume: (taskId?: string) => void;
-  handleTaskStop: (taskId?: string) => void;
+  handleTaskDelete: (taskId?: string) => void;
   openTaskFile: (taskId: string) => void;
   copyTaskLink: (taskId: string) => void;
   addTask: (url: string, option: DownloadOption) => void;
@@ -120,7 +121,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
     await get().fetchTasks();
   },
-  async handleTaskStop(taskId) {
+  async handleTaskDelete(taskId) {
     const { getTaskByGid, selectedTaskIds, fetchTasks } = get();
 
     let result: boolean;
@@ -178,7 +179,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     return tasks.filter((task) => selectedTaskIds.includes(task.gid));
   },
   async registerEvent() {
-    const { addListener } = await getAria2();
+    const { fetchTasks } = get();
+    const { setListener } = await getAria2();
     type WrapGid = [{ gid: string }];
 
     const createMessageFactory =
@@ -189,12 +191,16 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         Notice.success(t(key, { taskName }));
       };
 
-    addListener("onDownloadStart", createMessageFactory("task.StartMessage"));
-    addListener("onDownloadStop", createMessageFactory("task.StopMessage"));
+    setListener("onDownloadStart", createMessageFactory("task.StartMessage"));
+    setListener("onDownloadStop", createMessageFactory("task.StopMessage"));
 
-    // addListener("onDownloadComplete", (gid) => {
-    //   console.log("onDownloadComplete", gid);
-    // });
+    setListener<WrapGid>("onDownloadComplete", async ([{ gid }]) => {
+      fetchTasks();
+      const task = await taskItemApi({ gid });
+      const title = getTaskName(task, "unknown", 16);
+
+      sendNotification({ title, body: t("common.Complete") });
+    });
 
     // addListener("onDownloadError", (gid) => {
     //   console.log("onDownloadError", gid);

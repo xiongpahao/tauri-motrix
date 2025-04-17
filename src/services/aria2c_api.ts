@@ -156,6 +156,15 @@ export const pauseAllTaskApi = async () => {
   return call("pauseAll");
 };
 
+export const forcePauseTaskApi = async (gid: string) => {
+  const { call } = await getAria2();
+  return call("forcePause", gid);
+};
+export const forcePauseAllTaskApi = async () => {
+  const { call } = await getAria2();
+  return call("forcePauseAll");
+};
+
 export const batchPauseTaskApi = async (gids: string[]) => {
   const { multiCall } = await getAria2();
   return multiCall(gids.map((gid) => ({ method: "pause", params: [gid] })));

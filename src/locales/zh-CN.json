@@ -52,6 +52,7 @@
         "Remaining": "剩余",
         "Rename": "重命名",
         "Empty": "空",
-        "PickFolder": "选择文件夹"
+        "PickFolder": "选择文件夹",
+        "Complete": "完成"
     }
 }

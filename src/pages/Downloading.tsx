@@ -20,7 +20,7 @@ function DownloadingPage() {
     handleTaskSelect,
     handleTaskPause,
     handleTaskResume,
-    handleTaskStop,
+    handleTaskDelete: handleTaskStop,
     openTaskFile,
     copyTaskLink,
     setFetchType,

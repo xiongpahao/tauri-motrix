@@ -1,7 +1,7 @@
 import { useLockFn } from "ahooks";
 import useSWR from "swr";
 
-import { getVersionApi } from "@/services/aria2c_api";
+import { getAria2, getVersionApi } from "@/services/aria2c_api";
 import { getAria2Config } from "@/services/cmd";
 
 export function useAria2() {
@@ -18,6 +18,7 @@ export function useAria2() {
   const patchAria2Config = useLockFn(async () => {
     // TODO
     mutateAria2();
+    getAria2(true);
   });
 
   const version = versionData?.version;

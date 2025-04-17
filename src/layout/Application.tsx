@@ -53,7 +53,7 @@ function ApplicationLayout() {
   }
 
   return (
-    <SWRConfig>
+    <SWRConfig value={{ errorRetryCount: 3 }}>
       <ThemeProvider theme={theme}>
         <Paper
           onContextMenu={(e) => {

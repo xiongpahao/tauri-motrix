@@ -18,7 +18,7 @@ function DonePage() {
     handleTaskPause,
     handleTaskResume,
     handleTaskSelect,
-    handleTaskStop,
+    handleTaskDelete: handleTaskStop,
     copyTaskLink,
     fetchType,
     openTaskFile,

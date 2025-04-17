@@ -52,6 +52,7 @@
         "Remaining": "Remaining",
         "Rename": "Rename",
         "Empty": "Empty",
-        "PickFolder": "Pick folder"
+        "PickFolder": "Pick folder",
+        "Complete": "Complete"
     }
 }

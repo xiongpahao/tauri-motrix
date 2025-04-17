@@ -7,6 +7,6 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "rsbuild.config.ts",
+    "rsbuild.config.ts"
   ]
 }
