@@ -9,3 +9,9 @@ export const getAria2Config = () =>
 
 export const getMotrixConfig = () =>
   invoke<MotrixConfig | null>("get_motrix_config");
+
+export const openLogsDir = () => invoke<void>("open_logs_dir");
+
+export const openAppDir = () => invoke<void>("open_app_dir");
+
+export const openCoreDir = () => invoke<void>("open_core_dir");

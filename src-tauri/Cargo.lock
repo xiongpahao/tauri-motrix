@@ -3994,6 +3994,7 @@ dependencies = [
  "log",
  "log4rs",
  "once_cell",
+ "open",
  "parking_lot",
  "serde",
  "serde_json",

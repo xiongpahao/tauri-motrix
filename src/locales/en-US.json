@@ -18,7 +18,9 @@
         "AutoHideWindow": "Auto Hide Window",
         "ThemeMode": "Theme Mode",
         "Language": "Language",
-        "Display": "Display"
+        "Display": "Display",
+        "OpenConfDir": "Open Config Directory",
+        "OpenLogsDir": "Open Logs Directory"
     },
     "task": {
         "CloseAll": "Close All Tasks",

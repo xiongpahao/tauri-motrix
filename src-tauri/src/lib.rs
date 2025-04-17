@@ -23,6 +23,9 @@ pub fn run() {
             cmd::get_aria2_info,
             cmd::get_aria2_config,
             cmd::get_motrix_config,
+            cmd::open_logs_dir,
+            cmd::open_app_dir,
+            cmd::open_core_dir,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

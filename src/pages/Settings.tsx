@@ -2,6 +2,7 @@ import { Grid, useColorScheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import AppearanceSetting from "@/business/setting/DisplaySetting";
+import MotrixSetting from "@/business/setting/MotrixSetting";
 import BasePage from "@/components/BasePage";
 
 function SettingsPage() {
@@ -33,14 +34,14 @@ function SettingsPage() {
           <AppearanceSetting />
         </Grid>
 
-        {/* <Grid
+        <Grid
           size={{
             md: 6,
             sm: 12,
           }}
         >
-          111
-        </Grid> */}
+          <MotrixSetting />
+        </Grid>
       </Grid>
     </BasePage>
   );
