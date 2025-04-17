@@ -1,10 +1,14 @@
 import {
   Box,
+  boxClasses,
   Checkbox,
+  iconButtonClasses,
   LinearProgress,
   LinearProgressProps,
   ListItem,
+  ListItemButton,
   ListItemIcon,
+  listItemIconClasses,
   ListItemText,
   typographyClasses,
   useMediaQuery,
@@ -85,16 +89,20 @@ function TaskItem({
   }, [completedLength, isSm, progress, totalLength]);
 
   return (
-    <div>
-      <ListItem sx={({ palette }) => ({ bgcolor: palette.background.paper })}>
+    <ListItem disablePadding>
+      <ListItemButton
+        sx={({ palette }) => ({
+          bgcolor: palette.background.paper,
+          ":hover": { bgcolor: palette.background.paper },
+          borderRadius: "8px",
+          [`& .${listItemIconClasses.root}`]: {
+            minWidth: "40px",
+          },
+        })}
+        onClick={() => onSelect(gid)}
+      >
         <ListItemIcon>
-          <Checkbox
-            edge="start"
-            tabIndex={-1}
-            disableRipple
-            checked={selected}
-            onChange={() => onSelect(gid)}
-          />
+          <Checkbox edge="start" checked={selected} />
         </ListItemIcon>
 
         <ListItemText
@@ -114,9 +122,11 @@ function TaskItem({
 
         <Box
           sx={{
-            "& > :first-of-type": { textAlign: "end", textWrap: "nowrap" },
-            "& > :last-child": {
-              paddingRight: "5px",
+            [`.${boxClasses.root}`]: {
+              [`.${iconButtonClasses.root}:last-child`]: {
+                paddingRight: 0,
+              },
+              textAlign: "end",
               justifyContent: "end",
               textWrap: "nowrap",
             },
@@ -132,7 +142,7 @@ function TaskItem({
             onPause={onPause}
             onShowInfo={() => setOpenInfo(true)}
           />
-          {status === TASK_STATUS_ENUM.Active && (
+          {TASK_STATUS_ENUM.Active === status && (
             <TaskDownloadDes
               speed={speedVo}
               connections={connections}
@@ -140,9 +150,16 @@ function TaskItem({
             />
           )}
         </Box>
-      </ListItem>
+      </ListItemButton>
 
       <LinearProgress
+        sx={{
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          marginInline: 2,
+        }}
         variant="determinate"
         color={progressColor}
         value={progress}
@@ -153,7 +170,7 @@ function TaskItem({
         task={task}
         onClose={() => setOpenInfo(false)}
       />
-    </div>
+    </ListItem>
   );
 }
 

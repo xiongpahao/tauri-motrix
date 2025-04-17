@@ -55,8 +55,12 @@ export function TaskActionButton(props: {
 }) {
   return (
     <IconButton
+      onMouseDown={(e) => e.stopPropagation()}
       size="small"
-      onClick={props.onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        props.onClick?.(e);
+      }}
       title={props.title}
       disabled={props.disabled}
     >
