@@ -3,7 +3,16 @@ import {
   ArrowDownwardOutlined,
   HubOutlined,
 } from "@mui/icons-material";
-import { Box, Fab, IconButton, List, Zoom } from "@mui/material";
+import {
+  Box,
+  Fab,
+  IconButton,
+  List,
+  ListItem,
+  styled,
+  Typography,
+  Zoom,
+} from "@mui/material";
 import { CSSProperties, MouseEventHandler, ReactNode } from "react";
 
 import { BaseEmpty } from "@/components/BaseEmpty";
@@ -106,5 +115,38 @@ export function TaskFab(props: {
         <AddOutlined />
       </Fab>
     </Zoom>
+  );
+}
+
+export function TaskDrawerList(props: { title: string; children: ReactNode }) {
+  return (
+    <List
+      subheader={<Typography variant="subtitle1">{props.title}</Typography>}
+    >
+      {props.children}
+    </List>
+  );
+}
+
+export const TaskDrawerLabel = styled(Typography)(() => ({
+  fontWeight: "bold",
+  color: "#555",
+}));
+
+export const TaskDrawerValue = styled(Typography)(() => ({
+  marginLeft: "8px",
+  color: "#777",
+}));
+
+export function TaskDrawerItem(props: {
+  label: string;
+  value: ReactNode;
+  action?: ReactNode;
+}) {
+  return (
+    <ListItem secondaryAction={props.action}>
+      <TaskDrawerLabel variant="body1">{props.label}:</TaskDrawerLabel>
+      <TaskDrawerValue variant="body2">{props.value}</TaskDrawerValue>
+    </ListItem>
   );
 }

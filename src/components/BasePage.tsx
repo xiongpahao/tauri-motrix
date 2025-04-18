@@ -47,7 +47,9 @@ function BasePage({ title, header, children, full, fab }: Props) {
   return (
     <ThePage className="base-page">
       <Header data-tauri-drag-region>
-        <Typography>{title}</Typography>
+        <Typography sx={{ fontSize: "20px", fontWeight: "700" }}>
+          {title}
+        </Typography>
         {header}
       </Header>
       <TheContainer full={full}>

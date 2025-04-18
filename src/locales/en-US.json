@@ -49,7 +49,10 @@
         "SplitMin": "Split number must be greater than {{min}}",
         "SplitMax": "Split number must be less than {{max}}",
         "StartMessage": "Task \"{{taskName}}\" started",
-        "StopMessage": "Task \"{{taskName}}\" stopped"
+        "StopMessage": "Task \"{{taskName}}\" stopped",
+        "Details": "Task Details",
+        "InfoDetails": "Task Info",
+        "SpeedDetails": "Task Speed"
     },
     "common": {
         "DownloadFile": "Download File",
