@@ -34,7 +34,7 @@ const TheContainer = styled("article")<{ full?: boolean }>(
   ({ full, theme }) => ({
     width: "100%",
     height: "100%",
-    overflow: full ? "visible" : "hidden",
+    overflow: full ? "visible" : "auto",
     backgroundColor:
       theme.palette.mode === "dark" ? "#1e1f27" : "var(--background-color)",
     position: "relative",
