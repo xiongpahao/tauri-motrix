@@ -43,7 +43,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
   } = useForm<IFormInput>({
     values: {
       link: "",
-      split: 64,
+      split: 128,
       dir: aria2?.dir ?? "",
       out: "",
     },
@@ -133,8 +133,8 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
                 message: t("task.SplitMin", { min: 1 }),
               },
               max: {
-                value: 64,
-                message: t("task.SplitMax", { max: 64 }),
+                value: 128,
+                message: t("task.SplitMax", { max: 128 }),
               },
             }}
             control={control}
