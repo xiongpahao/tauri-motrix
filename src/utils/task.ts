@@ -1,7 +1,9 @@
+import { LinearProgressProps } from "@mui/material";
 import { resolve } from "@tauri-apps/api/path";
 import { t } from "i18next";
 
 import { Notice } from "@/components/Notice";
+import { TASK_STATUS_ENUM } from "@/constant/task";
 import { Aria2Task, taskItemApi } from "@/services/aria2c_api";
 // code from Motrix repo
 
@@ -216,3 +218,16 @@ export const createSimpleMessageFactory =
     const taskName = getTaskName(task, "unknown", 16);
     Notice.success(t(key, { taskName }));
   };
+
+export const getTaskProgressColor = (
+  progress: number,
+  status: string,
+): LinearProgressProps["color"] => {
+  if (progress === 100) {
+    return "success";
+  }
+  if (status === TASK_STATUS_ENUM.Pause) {
+    return "secondary";
+  }
+  return "primary";
+};

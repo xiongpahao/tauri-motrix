@@ -2,20 +2,23 @@ import {
   Box,
   Divider,
   Drawer,
+  LinearProgressProps,
   listItemClasses,
   ModalProps,
   styled,
   Typography,
 } from "@mui/material";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { TaskItemProps } from "@/business/task/TaskItem";
 import TaskItemAction from "@/business/task/TaskItemAction";
 import { TaskDrawerItem, TaskDrawerList } from "@/client/task_compose";
 import LinearProgressWithLabel from "@/components/LinearProgressWithLabel";
+import { TASK_STATUS_ENUM } from "@/constant/task";
 import { Aria2Task } from "@/services/aria2c_api";
 import { parseByteVo } from "@/utils/download";
-import { getTaskName } from "@/utils/task";
+import { getTaskName, getTaskProgressColor } from "@/utils/task";
 
 export interface TaskItemDrawerProps
   extends Pick<
@@ -61,6 +64,8 @@ function TaskItemDrawer({
   const { t } = useTranslation();
   const taskName = getTaskName(task);
 
+  const { status } = task;
+
   const totalLength = Number(task.totalLength) || 0;
   const completedLength = Number(task.completedLength) || 0;
   const progress = (completedLength / totalLength) * 100 || 0;
@@ -70,6 +75,11 @@ function TaskItemDrawer({
   const completed = parseByteVo(completedLength).join("");
   const total = parseByteVo(totalLength).join("");
   const progressText = `${completed} / ${total}`;
+
+  const progressColor = useMemo(
+    () => getTaskProgressColor(progress, status),
+    [progress, status],
+  );
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
@@ -96,7 +106,7 @@ function TaskItemDrawer({
           </TaskDrawerList>
 
           <TaskDrawerList title={t("task.SpeedDetails")}>
-            <LinearProgressWithLabel value={progress} />
+            <LinearProgressWithLabel value={progress} color={progressColor} />
             <TaskDrawerItem label="Progress" value={progressText} />
             <TaskDrawerItem label="Connections" value={task.connections} />
             <TaskDrawerItem label="Download Speed" value={speedVo} />

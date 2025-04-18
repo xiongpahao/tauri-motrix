@@ -4,15 +4,12 @@ import {
   Checkbox,
   iconButtonClasses,
   LinearProgress,
-  LinearProgressProps,
   ListItem,
   ListItemButton,
   ListItemIcon,
   listItemIconClasses,
   ListItemText,
   typographyClasses,
-  useMediaQuery,
-  useTheme,
 } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -23,7 +20,12 @@ import { TaskDownloadDes } from "@/client/task_compose";
 import { TASK_STATUS_ENUM } from "@/constant/task";
 import { Aria2Task } from "@/services/aria2c_api";
 import { parseByteVo } from "@/utils/download";
-import { getTaskName, timeFormat, timeRemaining } from "@/utils/task";
+import {
+  getTaskName,
+  getTaskProgressColor,
+  timeFormat,
+  timeRemaining,
+} from "@/utils/task";
 
 export interface TaskItemProps {
   task: Aria2Task;
@@ -60,33 +62,19 @@ function TaskItem({
     timeRemaining(totalLength, completedLength, downloadSpeed),
   )}`;
 
-  const theme = useTheme();
-  const isSm = useMediaQuery(theme.breakpoints.down("sm"));
-
   const [openInfo, setOpenInfo] = useState(false);
 
-  const progressColor = useMemo((): LinearProgressProps["color"] => {
-    if (progress === 100) {
-      return "success";
-    }
-
-    if (status === TASK_STATUS_ENUM.Pause) {
-      return "secondary";
-    }
-
-    return "primary";
-  }, [progress, status]);
+  const progressColor = useMemo(
+    () => getTaskProgressColor(progress, status),
+    [progress, status],
+  );
 
   const progressText = useMemo(() => {
-    if (isSm) {
-      return `${progress.toFixed(0)}%`;
-    }
-
     const completed = parseByteVo(completedLength).join("");
     const total = parseByteVo(totalLength).join("");
 
     return `${completed} / ${total}`;
-  }, [completedLength, isSm, progress, totalLength]);
+  }, [completedLength, totalLength]);
 
   return (
     <ListItem disablePadding>
