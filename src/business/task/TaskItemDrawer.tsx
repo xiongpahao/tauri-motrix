@@ -1,24 +1,27 @@
-import { FolderOutlined } from "@mui/icons-material";
 import {
   Box,
   Divider,
   Drawer,
-  IconButton,
   listItemClasses,
   ModalProps,
   styled,
   Typography,
 } from "@mui/material";
-import { openPath } from "@tauri-apps/plugin-opener";
 import { useTranslation } from "react-i18next";
 
+import { TaskItemProps } from "@/business/task/TaskItem";
+import TaskItemAction from "@/business/task/TaskItemAction";
 import { TaskDrawerItem, TaskDrawerList } from "@/client/task_compose";
 import LinearProgressWithLabel from "@/components/LinearProgressWithLabel";
 import { Aria2Task } from "@/services/aria2c_api";
 import { parseByteVo } from "@/utils/download";
 import { getTaskName } from "@/utils/task";
 
-export interface TaskItemDrawerProps {
+export interface TaskItemDrawerProps
+  extends Pick<
+    TaskItemProps,
+    "onCopyLink" | "onOpenFile" | "onPause" | "onResume" | "onStop"
+  > {
   open: boolean;
   onClose: ModalProps["onClose"];
   task: Aria2Task;
@@ -33,9 +36,21 @@ const TheContainer = styled(Box)(() => ({
     padding: "8px 0",
   },
   overflow: "auto",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
 }));
 
-function TaskItemDrawer({ open, onClose, task }: TaskItemDrawerProps) {
+function TaskItemDrawer({
+  open,
+  onClose,
+  task,
+  onCopyLink,
+  onOpenFile,
+  onPause,
+  onResume,
+  onStop,
+}: TaskItemDrawerProps) {
   const { t } = useTranslation();
   const taskName = getTaskName(task);
 
@@ -52,39 +67,41 @@ function TaskItemDrawer({ open, onClose, task }: TaskItemDrawerProps) {
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <TheContainer role="presentation">
-        <Typography
-          variant="h6"
-          sx={{ marginBottom: "16px", color: "#333", fontWeight: "700" }}
-        >
-          {t("task.Details")}
-        </Typography>
-        <TaskDrawerList title={t("task.InfoDetails")}>
-          <TaskDrawerItem label="GID" value={task.gid} />
-          <Divider />
-          <TaskDrawerItem label="Task Name" value={taskName} />
-          <Divider />
-          <TaskDrawerItem
-            action={
-              <IconButton
-                title={t("task.OpenFile")}
-                onClick={() => openPath(task.dir)}
-              >
-                <FolderOutlined />
-              </IconButton>
-            }
-            label="Save to"
-            value={task.dir}
-          />
-          <Divider />
-          <TaskDrawerItem label="Status" value={task.status} />
-        </TaskDrawerList>
+        <section>
+          <Typography
+            variant="h6"
+            sx={{ marginBottom: "16px", color: "#333", fontWeight: "700" }}
+          >
+            {t("task.Details")}
+          </Typography>
+          <TaskDrawerList title={t("task.InfoDetails")}>
+            <TaskDrawerItem label="GID" value={task.gid} />
+            <Divider />
+            <TaskDrawerItem label="Task Name" value={taskName} />
+            <Divider />
+            <TaskDrawerItem label="Save to" value={task.dir} />
+            <Divider />
+            <TaskDrawerItem label="Status" value={task.status} />
+          </TaskDrawerList>
 
-        <TaskDrawerList title={t("task.SpeedDetails")}>
-          <LinearProgressWithLabel value={progress} />
-          <TaskDrawerItem label="Progress" value={progressText} />
-          <TaskDrawerItem label="Connections" value={task.connections} />
-          <TaskDrawerItem label="Download Speed" value={speedVo} />
-        </TaskDrawerList>
+          <TaskDrawerList title={t("task.SpeedDetails")}>
+            <LinearProgressWithLabel value={progress} />
+            <TaskDrawerItem label="Progress" value={progressText} />
+            <TaskDrawerItem label="Connections" value={task.connections} />
+            <TaskDrawerItem label="Download Speed" value={speedVo} />
+          </TaskDrawerList>
+        </section>
+        <section style={{ alignSelf: "center" }}>
+          <TaskItemAction
+            status={task.status}
+            gid={task.gid}
+            onPause={onPause}
+            onResume={onResume}
+            onStop={onStop}
+            onOpenFile={onOpenFile}
+            onCopyLink={onCopyLink}
+          />
+        </section>
       </TheContainer>
     </Drawer>
   );

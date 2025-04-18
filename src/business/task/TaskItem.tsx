@@ -170,6 +170,11 @@ function TaskItem({
         open={openInfo}
         task={task}
         onClose={() => setOpenInfo(false)}
+        onCopyLink={onCopyLink}
+        onOpenFile={onOpenFile}
+        onPause={onPause}
+        onResume={onResume}
+        onStop={onStop}
       />
     </ListItem>
   );
