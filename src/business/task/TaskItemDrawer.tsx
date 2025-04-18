@@ -27,19 +27,26 @@ export interface TaskItemDrawerProps
   task: Aria2Task;
 }
 
-const TheContainer = styled(Box)(() => ({
-  width: "400px",
-  height: "100%",
-  padding: "16px",
-  backgroundColor: "#f5f5f5",
-  [`.${listItemClasses.root}`]: {
-    padding: "8px 0",
-  },
-  overflow: "auto",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
-}));
+const TheContainer = styled(Box)(
+  ({
+    theme: {
+      palette: { mode },
+    },
+  }) => ({
+    width: "400px",
+    height: "100%",
+    padding: "16px",
+    backgroundColor: mode === "dark" ? "#1e1e1e" : "#f5f5f5",
+    color: mode === "dark" ? "#fff" : "#000",
+    [`.${listItemClasses.root}`]: {
+      padding: "8px 0",
+    },
+    overflow: "auto",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  }),
+);
 
 function TaskItemDrawer({
   open,
@@ -70,7 +77,11 @@ function TaskItemDrawer({
         <section>
           <Typography
             variant="h6"
-            sx={{ marginBottom: "16px", color: "#333", fontWeight: "700" }}
+            sx={({ palette: { mode } }) => ({
+              marginBottom: "16px",
+              color: mode === "dark" ? "#bb86fc" : "#333",
+              fontWeight: "700",
+            })}
           >
             {t("task.Details")}
           </Typography>
