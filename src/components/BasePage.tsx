@@ -28,6 +28,7 @@ const Header = styled("header")(({ theme }) => ({
   justifyContent: "space-between",
   borderBottom: "1px solid var(--divider-color)",
   backgroundColor: theme.palette.background.paper,
+  appRegion: "drag",
 }));
 
 const TheContainer = styled("article")<{ full?: boolean }>(

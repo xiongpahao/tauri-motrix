@@ -35,6 +35,7 @@ function TitleBar() {
         display: "flex",
         justifyContent: "end",
         alignItems: "center",
+        appRegion: "drag",
       })}
       data-tauri-drag-region
     >
