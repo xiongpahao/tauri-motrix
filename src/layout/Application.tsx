@@ -35,6 +35,10 @@ const TheTraffic = styled("section")(() => ({
   },
 }));
 
+const Main = styled("main")(() => ({
+  overflow: "hidden",
+}));
+
 const Aside = styled("aside")(({ theme }) => ({
   width: "200px",
   display: "flex",
@@ -107,7 +111,7 @@ function ApplicationLayout() {
             </TheTraffic>
           </Aside>
 
-          <main>{routerElements}</main>
+          <Main>{routerElements}</Main>
         </Paper>
       </ThemeProvider>
     </SWRConfig>
