@@ -16,7 +16,7 @@ Tauri Motrix is a full-featured download manager written in Tauri.The purpose is
 Go to the [release page](https://github.com/Taoister39/tauri-motrix/releases) to download the corresponding installation package
 Supports Windows (x64 / arm64).
 
-## ✨ Features
+## Features
 
 - 🎨 Material Design Theme (MUI).
 - 🚀 Supports 128 threads in a single task
