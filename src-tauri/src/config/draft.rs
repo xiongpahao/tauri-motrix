@@ -11,7 +11,12 @@ pub struct Draft<T: Clone + ToOwned> {
 
 macro_rules! draft_define {
     ($id: ident) => {
+        #[allow(dead_code)]
         impl Draft<$id> {
+            pub fn data(&self) -> MappedMutexGuard<$id> {
+                MutexGuard::map(self.inner.lock(), |inner| &mut inner.0)
+            }
+
             pub fn latest(&self) -> MappedMutexGuard<$id> {
                 MutexGuard::map(self.inner.lock(), |inner| {
                     if inner.1.is_none() {
@@ -20,6 +25,31 @@ macro_rules! draft_define {
                         inner.1.as_mut().unwrap()
                     }
                 })
+            }
+            pub fn draft(&self) -> MappedMutexGuard<$id> {
+                MutexGuard::map(self.inner.lock(), |inner| {
+                    if inner.1.is_none() {
+                        inner.1 = Some(inner.0.clone());
+                    }
+
+                    inner.1.as_mut().unwrap()
+                })
+            }
+            pub fn apply(&self) -> Option<$id> {
+                let mut inner = self.inner.lock();
+
+                match inner.1.take() {
+                    Some(draft) => {
+                        let old_value = inner.0.to_owned();
+                        inner.0 = draft.to_owned();
+                        Some(old_value)
+                    }
+                    None => None,
+                }
+            }
+            pub fn discard(&self) -> Option<$id> {
+                let mut inner = self.inner.lock();
+                inner.1.take()
             }
         }
         impl From<$id> for Draft<$id> {

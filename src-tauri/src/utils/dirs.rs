@@ -69,6 +69,12 @@ pub fn user_downloads_dir() -> Result<PathBuf> {
     }
 }
 
+pub fn locales_dir() -> Option<PathBuf> {
+    app_resources_dir()
+        .map(|resource_path| resource_path.join("locales"))
+        .ok()
+}
+
 pub fn motrix_path() -> Result<PathBuf> {
     Ok(app_home_dir()?.join(MOTRIX_CONFIG))
 }

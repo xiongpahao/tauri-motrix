@@ -2,7 +2,6 @@ use std::fs;
 
 use anyhow::Result;
 use chrono::Local;
-use log::LevelFilter;
 use log4rs::{
     append::{console::ConsoleAppender, file::FileAppender},
     config::{Appender, Logger, Root},
@@ -10,8 +9,8 @@ use log4rs::{
 };
 
 use crate::{
-    config::{IAria2Temp, IMotrix},
-    log_err,
+    config::{Config, IAria2Temp, IMotrix},
+    log_err, service,
     utils::{
         dirs,
         help::{self, simple_save_file},
@@ -30,8 +29,8 @@ pub fn init_log() -> Result<()> {
     let log_file = log_dir.join(log_file);
 
     let encode = Box::new(PatternEncoder::new("{d(%Y-%m-%d %H:%M:%S)} {l} - {m}{n}"));
-    // TODO: according to motrix config
-    let log_level = LevelFilter::Info;
+
+    let log_level = service::log::get_log_level();
 
     let stdout = ConsoleAppender::builder().encoder(encode.clone()).build();
     let to_file = FileAppender::builder().encoder(encode).build(log_file)?;
@@ -54,7 +53,7 @@ pub fn init_log() -> Result<()> {
 
 pub fn init_config() -> Result<()> {
     let _ = init_log();
-    // TODO: auto clear log
+    let _ = service::log::delete_log();
 
     log_err!(dirs::app_home_dir().map(|app_dir| {
         if !app_dir.exists() {

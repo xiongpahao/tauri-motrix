@@ -3,6 +3,8 @@ use utils::resolve;
 mod cmd;
 mod config;
 mod core;
+mod feat;
+mod service;
 mod utils;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -27,6 +29,7 @@ pub fn run() {
             cmd::open_logs_dir,
             cmd::open_app_dir,
             cmd::open_core_dir,
+            cmd::patch_motrix_config,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
