@@ -8,10 +8,6 @@ const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig({
   plugins: [pluginReact(), pluginSvgr()],
-
-  html: {
-    template: "./index.html",
-  },
   source: {
     entry: {
       index: "./src/main.tsx",

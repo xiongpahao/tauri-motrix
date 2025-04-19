@@ -1,4 +1,4 @@
-import "@/utils/i18n";
+import "@/services/i18n";
 import "./main.css";
 
 import React from "react";
@@ -7,10 +7,13 @@ import { BrowserRouter } from "react-router-dom";
 
 import ApplicationLayout from "@/layout/Application";
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <ApplicationLayout />
-    </BrowserRouter>
-  </React.StrictMode>,
-);
+const rootEl = document.getElementById("root");
+if (rootEl) {
+  ReactDOM.createRoot(rootEl).render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <ApplicationLayout />
+      </BrowserRouter>
+    </React.StrictMode>,
+  );
+}

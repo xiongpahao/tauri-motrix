@@ -26,7 +26,8 @@
         "Aria2": "Aria2 Setting",
         "External": "External",
         "ExternalController": "External Controller",
-        "ExternalControllerAddressModified": "External controller address modified"
+        "ExternalControllerAddressModified": "External controller address modified",
+        "CheckForUpdates": "Check for Updates"
     },
     "task": {
         "CloseAll": "Close All Tasks",
@@ -65,6 +66,11 @@
         "Rename": "Rename",
         "Empty": "Empty",
         "PickFolder": "Pick folder",
-        "Complete": "Complete"
+        "Complete": "Complete",
+        "Update": "Update"
+    },
+    "update": {
+        "GotoReleasePage": "Go to release page",
+        "CurrentlyOnLatest": "Currently on the Latest Version"
     }
 }

@@ -5,7 +5,7 @@ import ThemeModeSwitch from "@/business/setting/ThemeModeSwitch";
 import { SettingItem, SettingList } from "@/client/setting_compose";
 import { AVAILABLE_LANGUAGES } from "@/constant/language";
 import { useMotrix } from "@/hooks/motrix";
-import { getLanguage } from "@/utils/i18n";
+import { getLanguage } from "@/services/i18n";
 
 function AppearanceSetting() {
   const { t, i18n } = useTranslation();
