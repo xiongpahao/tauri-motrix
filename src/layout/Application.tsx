@@ -22,7 +22,6 @@ const TheLogo = styled("section")(() => ({
   flex: "0 0 58px",
   justifyContent: "center",
   alignItems: "center",
-  appRegion: "drag",
 }));
 
 const TheMenu = styled(List)(() => ({

@@ -1,25 +1,42 @@
 # tauri-motrix
 
-> It is still under development and there is still a lot to be improved
+[![Feature Requests](https://img.shields.io/github/issues/taoister39/tauri-motrix/feature-request.svg)](https://github.com/taoister39/tauri-motrix/issues?q=is%3Aopen+is%3Aissue+label%3Afeature-request+sort%3Areactions-%2B1-desc)
+[![Bugs](https://img.shields.io/github/issues/taoister39/tauri-motrix/bug.svg)](https://github.com/taoister39/tauri-motrix/issues?utf8=✓&q=is%3Aissue+is%3Aopen+label%3Abug)
+[![Gitter](https://img.shields.io/badge/chat-on%20gitter-yellow.svg)](https://gitter.im/Taoister39/tauri-motrix)
 
-**Use Tauri to refactor [Motrix](https://github.com/agalwood/Motrix) project.**
+Tauri Motrix is a full-featured download manager written in Tauri.The purpose is to restructure [Motrix](https://github.com/agalwood/Motrix) open source project.
 
-![example](./screenshot/demo-example.png)
+## Preview
 
-![example dark](./screenshot/demo-example-dark.png)
+| Dark                             | Light                             |
+| -------------------------------- | --------------------------------- |
+| ![预览](./docs/preview_dark.png) | ![预览](./docs/preview_light.png) |
+
+## Install
+
+Go to the [release page](https://github.com/Taoister39/tauri-motrix/releases) to download the corresponding installation package
+Supports Windows (x64 / arm64).
 
 ## ✨ Features
 
+- 🎨 Material Design Theme (MUI).
 - 🚀 Supports 128 threads in a single task
-- Material UI
+- 📦 Lightweight, small package size
+- 🚥 Supports speed limit
 
 ## Devolvement
 
-```Powershell
-pnpm run check # ensure fetch
+To run the development server, execute the following commands after all prerequisites for Tauri are installed:
 
-pnpm run tauri dev
+```Powershell
+pnpm i
+pnpm check
+pnpm tauri dev
 ```
+
+## Contributions
+
+Issue and PR welcome!
 
 ## Acknowledgements
 

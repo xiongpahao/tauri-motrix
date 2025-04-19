@@ -75,3 +75,17 @@ export async function pullUpOnlySubDirectory(dir) {
   );
   await fsp.rmdir(innerFolder);
 }
+
+/**
+ * get the signature file content
+ * @param {string} url
+ * @returns {Promise<string>}
+ */
+export async function getSignature(url) {
+  const response = await fetch(url, {
+    method: "GET",
+    headers: { "Content-Type": "application/octet-stream" },
+  });
+
+  return response.text();
+}
