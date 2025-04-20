@@ -27,6 +27,7 @@ export function useAria2() {
     aria2,
     mutateAria2,
     version,
+    versionData,
     mutateVersion,
     patchAria2Config,
   };

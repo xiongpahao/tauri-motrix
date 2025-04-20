@@ -75,6 +75,7 @@
         "CurrentlyOnLatest": "Currently on the Latest Version"
     },
     "about": {
-        "Title": "App About"
+        "Title": "App About",
+        "License": "Open Source License"
     }
 }

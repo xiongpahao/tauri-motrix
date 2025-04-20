@@ -1,4 +1,4 @@
-import { List, ListItem, ListItemText } from "@mui/material";
+import { Box, Typography, typographyClasses } from "@mui/material";
 import { version as appVersion } from "@root/package.json";
 import { useBoolean } from "ahooks";
 import { Ref, useImperativeHandle } from "react";
@@ -6,12 +6,13 @@ import { useTranslation } from "react-i18next";
 
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
 import { useAria2 } from "@/hooks/aria2";
+import CopyRight from "@/business/about/CopyRight";
 
 function AboutDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();
   const [open, { setFalse, setTrue }] = useBoolean();
 
-  const { version } = useAria2();
+  const { version, versionData } = useAria2();
 
   useImperativeHandle(props.ref, () => ({
     open: setTrue,
@@ -27,14 +28,29 @@ function AboutDialog(props: { ref: Ref<DialogRef> }) {
       onOk={setFalse}
       okBtn={t("common.Ok")}
     >
-      <List>
-        <ListItem>
-          <ListItemText primary={`aria2 version v${version}`} />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={`motrix version v${appVersion}`} />
-        </ListItem>
-      </List>
+      <Typography variant="subtitle1">motrix version v{appVersion}</Typography>
+      <Typography variant="subtitle1">aria2 version v{version}</Typography>
+
+      <Box
+        sx={{
+          [`& .${typographyClasses.root}`]: {
+            fontSize: "14px",
+            width: "50%",
+          },
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+        }}
+      >
+        {versionData?.enabledFeatures.map((feature) => (
+          <Typography key={feature} variant="body2">
+            {feature}
+          </Typography>
+        ))}
+      </Box>
+
+      <CopyRight />
     </BaseDialog>
   );
 }
