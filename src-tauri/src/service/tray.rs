@@ -5,10 +5,12 @@ use tauri::{
     App,
 };
 
-use crate::utils::window::create_window;
+use crate::{feat, utils::window::create_window};
+
+use super::i18n::t;
 
 pub fn create_tray(app: &App) -> Result<()> {
-    let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
+    let quit_i = MenuItem::with_id(app, "quit", t("common.Exit"), true, Some("CmdOrControl+Q"))?;
     let menu = Menu::with_items(app, &[&quit_i])?;
 
     let mut builder = TrayIconBuilder::new()
@@ -25,7 +27,7 @@ pub fn create_tray(app: &App) -> Result<()> {
     tray.on_menu_event(|app, event| match event.id.as_ref() {
         "quit" => {
             println!("quit menu item was clicked");
-            app.exit(0);
+            feat::quit(Some(0));
         }
         _ => {
             println!("menu item {:?} not handled", event.id);

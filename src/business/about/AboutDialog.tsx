@@ -4,9 +4,9 @@ import { useBoolean } from "ahooks";
 import { Ref, useImperativeHandle } from "react";
 import { useTranslation } from "react-i18next";
 
+import CopyRight from "@/business/about/CopyRight";
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
 import { useAria2 } from "@/hooks/aria2";
-import CopyRight from "@/business/about/CopyRight";
 
 function AboutDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();

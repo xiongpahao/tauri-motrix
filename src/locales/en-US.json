@@ -68,7 +68,8 @@
         "PickFolder": "Pick folder",
         "Complete": "Complete",
         "Update": "Update",
-        "Ok": "OK"
+        "Ok": "OK",
+        "Exit": "Exit"
     },
     "update": {
         "GotoReleasePage": "Go to release page",

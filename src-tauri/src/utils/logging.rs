@@ -3,12 +3,14 @@ use std::fmt;
 #[derive(Debug)]
 pub enum Type {
     Window,
+    Core,
 }
 
 impl fmt::Display for Type {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Type::Window => write!(f, "[Window]"),
+            Type::Core => write!(f, "[Core]"),
         }
     }
 }

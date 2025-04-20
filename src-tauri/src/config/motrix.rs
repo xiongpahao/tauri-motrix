@@ -1,4 +1,3 @@
-use log::LevelFilter;
 use serde::{Deserialize, Serialize};
 
 use crate::{

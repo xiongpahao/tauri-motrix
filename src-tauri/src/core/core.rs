@@ -2,15 +2,16 @@ use anyhow::Result;
 use fs2::FileExt;
 use once_cell::sync::OnceCell;
 use std::{path::PathBuf, sync::Arc, time::Duration};
-use tauri_plugin_shell::ShellExt;
+use tauri_plugin_shell::{process::CommandChild, ShellExt};
 use tokio::{sync::Mutex, time::sleep};
 
 use crate::{
     config::Config,
     core::handle,
-    log_err,
+    log_err, logging,
     utils::{
         dirs::{self, aria2_path},
+        logging::Type,
         sys,
     },
 };
@@ -18,6 +19,7 @@ use crate::{
 #[derive(Debug)]
 pub struct CoreManager {
     running: Arc<Mutex<bool>>,
+    aria2c_sidecar: Arc<Mutex<Option<CommandChild>>>,
 }
 
 impl CoreManager {
@@ -25,6 +27,7 @@ impl CoreManager {
         static CORE_MANGER: OnceCell<CoreManager> = OnceCell::new();
         CORE_MANGER.get_or_init(|| CoreManager {
             running: Arc::new(Mutex::new(false)),
+            aria2c_sidecar: Arc::new(Mutex::new(None)),
         })
     }
 
@@ -50,6 +53,11 @@ impl CoreManager {
         *running = true;
 
         Ok(())
+    }
+
+    pub async fn stop_engine(&self) {
+        // TODO aria2c external control for user
+        let _ = self.kill_core_by_sidecar().await;
     }
 
     pub async fn ensure_port_available(&self) {
@@ -119,12 +127,31 @@ impl CoreManager {
 
         // save process id
         println!("[sidecar] run core process success, PID: {:?}", child.pid());
-        handle::Handle::global().set_core_process(child);
+        // handle::Handle::global().set_core_process(child);
+        *self.aria2c_sidecar.lock().await = Some(child);
 
         sleep(Duration::from_millis(300)).await;
 
         println!("[sidecar] run core process done.");
         log::info!(target: "app", "core started in sidecar mode");
+
+        Ok(())
+    }
+
+    async fn kill_core_by_sidecar(&self) -> Result<()> {
+        logging!(trace, Type::Core, true, "Stopping core by sidecar");
+
+        if let Some(child) = self.aria2c_sidecar.lock().await.take() {
+            let pid = child.pid();
+            child.kill()?;
+            logging!(
+                trace,
+                Type::Core,
+                true,
+                "Stopped core by sidecar pid: {}",
+                pid
+            );
+        }
 
         Ok(())
     }
