@@ -67,10 +67,14 @@
         "Empty": "Empty",
         "PickFolder": "Pick folder",
         "Complete": "Complete",
-        "Update": "Update"
+        "Update": "Update",
+        "Ok": "OK"
     },
     "update": {
         "GotoReleasePage": "Go to release page",
         "CurrentlyOnLatest": "Currently on the Latest Version"
+    },
+    "about": {
+        "Title": "App About"
     }
 }

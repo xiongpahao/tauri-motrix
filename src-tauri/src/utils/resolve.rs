@@ -4,6 +4,7 @@ use crate::{
     config::Config,
     core::{handle, CoreManager},
     log_err,
+    service::tray,
     utils::init,
 };
 
@@ -21,4 +22,6 @@ pub async fn resolve_setup(app: &App) {
 
     log::trace!(target: "app", "launch core");
     log_err!(CoreManager::global().init().await);
+
+    log_err!(tray::create_tray(app));
 }

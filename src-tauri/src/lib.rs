@@ -9,7 +9,7 @@ mod utils;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_dialog::init())
@@ -30,7 +30,18 @@ pub fn run() {
             cmd::open_app_dir,
             cmd::open_core_dir,
             cmd::patch_motrix_config,
-        ])
-        .run(tauri::generate_context!())
+        ]);
+
+    let app = builder
+        .build(tauri::generate_context!())
         .expect("error while running tauri application");
+
+    app.run(|app_handle, e| match e {
+        tauri::RunEvent::ExitRequested { api, code, .. } => {
+            if code.is_none() {
+                api.prevent_exit();
+            }
+        }
+        _ => {}
+    });
 }

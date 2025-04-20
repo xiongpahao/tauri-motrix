@@ -2,7 +2,7 @@ use std::{fs::File, sync::Arc};
 
 use once_cell::sync::OnceCell;
 use parking_lot::RwLock;
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager, WebviewWindow};
 use tauri_plugin_shell::process::CommandChild;
 
 #[derive(Debug, Clone)]
@@ -40,5 +40,14 @@ impl Handle {
     pub fn set_core_process(&self, process: CommandChild) {
         let mut core_process = self.core_process.write();
         *core_process = Some(process);
+    }
+
+    pub fn get_window(&self) -> Option<WebviewWindow> {
+        let app_handle = self.app_handle().unwrap();
+        let window: Option<WebviewWindow> = app_handle.get_webview_window("main");
+        if window.is_none() {
+            log::debug!(target:"app", "main window not found");
+        }
+        window
     }
 }
