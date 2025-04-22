@@ -67,20 +67,32 @@ impl CoreManager {
             .and_then(|value| value.parse::<u16>().ok())
             .unwrap_or(16801);
 
-        println!("[sidecar] Check existing port: {}", aria2_port);
+        logging!(
+            info,
+            Type::Core,
+            true,
+            "check existing port: {}",
+            aria2_port
+        );
 
         let occupies = sys::get_occupied_port_pids(aria2_port).await;
 
         if !occupies.is_empty() {
-            println!("[sidecar] port {} is already occupied", aria2_port);
+            logging!(
+                info,
+                Type::Core,
+                true,
+                "port {} is already occupied",
+                aria2_port
+            );
         }
 
         for pid in occupies {
-            println!("[sidecar] try to kill process: {}", pid);
+            logging!(info, Type::Core, true, "try to kill process: {}", pid);
             sys::terminate_process(pid).await;
         }
 
-        println!("[sidecar] Waiting for process to exit...");
+        logging!(info, Type::Core, true, "waiting for process to exit...");
         sleep(Duration::from_millis(500)).await;
     }
 
@@ -89,13 +101,18 @@ impl CoreManager {
         let aria2_engine = { Config::motrix().latest().aria2_engine.clone() };
         let aria2_engine = aria2_engine.unwrap_or("aria2c".into());
 
-        log::info!(target: "app", "starting core {} in sidecar mode", aria2_engine);
-        println!("[sidecar]: Begin run engine: {}", aria2_engine);
+        logging!(
+            info,
+            Type::Core,
+            true,
+            "starting core {} in sidecar mode",
+            aria2_engine
+        );
 
         let lock_file = dirs::app_home_dir()?.join(format!("{}.lock", aria2_engine));
-        println!("[sidecar] lock_file path : {:?}", lock_file);
+        logging!(info, Type::Core, true, "lock_file path : {:?}", lock_file);
+        logging!(info, Type::Core, true, "[sidecar] try to get lock file");
 
-        println!("[sidecar] try to get lock file");
         let file = std::fs::OpenOptions::new()
             .write(true)
             .create(true)
@@ -103,9 +120,7 @@ impl CoreManager {
 
         match file.try_lock_exclusive() {
             Ok(_) => {
-                println!("[sidecar] Get lock file success");
-                log::info!(target: "app", "acquired lock for core process");
-
+                logging!(info, Type::Core, true, "acquired lock for core process");
                 handle::Handle::global().set_core_lock(file);
             }
             // TODO
@@ -118,7 +133,7 @@ impl CoreManager {
 
         let config_path_str = dirs::path_to_str(config_path)?;
 
-        println!("[sidecar] Begin start run core process");
+        logging!(info, Type::Core, true, "begin start run core process");
         let (_, child) = app_handle
             .shell()
             .sidecar(aria2_engine)?
@@ -126,14 +141,19 @@ impl CoreManager {
             .spawn()?;
 
         // save process id
-        println!("[sidecar] run core process success, PID: {:?}", child.pid());
+        logging!(
+            info,
+            Type::Core,
+            true,
+            "run core process success, PID: {:?}",
+            child.pid()
+        );
         // handle::Handle::global().set_core_process(child);
         *self.aria2c_sidecar.lock().await = Some(child);
 
         sleep(Duration::from_millis(300)).await;
 
-        println!("[sidecar] run core process done.");
-        log::info!(target: "app", "core started in sidecar mode");
+        logging!(info, Type::Core, true, "core started in sidecar mode");
 
         Ok(())
     }
