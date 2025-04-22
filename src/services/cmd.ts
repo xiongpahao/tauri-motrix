@@ -20,3 +20,6 @@ export const exitApp = () => invoke<void>("exit_app");
 
 export const patchMotrixConfig = (data: Partial<MotrixConfig>) =>
   invoke<null>("patch_motrix_config", { data });
+
+export const patchAria2Config = (data: Partial<Aria2Config>) =>
+  invoke<null>("patch_aria2_config", { data });

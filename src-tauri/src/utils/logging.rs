@@ -4,6 +4,7 @@ use std::fmt;
 pub enum Type {
     Window,
     Core,
+    Engine,
 }
 
 impl fmt::Display for Type {
@@ -11,6 +12,7 @@ impl fmt::Display for Type {
         match self {
             Type::Window => write!(f, "[Window]"),
             Type::Core => write!(f, "[Core]"),
+            Type::Engine => write!(f, "[Engine]"),
         }
     }
 }

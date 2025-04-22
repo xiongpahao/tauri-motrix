@@ -31,6 +31,7 @@ pub fn run() {
             cmd::open_core_dir,
             cmd::patch_motrix_config,
             cmd::exit_app,
+            cmd::patch_aria2_config,
         ]);
 
     let app = builder

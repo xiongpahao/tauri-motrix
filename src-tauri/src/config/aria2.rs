@@ -1,9 +1,11 @@
 use std::{collections::HashMap, fmt, fs::read_to_string};
 
+use anyhow::Result;
 use serde::Serialize;
 
-use crate::utils::dirs::{
-    aria2_download_session_path, aria2_path, path_to_str, user_downloads_dir,
+use crate::utils::{
+    dirs::{self, aria2_download_session_path, aria2_path, path_to_str, user_downloads_dir},
+    help::simple_save_file,
 };
 
 #[derive(Debug, Default, Clone, Serialize)]
@@ -91,6 +93,16 @@ impl IAria2Temp {
             // TODO: temporary solution, need to be fixed
             server: Self::guard_server(config),
         }
+    }
+
+    pub fn patch_config(&mut self, patch: HashMap<String, String>) {
+        for (key, value) in patch.into_iter() {
+            self.0.insert(key, value);
+        }
+    }
+
+    pub fn save_file(&self) -> Result<()> {
+        simple_save_file(&dirs::aria2_path()?, &self)
     }
 }
 

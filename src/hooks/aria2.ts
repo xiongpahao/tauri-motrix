@@ -2,7 +2,7 @@ import { useLockFn } from "ahooks";
 import useSWR, { mutate } from "swr";
 
 import { getAria2, getVersionApi } from "@/services/aria2c_api";
-import { getAria2Config, getAria2Info } from "@/services/cmd";
+import { getAria2Config, getAria2Info, patchAria2Config } from "@/services/cmd";
 
 export function useAria2() {
   const { data: aria2, mutate: mutateAria2 } = useSWR(
@@ -15,11 +15,13 @@ export function useAria2() {
     getVersionApi,
   );
 
-  const patchAria2Config = useLockFn(async () => {
-    // TODO
-    mutateAria2();
-    getAria2(true);
-  });
+  const patchConfig = useLockFn(
+    async (data: Parameters<typeof patchAria2Config>[0]) => {
+      await patchAria2Config(data);
+      mutateAria2();
+      getAria2(true);
+    },
+  );
 
   const version = versionData?.version;
 
@@ -29,7 +31,7 @@ export function useAria2() {
     version,
     versionData,
     mutateVersion,
-    patchAria2Config,
+    patchConfig,
   };
 }
 
@@ -41,6 +43,7 @@ export function useAria2Info() {
 
   const patchInfo = async (data: Record<string, string>) => {
     // TODO
+
     console.log("aria2 info change ", data);
 
     mutate("getAria2Config");
