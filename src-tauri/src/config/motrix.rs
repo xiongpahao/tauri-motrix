@@ -1,3 +1,4 @@
+use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -47,6 +48,11 @@ impl IMotrix {
             theme_mode: Some("system".into()),
             ..Self::default()
         }
+    }
+
+    /// Save IMotrix App Config
+    pub fn save_file(&self) -> Result<()> {
+        help::save_yaml(&dirs::motrix_path()?, &self, Some("# tauri-motrix Config"))
     }
 
     /// patch motrix config

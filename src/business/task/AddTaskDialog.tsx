@@ -10,9 +10,12 @@ import {
   TextField,
 } from "@mui/material";
 import { open as dialogOpen } from "@tauri-apps/plugin-dialog";
+import { useBoolean } from "ahooks";
+import { Ref, useImperativeHandle } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { DialogRef } from "@/components/BaseDialog";
 import { useAria2 } from "@/hooks/aria2";
 import { useTaskStore } from "@/store/task";
 
@@ -23,17 +26,19 @@ interface IFormInput {
   dir: string;
 }
 
-export interface AddTaskModalProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
+function AddTaskDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();
 
   const { addTask } = useTaskStore();
 
   const { aria2 } = useAria2();
+
+  const [open, { setFalse, setTrue }] = useBoolean();
+
+  useImperativeHandle(props.ref, () => ({
+    open: setTrue,
+    close: setFalse,
+  }));
 
   const {
     control,
@@ -58,7 +63,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
       out,
     });
 
-    onClose();
+    setFalse();
   };
 
   const onFolderPick = async () => {
@@ -76,7 +81,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={setFalse}
       slotProps={{
         paper: {
           component: "form",
@@ -173,7 +178,7 @@ function AddTaskDialog({ onClose, open }: AddTaskModalProps) {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button autoFocus onClick={onClose}>
+        <Button autoFocus onClick={setFalse}>
           {t("common.Cancel")}
         </Button>
         <Button autoFocus type="submit">

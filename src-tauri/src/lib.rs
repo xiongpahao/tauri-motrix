@@ -30,6 +30,7 @@ pub fn run() {
             cmd::open_app_dir,
             cmd::open_core_dir,
             cmd::patch_motrix_config,
+            cmd::exit_app,
         ]);
 
     let app = builder

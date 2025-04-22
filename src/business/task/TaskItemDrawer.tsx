@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   Drawer,
-  LinearProgressProps,
   listItemClasses,
   ModalProps,
   styled,
@@ -15,7 +14,6 @@ import { TaskItemProps } from "@/business/task/TaskItem";
 import TaskItemAction from "@/business/task/TaskItemAction";
 import { TaskDrawerItem, TaskDrawerList } from "@/client/task_compose";
 import LinearProgressWithLabel from "@/components/LinearProgressWithLabel";
-import { TASK_STATUS_ENUM } from "@/constant/task";
 import { Aria2Task } from "@/services/aria2c_api";
 import { parseByteVo } from "@/utils/download";
 import { getTaskName, getTaskProgressColor } from "@/utils/task";

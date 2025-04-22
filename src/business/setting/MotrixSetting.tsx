@@ -7,7 +7,7 @@ import { SettingItem, SettingList } from "@/client/setting_compose";
 import { DialogRef } from "@/components/BaseDialog";
 import { Notice } from "@/components/Notice";
 // import { useMotrix } from "@/hooks/motrix";
-import { openAppDir, openCoreDir, openLogsDir } from "@/services/cmd";
+import { exitApp, openAppDir, openCoreDir, openLogsDir } from "@/services/cmd";
 
 function MotrixSetting() {
   // const { motrix } = useMotrix();
@@ -40,6 +40,7 @@ function MotrixSetting() {
         label={t("setting.CheckForUpdates")}
         onClick={onCheckUpdate}
       />
+      <SettingItem label={t("common.Exit")} onClick={exitApp} />
     </SettingList>
   );
 }

@@ -15,3 +15,8 @@ export const openLogsDir = () => invoke<void>("open_logs_dir");
 export const openAppDir = () => invoke<void>("open_app_dir");
 
 export const openCoreDir = () => invoke<void>("open_core_dir");
+
+export const exitApp = () => invoke<void>("exit_app");
+
+export const patchMotrixConfig = (data: Partial<MotrixConfig>) =>
+  invoke<null>("patch_motrix_config", { data });

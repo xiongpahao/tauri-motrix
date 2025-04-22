@@ -6,11 +6,13 @@ import {
   SvgIcon,
   ThemeProvider,
 } from "@mui/material";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import logoIcon from "@/assets/logo.svg?react";
+import { useMotrix } from "@/hooks/motrix";
 import { useCustomTheme } from "@/hooks/theme";
 import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
@@ -47,10 +49,17 @@ const Aside = styled("aside")(({ theme }) => ({
 }));
 
 function ApplicationLayout() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { theme } = useCustomTheme();
+  const { motrix } = useMotrix();
 
   const routerElements = useRoutes(routers);
+
+  useEffect(() => {
+    if (motrix?.language) {
+      i18n.changeLanguage(motrix.language);
+    }
+  }, [i18n, motrix?.language]);
 
   if (!routerElements) {
     return null;

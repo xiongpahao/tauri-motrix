@@ -1,4 +1,4 @@
-use crate::{utils::dirs, wrap_err};
+use crate::{feat, utils::dirs, wrap_err};
 
 use super::CmdResult;
 
@@ -19,4 +19,9 @@ pub fn open_core_dir() -> CmdResult<()> {
 pub fn open_app_dir() -> CmdResult<()> {
     let app_dir = wrap_err!(dirs::app_home_dir())?;
     wrap_err!(open::that(app_dir))
+}
+
+#[tauri::command]
+pub fn exit_app() {
+    feat::quit(Some(0));
 }

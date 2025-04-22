@@ -1,5 +1,13 @@
 import { GitHub, HelpOutlineRounded } from "@mui/icons-material";
-import { ButtonGroup, Grid, IconButton, useColorScheme } from "@mui/material";
+import {
+  Box,
+  boxClasses,
+  ButtonGroup,
+  Grid,
+  gridClasses,
+  IconButton,
+  useColorScheme,
+} from "@mui/material";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { useLockFn } from "ahooks";
 import { useRef } from "react";
@@ -52,45 +60,29 @@ function SettingsPage() {
     >
       <Grid
         container
-        spacing={2}
+        spacing={1.5}
         sx={{
-          "& .MuiGrid-root": {
+          [`.${gridClasses.root} > .${boxClasses.root}`]: {
             borderRadius: 2,
             marginBottom: 1.5,
             backgroundColor: isDark ? "#282a36" : "#ffffff",
           },
         }}
+        columns={{ xs: 6, sm: 6, md: 12 }}
       >
-        <Grid
-          size={{
-            lg: 4,
-            md: 6,
-            xs: 12,
-          }}
-        >
-          <AppearanceSetting />
+        <Grid size={6}>
+          <Box>
+            <AppearanceSetting />
+          </Box>
+          <Box>
+            <Aria2Setting />
+          </Box>
         </Grid>
 
-        <Grid
-          size={{
-            lg: 4,
-
-            md: 6,
-            xs: 12,
-          }}
-        >
-          <MotrixSetting />
-        </Grid>
-
-        <Grid
-          size={{
-            lg: 4,
-
-            md: 6,
-            xs: 12,
-          }}
-        >
-          <Aria2Setting />
+        <Grid size={6}>
+          <Box>
+            <MotrixSetting />
+          </Box>
         </Grid>
       </Grid>
     </BasePage>

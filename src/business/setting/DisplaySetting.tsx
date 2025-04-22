@@ -9,7 +9,7 @@ import { getLanguage } from "@/services/i18n";
 
 function AppearanceSetting() {
   const { t, i18n } = useTranslation();
-  const { motrix } = useMotrix();
+  const { motrix, patchMotrix } = useMotrix();
 
   return (
     <SettingList title={t("setting.Display")}>
@@ -24,11 +24,9 @@ function AppearanceSetting() {
       <SettingItem label={t("setting.Language")}>
         <Select
           size="small"
-          value={getLanguage(i18n.language)}
-          onChange={(value) => {
-            i18n.changeLanguage(value.target.value);
-          }}
-          sx={{ width: 110, "> div": { py: "7.5px" } }}
+          value={getLanguage(motrix?.language ?? i18n.language)}
+          onChange={(value) => patchMotrix({ language: value.target.value })}
+          sx={{ "> div": { py: "7.5px" } }}
         >
           {AVAILABLE_LANGUAGES.map(({ label, value }) => (
             <MenuItem value={value} key={value}>

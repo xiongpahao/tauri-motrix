@@ -1,7 +1,7 @@
 import { useLockFn } from "ahooks";
 import useSWR from "swr";
 
-import { getMotrixConfig } from "@/services/cmd";
+import { getMotrixConfig, patchMotrixConfig } from "@/services/cmd";
 
 export function useMotrix() {
   const { data: motrix, mutate: mutateMotrix } = useSWR(
@@ -9,14 +9,16 @@ export function useMotrix() {
     getMotrixConfig,
   );
 
-  const patchMotrixConfig = useLockFn(async () => {
-    // TODO
-    mutateMotrix();
-  });
+  const patchMotrix = useLockFn(
+    async (data: Parameters<typeof patchMotrixConfig>[0]) => {
+      await patchMotrixConfig(data);
+      mutateMotrix();
+    },
+  );
 
   return {
     motrix,
     mutateMotrix,
-    patchMotrixConfig,
+    patchMotrix,
   };
 }

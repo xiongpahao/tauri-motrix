@@ -25,6 +25,7 @@ pub async fn patch_motrix(data: IMotrix) -> Result<()> {
     match res {
         Ok(()) => {
             Config::motrix().apply();
+            let _ = Config::motrix().data().save_file();
             Ok(())
         }
         Err(err) => {

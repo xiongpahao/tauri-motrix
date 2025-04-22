@@ -26,6 +26,10 @@ interface Aria2Config {
 interface MotrixConfig {
   aria2_engine: string;
   app_hide_window: boolean;
+  language: string;
+  app_log_level: "silent" | "error" | "warn" | "info" | "debug" | "trace";
+  theme_mode: "light" | "dark" | "system";
+  auto_log_clean: 0 | 1 | 2 | 3;
 }
 
 interface Aria2Option {

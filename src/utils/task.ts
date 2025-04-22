@@ -226,8 +226,13 @@ export const getTaskProgressColor = (
   if (progress === 100) {
     return "success";
   }
-  if (status === TASK_STATUS_ENUM.Pause) {
-    return "secondary";
+
+  switch (status) {
+    case TASK_STATUS_ENUM.Pause:
+      return "secondary";
+    case TASK_STATUS_ENUM.Error:
+      return "error";
+    default:
+      return "primary";
   }
-  return "primary";
 };
