@@ -10,7 +10,7 @@ use crate::{feat, utils::window::create_window};
 use super::i18n::t;
 
 pub fn create_tray(app: &App) -> Result<()> {
-    let quit_i = MenuItem::with_id(app, "quit", t("common.Exit"), true, Some("CmdOrControl+Q"))?;
+    let quit_i = MenuItem::with_id(app, "quit", t("common.Exit"), true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&quit_i])?;
 
     let mut builder = TrayIconBuilder::new()

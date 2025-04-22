@@ -45,10 +45,9 @@ pub fn get_supported_languages() -> Vec<String> {
 }
 
 pub fn get_system_language() -> String {
-    sys_locale::get_locale()
-        .map(|locale| locale.to_lowercase())
-        .and_then(|locale| locale.split(['_', '-']).next().map(String::from))
+    sys_locale::get_locales()
         .filter(|lang| get_supported_languages().contains(lang))
+        .next()
         .unwrap_or_else(|| DEFAULT_LANGUAGE.to_string())
 }
 
@@ -60,22 +59,44 @@ pub fn t(key: &str) -> String {
         .clone()
         .unwrap_or(get_system_language());
 
-    if let Some(text) = TRANSLATIONS
-        .get(&current_language)
-        .and_then(|trans| trans.get(key))
-        .and_then(|val| val.as_str())
-    {
+    if let Some(text) = get_translation(&current_language, key) {
         return text.to_string();
     }
 
     if current_language != DEFAULT_LANGUAGE {
-        if let Some(text) = TRANSLATIONS
-            .get(DEFAULT_LANGUAGE)
-            .and_then(|trans| trans.get(key))
-            .and_then(|val| val.as_str())
-        {
+        if let Some(text) = get_translation(&DEFAULT_LANGUAGE, key) {
             return text.to_string();
         }
     }
     key.to_string()
+}
+
+pub fn get_translation(current_language: &str, key: &str) -> Option<String> {
+    let split_key = key.split('.').collect::<Vec<_>>();
+    TRANSLATIONS
+        .get(&current_language)
+        .and_then(|trans| {
+            split_key
+                .iter()
+                .fold(Some(trans), |acc, &k| acc.and_then(|v| v.get(k)))
+        })
+        .and_then(|val| val.as_str())
+        .map(|s| s.to_string())
+}
+
+// TODO: whether value is only json object or not
+pub fn parse_translation(key: &str, value: Option<Value>) -> String {
+    let mut result = key.to_string();
+    if let Some(map) = value.as_object() {
+        for (k, v) in map {
+            if let Some(v_str) = v.as_str() {
+                result = result.replace(&format!("{{{{{}}}}}", k), v_str);
+            } else if let Some(v_num) = v.as_i64() {
+                result = result.replace(&format!("{{{{{}}}}}", k), &v_num.to_string());
+            } else if let Some(v_bool) = v.as_bool() {
+                result = result.replace(&format!("{{{{{}}}}}", k), &v_bool.to_string());
+            }
+        }
+    }
+    result
 }

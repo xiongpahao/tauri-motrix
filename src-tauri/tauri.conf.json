@@ -37,7 +37,11 @@
     "externalBin": [
       "sidecar/aria2c"
     ],
-    "createUpdaterArtifacts": true
+    "createUpdaterArtifacts": true,
+    "resources": [
+      "resources",
+      "resources/locales/*"
+    ]
   },
   "plugins": {
     "updater": {
