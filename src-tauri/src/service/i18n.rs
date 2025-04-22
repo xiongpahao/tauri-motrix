@@ -71,10 +71,10 @@ pub fn t(key: &str) -> String {
     key.to_string()
 }
 
-pub fn get_translation(current_language: &str, key: &str) -> Option<String> {
+pub fn get_translation(language: &str, key: &str) -> Option<String> {
     let split_key = key.split('.').collect::<Vec<_>>();
     TRANSLATIONS
-        .get(&current_language)
+        .get(language)
         .and_then(|trans| {
             split_key
                 .iter()
@@ -87,7 +87,7 @@ pub fn get_translation(current_language: &str, key: &str) -> Option<String> {
 // TODO: whether value is only json object or not
 pub fn parse_translation(key: &str, value: Option<Value>) -> String {
     let mut result = key.to_string();
-    if let Some(map) = value.as_object() {
+    if let Some(map) = value.unwrap().as_object() {
         for (k, v) in map {
             if let Some(v_str) = v.as_str() {
                 result = result.replace(&format!("{{{{{}}}}}", k), v_str);

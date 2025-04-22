@@ -9,7 +9,7 @@ use log4rs::{
 };
 
 use crate::{
-    config::{Config, IAria2Temp, IMotrix},
+    config::{IAria2Temp, IMotrix},
     log_err, service,
     utils::{
         dirs,

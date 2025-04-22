@@ -24,7 +24,7 @@ pub fn create_tray(app: &App) -> Result<()> {
 
     let tray = builder.build(app)?;
 
-    tray.on_menu_event(|app, event| match event.id.as_ref() {
+    tray.on_menu_event(|_app, event| match event.id.as_ref() {
         "quit" => {
             println!("quit menu item was clicked");
             feat::quit(Some(0));
