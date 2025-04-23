@@ -6,9 +6,6 @@ import ExternalControllerDialog from "@/business/setting/ExternalControllerDialo
 import { SettingItem, SettingList } from "@/client/setting_compose";
 import { DialogRef } from "@/components/BaseDialog";
 import { useAria2 } from "@/hooks/aria2";
-import { patchAria2Config } from "@/services/cmd";
-
-window.a = patchAria2Config;
 
 function Aria2Setting() {
   const { t } = useTranslation();

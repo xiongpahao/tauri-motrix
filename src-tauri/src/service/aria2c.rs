@@ -12,6 +12,14 @@ pub fn get_aria2_client_info() -> (String, String) {
     (server, secret)
 }
 
+fn ensure_prefix(name: &str) -> String {
+    if name.starts_with("aria2.") || name.starts_with("system") {
+        name.to_string()
+    } else {
+        format!("aria2.{}", name)
+    }
+}
+
 pub async fn call(name: &str, data: &[Value]) -> Result<Value> {
     let (server, _secret) = get_aria2_client_info();
 
@@ -22,12 +30,18 @@ pub async fn call(name: &str, data: &[Value]) -> Result<Value> {
 
     let json_rpc_message = json!({
         "jsonrpc": "2.0",
-        "method": name,
+        "method":ensure_prefix(name),
         "id": id,
         "params":data
     });
 
-    println!("json_rpc_message: {}", json_rpc_message.to_string());
+    logging!(
+        info,
+        Type::Engine,
+        true,
+        "json_rpc_message: {}",
+        json_rpc_message.to_string()
+    );
 
     let res = client
         .post(&url)
@@ -42,11 +56,32 @@ pub async fn call(name: &str, data: &[Value]) -> Result<Value> {
         .json::<Value>()
         .await?;
 
-    println!("aria2c call result: {}", res.to_string());
+    logging!(
+        info,
+        Type::Engine,
+        true,
+        "aria2c call result: {}",
+        res.to_string()
+    );
+
+    if res.get("error").is_some() {
+        let error = res.get("error").unwrap();
+        let code = error.get("code").unwrap().as_i64().unwrap();
+        let message = error.get("message").unwrap().as_str().unwrap();
+        logging!(
+            error,
+            Type::Engine,
+            true,
+            "aria2c call error: {} {}",
+            code,
+            message
+        );
+        return Err(anyhow::anyhow!("aria2c call error: {} {}", code, message));
+    }
 
     Ok(res)
 }
 
 pub async fn change_global_option(data: &[Value]) -> Result<Value> {
-    call("aria2c.changeGlobalOption", data).await
+    call("changeGlobalOption", data).await
 }
