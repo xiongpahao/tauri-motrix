@@ -5,10 +5,10 @@ import { revealItemInDir } from "@tauri-apps/plugin-opener";
 import { t } from "i18next";
 import { create } from "zustand";
 
+import { Notice } from "@/components/Notice";
 import { TASK_STATUS_ENUM } from "@/constant/task";
 import {
   addTaskApi,
-  Aria2GlobalStat,
   Aria2Task,
   batchPauseTaskApi,
   batchRemoveTaskApi,
@@ -23,21 +23,17 @@ import {
   waitingTasksApi,
 } from "@/services/aria2c_api";
 import { DownloadOption } from "@/services/aria2c_api";
+import { usePollingStore } from "@/store/polling";
 import { compactUndefined } from "@/utils/compact_undefined";
 import { getTaskFullPath, getTaskName, getTaskUri } from "@/utils/task";
-import { createSimpleMessageFactory, WrapGid } from "@/utils/task";
 
-const DEFAULT_INTERVAL = 1000;
-const MAX_INTERVAL = 6000;
-const MIN_INTERVAL = 500;
+export type WrapGid = [{ gid: string }];
 
 interface TaskStore {
   tasks: Array<Aria2Task>;
   fetchType: TASK_STATUS_ENUM;
   selectedTaskIds: Array<string>;
   selectedTasks: Array<Aria2Task>;
-  timer?: number;
-  interval: number;
   fetchTasks: () => void;
   setFetchType: (type: TASK_STATUS_ENUM) => void;
   handleTaskSelect: (taskId: string) => void;
@@ -49,8 +45,6 @@ interface TaskStore {
   addTask: (url: string, option: DownloadOption) => void;
   getTaskByGid: (gid: string) => Aria2Task;
   registerEvent: () => void;
-  polling: () => void;
-  updateInterval: (stat?: Aria2GlobalStat) => void;
   onDownloadStart: (wrap: WrapGid) => void;
   onDownloadStop: (wrap: WrapGid) => void;
   onDownloadComplete: (wrap: WrapGid) => void;
@@ -59,8 +53,6 @@ interface TaskStore {
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
   selectedTaskIds: [],
-  timer: undefined,
-  interval: DEFAULT_INTERVAL,
   fetchType: TASK_STATUS_ENUM.Active,
   get selectedTasks() {
     const { tasks, selectedTaskIds } = get();
@@ -178,8 +170,19 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
     return task;
   },
-  onDownloadStart: createSimpleMessageFactory("task.StartMessage"),
-  onDownloadStop: createSimpleMessageFactory("task.StopMessage"),
+  async onDownloadStart([{ gid }]) {
+    get().fetchTasks();
+    usePollingStore.getState().resetInterval();
+
+    const task = await taskItemApi({ gid });
+    const taskName = getTaskName(task, "unknown", 16);
+    Notice.success(t("task.StartMessage", { taskName }));
+  },
+  async onDownloadStop([{ gid }]) {
+    const task = await taskItemApi({ gid });
+    const taskName = getTaskName(task, "unknown", 16);
+    Notice.success(t("task.StopMessage", { taskName }));
+  },
   async onDownloadComplete([{ gid }]) {
     get().fetchTasks();
     const task = await taskItemApi({ gid });
@@ -195,38 +198,4 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     addListener("onDownloadStop", onDownloadStop);
     addListener("onDownloadComplete", onDownloadComplete);
   },
-  polling() {
-    const { interval, polling, fetchTasks, timer, registerEvent } = get();
-    if (!timer) {
-      registerEvent();
-    }
-    clearTimeout(timer);
-
-    const newTimer = setTimeout(() => {
-      fetchTasks();
-      polling();
-    }, interval);
-    set({ timer: newTimer });
-  },
-  updateInterval(stat) {
-    const { interval: currentInterval } = get();
-    const numActive =
-      stat?.numActive && !isNaN(Number(stat.numActive))
-        ? Number(stat.numActive)
-        : 0;
-
-    let interval: number;
-    if (numActive > 0) {
-      const newInterval = DEFAULT_INTERVAL - 100 * numActive;
-      interval = Math.min(MAX_INTERVAL, Math.max(MIN_INTERVAL, newInterval));
-    } else {
-      const newInterval = Math.max(MIN_INTERVAL, currentInterval + 100);
-      interval = newInterval;
-    }
-    set({ interval });
-  },
 }));
-
-setTimeout(() => {
-  useTaskStore.getState().polling();
-}, 100);

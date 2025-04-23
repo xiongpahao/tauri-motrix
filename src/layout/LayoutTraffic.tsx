@@ -1,10 +1,8 @@
 import { ArrowDownwardRounded, ArrowUpwardRounded } from "@mui/icons-material";
 import { Box, styled, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import useSWR from "swr";
 
-import { getGlobalStatApi } from "@/services/aria2c_api";
-import { useTaskStore } from "@/store/task";
+import { useAria2StateStore } from "@/store/aria2_state";
 import { parseByteVo } from "@/utils/download";
 
 const SpeedIndicatorRow = styled("section")(() => ({
@@ -33,20 +31,11 @@ const SpeedUnit = styled(Typography)(() => ({
 
 function LayoutTraffic() {
   const { t } = useTranslation();
-  const { updateInterval, interval } = useTaskStore();
 
-  const { data: stat } = useSWR(
-    "getGlobalStat",
-    async () => {
-      const globalStat = await getGlobalStatApi();
-      updateInterval(globalStat);
-      return globalStat;
-    },
-    { refreshInterval: interval },
-  );
+  const { globalStat: stat } = useAria2StateStore();
 
-  const [up, upUnit] = parseByteVo(stat?.uploadSpeed, "/s");
-  const [down, downUnit] = parseByteVo(stat?.downloadSpeed, "/s");
+  const [up, upUnit] = parseByteVo(stat.uploadSpeed, "/s");
+  const [down, downUnit] = parseByteVo(stat.downloadSpeed, "/s");
 
   return (
     <Box
