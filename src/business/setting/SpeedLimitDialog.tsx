@@ -14,6 +14,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
+import { Notice } from "@/components/Notice";
 import { SPEED_UNITS, SpeedUnit } from "@/constant/speed";
 import { useAria2 } from "@/hooks/aria2";
 import { parseByte, toByte } from "@/utils/download";
@@ -60,6 +61,7 @@ function SpeedLimitDialog(props: { ref: Ref<DialogRef> }) {
         "max-upload-limit": upload,
         "max-download-limit": download,
       });
+      Notice.success(t("common.SaveSuccess"));
       setFalse();
     },
   );

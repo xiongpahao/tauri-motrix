@@ -40,11 +40,12 @@ function MotrixSetting() {
           value={motrix?.app_log_level ?? "info"}
           size="small"
           sx={{ width: 100, "> div": { py: "7.5px" } }}
-          onChange={(e) =>
-            patchMotrix({
+          onChange={async (e) => {
+            await patchMotrix({
               app_log_level: e.target.value as MotrixConfig["app_log_level"],
-            })
-          }
+            });
+            Notice.success(t("common.SaveSuccess"));
+          }}
         >
           {LOG_LEVELS.map(({ label, value }) => (
             <MenuItem value={value}>{label}</MenuItem>

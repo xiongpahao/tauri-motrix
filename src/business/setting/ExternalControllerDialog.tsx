@@ -6,7 +6,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useBoolean, useLockFn } from "ahooks";
-import { Ref, useImperativeHandle, useState } from "react";
+import { Ref, useEffect, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
@@ -19,7 +19,13 @@ function ExternalControllerDialog(props: { ref: Ref<DialogRef> }) {
 
   const { aria2Info, patchInfo } = useAria2Info();
 
-  const [controller, setController] = useState(aria2Info?.server ?? "");
+  const [controller, setController] = useState("");
+
+  useEffect(() => {
+    if (aria2Info?.server) {
+      setController(aria2Info.server);
+    }
+  }, [aria2Info?.server]);
 
   useImperativeHandle(props.ref, () => ({
     open: setTrue,
@@ -27,6 +33,8 @@ function ExternalControllerDialog(props: { ref: Ref<DialogRef> }) {
   }));
 
   const onSave = useLockFn(async () => {
+    Notice.error("unsupported");
+    return;
     try {
       await patchInfo({ "external-controller": controller });
       Notice.success(t("setting.ExternalControllerAddressModified"), 1000);

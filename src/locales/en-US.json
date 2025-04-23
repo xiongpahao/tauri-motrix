@@ -73,7 +73,8 @@
         "Complete": "Complete",
         "Update": "Update",
         "Ok": "OK",
-        "Exit": "Exit"
+        "Exit": "Exit",
+        "SaveSuccess": "Save Success"
     },
     "update": {
         "GotoReleasePage": "Go to release page",
