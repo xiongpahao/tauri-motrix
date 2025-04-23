@@ -10,6 +10,7 @@ export interface PollingStore {
   polling: () => void;
   updateInterval: (stat?: Aria2GlobalStat) => void;
   resetInterval: () => void;
+  stop: () => void;
 }
 
 const DEFAULT_INTERVAL = 1000;
@@ -21,20 +22,16 @@ export const usePollingStore = create<PollingStore>((set, get) => ({
   interval: DEFAULT_INTERVAL,
 
   polling() {
-    const { interval, polling, timer } = get();
-    const { fetchTasks, registerEvent } = useTaskStore.getState();
+    const { interval, polling } = get();
+    const { fetchTasks } = useTaskStore.getState();
     const { fetchGlobalStat } = useAria2StateStore.getState();
-    if (!timer) {
-      registerEvent();
-    }
-    clearTimeout(timer);
 
-    const newTimer = setTimeout(() => {
+    const timer = setTimeout(() => {
       fetchTasks();
       fetchGlobalStat();
       polling();
     }, interval);
-    set({ timer: newTimer });
+    set({ timer });
   },
   updateInterval(stat) {
     const { interval: currentInterval } = get();
@@ -56,8 +53,11 @@ export const usePollingStore = create<PollingStore>((set, get) => ({
   resetInterval() {
     set({ interval: DEFAULT_INTERVAL });
   },
+  stop() {
+    const { timer } = get();
+    if (timer) {
+      clearTimeout(timer);
+      set({ timer: undefined });
+    }
+  },
 }));
-
-setTimeout(() => {
-  usePollingStore.getState().polling();
-}, 100);

@@ -18,6 +18,9 @@ import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
 import TitleBar from "@/layout/TitleBar";
 import { routers } from "@/routes/application";
+import { useTaskStore } from "@/store/task";
+import { useMount } from "ahooks";
+import { usePollingStore } from "@/store/polling";
 
 const TheLogo = styled("section")(() => ({
   display: "flex",
@@ -52,6 +55,8 @@ function ApplicationLayout() {
   const { t, i18n } = useTranslation();
   const { theme } = useCustomTheme();
   const { motrix } = useMotrix();
+  const { registerEvent } = useTaskStore();
+  const { polling, stop } = usePollingStore();
 
   const routerElements = useRoutes(routers);
 
@@ -60,6 +65,18 @@ function ApplicationLayout() {
       i18n.changeLanguage(motrix.language);
     }
   }, [i18n, motrix?.language]);
+
+  useEffect(() => {
+    polling();
+
+    return () => {
+      stop();
+    };
+  }, [polling, stop]);
+
+  useMount(() => {
+    registerEvent();
+  });
 
   if (!routerElements) {
     return null;
