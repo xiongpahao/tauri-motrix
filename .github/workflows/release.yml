@@ -69,7 +69,7 @@ jobs:
           tagName: v__VERSION__
           releaseName: "Tauri Motrix v__VERSION__"
           releaseBody: "More new features are now supported."
-          tauriScript: pnpm
+          tauriScript: pnpm tauri
           args: --target ${{ matrix.target }}
 
   release-update:
