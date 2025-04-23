@@ -10,10 +10,12 @@ import { TASK_STATUS_ENUM } from "@/constant/task";
 import {
   addTaskApi,
   Aria2Task,
+  batchForcePauseTaskApi,
   batchPauseTaskApi,
   batchRemoveTaskApi,
   batchResumeTaskApi,
   downloadingTasksApi,
+  forcePauseTaskApi,
   getAria2,
   pauseTaskApi,
   removeTaskApi,
@@ -144,9 +146,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
 
     if (!taskId) {
+      await batchForcePauseTaskApi(selectedTaskIds);
       await batchRemoveTaskApi(selectedTaskIds);
+
       set({ selectedTaskIds: [] });
     } else {
+      await forcePauseTaskApi(taskId);
       await removeTaskApi(taskId);
     }
 
