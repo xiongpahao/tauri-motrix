@@ -6,13 +6,16 @@ import {
   SvgIcon,
   ThemeProvider,
 } from "@mui/material";
+import { listen } from "@tauri-apps/api/event";
 import { useMount } from "ahooks";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
 import { SWRConfig } from "swr";
 
 import logoIcon from "@/assets/logo.svg?react";
+import AddTaskDialog from "@/business/task/AddTaskDialog";
+import { DialogRef } from "@/components/BaseDialog";
 import { useMotrix } from "@/hooks/motrix";
 import { useCustomTheme } from "@/hooks/theme";
 import LayoutItem from "@/layout/LayoutItem";
@@ -57,8 +60,19 @@ function Application() {
   const { motrix } = useMotrix();
   const { registerEvent } = useTaskStore();
   const { polling, stop } = usePollingStore();
+  const addRef = useRef<DialogRef>(null);
 
   const routerElements = useRoutes(routers);
+
+  useEffect(() => {
+    const unlisten = listen("motrix://open-add-task-dialog", () => {
+      addRef.current?.open();
+    });
+
+    return () => {
+      unlisten.then((unlisten) => unlisten());
+    };
+  }, []);
 
   useEffect(() => {
     if (motrix?.language) {
@@ -85,6 +99,7 @@ function Application() {
   return (
     <SWRConfig value={{ errorRetryCount: 3 }}>
       <ThemeProvider theme={theme}>
+        <AddTaskDialog ref={addRef} />
         <Paper
           onContextMenu={(e) => {
             e.preventDefault();

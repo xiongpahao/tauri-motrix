@@ -17,9 +17,9 @@ function AppearanceSetting() {
         <ThemeModeSwitch />
       </SettingItem>
 
-      <SettingItem label={t("setting.AutoHideWindow")}>
+      {/* <SettingItem label={t("setting.AutoHideWindow")}>
         <Switch checked={!!motrix?.app_hide_window} />
-      </SettingItem>
+      </SettingItem> */}
 
       <SettingItem label={t("setting.Language")}>
         <Select
