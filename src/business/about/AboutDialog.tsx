@@ -12,7 +12,7 @@ function AboutDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();
   const [open, { setFalse, setTrue }] = useBoolean();
 
-  const { version, versionData } = useAria2();
+  const { version, enabledFeatures } = useAria2();
 
   useImperativeHandle(props.ref, () => ({
     open: setTrue,
@@ -43,7 +43,7 @@ function AboutDialog(props: { ref: Ref<DialogRef> }) {
           flexWrap: "wrap",
         }}
       >
-        {versionData?.enabledFeatures.map((feature) => (
+        {enabledFeatures?.map((feature) => (
           <Typography key={feature} variant="body2">
             {feature}
           </Typography>

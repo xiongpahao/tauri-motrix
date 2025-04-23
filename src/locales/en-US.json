@@ -28,7 +28,10 @@
         "ExternalController": "External Controller",
         "ExternalControllerAddressModified": "External controller address modified",
         "CheckForUpdates": "Check for Updates",
-        "LogLevelInfo": "Log Level"
+        "LogLevelInfo": "Log Level",
+        "SpeedLimit": "Speed Limit",
+        "UploadSpeedLimit": "Upload Speed Limit",
+        "DownloadSpeedLimit": "Download Speed Limit"
     },
     "task": {
         "CloseAll": "Close All Tasks",

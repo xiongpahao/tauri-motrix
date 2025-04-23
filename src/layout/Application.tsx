@@ -6,6 +6,7 @@ import {
   SvgIcon,
   ThemeProvider,
 } from "@mui/material";
+import { useMount } from "ahooks";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useRoutes } from "react-router-dom";
@@ -18,9 +19,8 @@ import LayoutItem from "@/layout/LayoutItem";
 import LayoutTraffic from "@/layout/LayoutTraffic";
 import TitleBar from "@/layout/TitleBar";
 import { routers } from "@/routes/application";
-import { useTaskStore } from "@/store/task";
-import { useMount } from "ahooks";
 import { usePollingStore } from "@/store/polling";
+import { useTaskStore } from "@/store/task";
 
 const TheLogo = styled("section")(() => ({
   display: "flex",
@@ -51,7 +51,7 @@ const Aside = styled("aside")(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
-function ApplicationLayout() {
+function Application() {
   const { t, i18n } = useTranslation();
   const { theme } = useCustomTheme();
   const { motrix } = useMotrix();
@@ -144,4 +144,4 @@ function ApplicationLayout() {
   );
 }
 
-export default ApplicationLayout;
+export default Application;

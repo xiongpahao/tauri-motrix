@@ -15,23 +15,23 @@ export function useAria2() {
     getVersionApi,
   );
 
-  const patchConfig = useLockFn(
+  const patchAria2 = useLockFn(
     async (data: Parameters<typeof patchAria2Config>[0]) => {
       await patchAria2Config(data);
       mutateAria2();
-      getAria2(true);
     },
   );
 
   const version = versionData?.version;
+  const enabledFeatures = versionData?.enabledFeatures;
 
   return {
     aria2,
     mutateAria2,
     version,
-    versionData,
+    enabledFeatures,
     mutateVersion,
-    patchConfig,
+    patchAria2,
   };
 }
 

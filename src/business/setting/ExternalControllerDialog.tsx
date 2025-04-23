@@ -5,7 +5,7 @@ import {
   ListItemText,
   TextField,
 } from "@mui/material";
-import { useLockFn } from "ahooks";
+import { useBoolean, useLockFn } from "ahooks";
 import { Ref, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -15,26 +15,22 @@ import { useAria2Info } from "@/hooks/aria2";
 
 function ExternalControllerDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
+  const [open, { setFalse, setTrue }] = useBoolean();
 
   const { aria2Info, patchInfo } = useAria2Info();
 
   const [controller, setController] = useState(aria2Info?.server ?? "");
 
   useImperativeHandle(props.ref, () => ({
-    open() {
-      setOpen(true);
-    },
-    close() {
-      setOpen(false);
-    },
+    open: setTrue,
+    close: setFalse,
   }));
 
   const onSave = useLockFn(async () => {
     try {
       await patchInfo({ "external-controller": controller });
       Notice.success(t("setting.ExternalControllerAddressModified"), 1000);
-      setOpen(false);
+      setFalse();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       Notice.error(err?.message || err?.toString(), 4000);
@@ -48,8 +44,8 @@ function ExternalControllerDialog(props: { ref: Ref<DialogRef> }) {
       contentSx={{ width: 400 }}
       okBtn={t("common.Save")}
       cancelBtn={t("common.Cancel")}
-      onClose={() => setOpen(false)}
-      onCancel={() => setOpen(false)}
+      onClose={setFalse}
+      onCancel={setFalse}
       onOk={onSave}
     >
       <List
