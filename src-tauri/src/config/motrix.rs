@@ -46,6 +46,7 @@ impl IMotrix {
             app_hide_window: Some(false),
             language: i18n::get_system_language().into(),
             theme_mode: Some("system".into()),
+            app_log_level: Some("info".into()),
             ..Self::default()
         }
     }

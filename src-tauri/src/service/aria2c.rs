@@ -12,7 +12,7 @@ pub fn get_aria2_client_info() -> (String, String) {
     (server, secret)
 }
 
-fn ensure_prefix(name: &str) -> String {
+pub fn ensure_prefix(name: &str) -> String {
     if name.starts_with("aria2.") || name.starts_with("system") {
         name.to_string()
     } else {

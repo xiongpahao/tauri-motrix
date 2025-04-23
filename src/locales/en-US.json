@@ -27,7 +27,8 @@
         "External": "External",
         "ExternalController": "External Controller",
         "ExternalControllerAddressModified": "External controller address modified",
-        "CheckForUpdates": "Check for Updates"
+        "CheckForUpdates": "Check for Updates",
+        "LogLevelInfo": "Log Level"
     },
     "task": {
         "CloseAll": "Close All Tasks",

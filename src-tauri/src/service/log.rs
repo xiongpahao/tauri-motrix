@@ -85,7 +85,7 @@ pub fn get_log_level() -> LevelFilter {
         match level.to_lowercase().as_str() {
             "silent" => LevelFilter::Off,
             "error" => LevelFilter::Error,
-            "warn" => LevelFilter::Warn,
+            "warning" => LevelFilter::Warn,
             "info" => LevelFilter::Info,
             "debug" => LevelFilter::Debug,
             "trace" => LevelFilter::Trace,

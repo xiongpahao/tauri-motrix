@@ -1,3 +1,4 @@
+import { MenuItem, Select } from "@mui/material";
 import { check as checkUpdate } from "@tauri-apps/plugin-updater";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -6,11 +7,12 @@ import UpdateViewer from "@/business/update/UpdateViewer";
 import { SettingItem, SettingList } from "@/client/setting_compose";
 import { DialogRef } from "@/components/BaseDialog";
 import { Notice } from "@/components/Notice";
-// import { useMotrix } from "@/hooks/motrix";
+import { LOG_LEVELS } from "@/constant/log";
+import { useMotrix } from "@/hooks/motrix";
 import { exitApp, openAppDir, openCoreDir, openLogsDir } from "@/services/cmd";
 
 function MotrixSetting() {
-  // const { motrix } = useMotrix();
+  const { motrix, patchMotrix } = useMotrix();
   const { t } = useTranslation();
 
   const updateRef = useRef<DialogRef>(null);
@@ -32,6 +34,23 @@ function MotrixSetting() {
   return (
     <SettingList title={t("setting.Motrix")}>
       <UpdateViewer ref={updateRef} />
+
+      <SettingItem label={t("setting.LogLevelInfo")}>
+        <Select
+          value={motrix?.app_log_level ?? "info"}
+          size="small"
+          sx={{ width: 100, "> div": { py: "7.5px" } }}
+          onChange={(e) =>
+            patchMotrix({
+              app_log_level: e.target.value as MotrixConfig["app_log_level"],
+            })
+          }
+        >
+          {LOG_LEVELS.map(({ label, value }) => (
+            <MenuItem value={value}>{label}</MenuItem>
+          ))}
+        </Select>
+      </SettingItem>
 
       <SettingItem label={t("setting.OpenConfDir")} onClick={openAppDir} />
       <SettingItem label={t("setting.OpenCoreDir")} onClick={openCoreDir} />
