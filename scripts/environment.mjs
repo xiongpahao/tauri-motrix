@@ -32,7 +32,9 @@ const ARCH_MAP = {
 };
 
 // ci/cd environment argument
-const _target = argv[1];
+// why the splice start to 2?
+// because nodejs process.argv[0] is nodejs path, and argv[1] is script path
+const _target = argv.splice(2)[1];
 
 export const platform = _target ? PLATFORM_MAP[_target] : _platform;
 export const arch = _target ? ARCH_MAP[_target] : _arch;
