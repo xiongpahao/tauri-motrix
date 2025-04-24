@@ -1,3 +1,4 @@
+// @ts-check
 import { context, getOctokit } from "@actions/github";
 import process from "process";
 
@@ -15,7 +16,7 @@ const ALPHA_UPDATE_JSON_FILE = "update.json";
  * @typedef {import("@actions/github")["context"]} Context
  * @typedef {Context["repo"]["repo"]} Repo
  * @typedef {Context["repo"]["owner"]} Owner
- * @typedef {{name: string;commit: {sha: string;url: string;};zipball_url: string;tarball_url: string;node_id: string;}} tag
+ * @typedef {{name: string;commit: {sha: string;url: string;};zipball_url: string;tarball_url: string;node_id: string;}} Tag
  */
 
 async function resolveUpdater() {
@@ -85,7 +86,7 @@ async function resolveUpdater() {
  *
  * @param {ReturnType<import("@actions/github")["getOctokit"]>} github
  * @param {{owner:Owner;repo:Repo}} options
- * @param {Tag[] | void} tag
+ * @param {Tag | void} tag
  * @param {boolean} isAlpha
  */
 async function processRelease(github, options, tag, isAlpha) {
@@ -156,16 +157,18 @@ async function processRelease(github, options, tag, isAlpha) {
     );
 
     // Try to get the existing release
-    const { data: updateRelease } = await github.rest.repos
+    const updateRelease = await github.rest.repos
       .getReleaseByTag({
         ...options,
         tag: releaseTag,
       })
       .then(
-        () =>
+        ({ data }) => {
           console.log(
-            `Found existing ${releaseTag} release with ID: ${updateRelease.id}`,
-          ),
+            `Found existing ${releaseTag} release with ID: ${data.id}`,
+          );
+          return data;
+        },
         async (err) => {
           if (err.status === 404) {
             console.log(
@@ -232,4 +235,4 @@ async function processRelease(github, options, tag, isAlpha) {
   }
 }
 
-resolveUpdater().catch(console.err);
+resolveUpdater().catch(console.error);
