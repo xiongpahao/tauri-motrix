@@ -1,5 +1,4 @@
-import { context } from "@actions/github";
-import { getOctokit } from "@actions/github";
+import { context, getOctokit } from "@actions/github";
 import process from "process";
 
 import { resolveUpdateLog } from "./update_log.mjs";
@@ -118,13 +117,11 @@ async function processRelease(github, options, tag, isAlpha) {
       // Process all the platform URL and signature data
       // win64 url
       if (name.endsWith("x64-setup.exe")) {
-        updateData.platforms.win64.url = browser_download_url;
         updateData.platforms["windows-x86_64"].url = browser_download_url;
       }
       // win64 signature
       if (name.endsWith("x64-setup.exe.sig")) {
         const sig = await getSignature(browser_download_url);
-        updateData.platforms.win64.signature = sig;
         updateData.platforms["windows-x86_64"].signature = sig;
       }
 
