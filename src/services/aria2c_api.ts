@@ -198,6 +198,11 @@ export const removeTaskApi = async (gid: string) => {
   return call("remove", gid);
 };
 
+export const removeDownloadResultTaskApi = async (gid: string) => {
+  const { call } = await getAria2();
+  return call("removeDownloadResult", gid);
+};
+
 export const batchRemoveTaskApi = async (gids: string[]) => {
   const { multiCall } = await getAria2();
   return multiCall(gids.map((gid) => ({ method: "remove", params: [gid] })));
@@ -211,6 +216,11 @@ export const getVersionApi = async () => {
 export const getOptionApi = async (gid: string) => {
   const { call } = await getAria2();
   return call<Aria2Option>("getGlobalOption", gid);
+};
+
+export const saveSessionApi = async () => {
+  const { call } = await getAria2();
+  return call<"OK">("saveSession");
 };
 
 getAria2().then(({ listMethods, listNotifications }) => {

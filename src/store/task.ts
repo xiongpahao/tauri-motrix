@@ -18,8 +18,10 @@ import {
   forcePauseTaskApi,
   getAria2,
   pauseTaskApi,
+  removeDownloadResultTaskApi,
   removeTaskApi,
   resumeTaskApi,
+  saveSessionApi,
   stoppedTasksApi,
   taskItemApi,
   waitingTasksApi,
@@ -101,7 +103,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     set({ fetchType: type, selectedTaskIds: [] });
     await get().fetchTasks();
   },
-  async handleTaskPause(taskId?: string) {
+  async handleTaskPause(taskId) {
     if (taskId) {
       await pauseTaskApi(taskId);
     } else {
@@ -119,6 +121,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
     await get().fetchTasks();
   },
+  // TODO: to be renovated
   async handleTaskDelete(taskId) {
     const { getTaskByGid, selectedTaskIds, fetchTasks } = get();
 
@@ -151,16 +154,33 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
       set({ selectedTaskIds: [] });
     } else {
-      await forcePauseTaskApi(taskId);
-      await removeTaskApi(taskId);
+      const task = getTaskByGid(taskId);
+
+      if (task.status === TASK_STATUS_ENUM.Active) {
+        await forcePauseTaskApi(taskId);
+      }
+
+      if (
+        [
+          TASK_STATUS_ENUM.Error,
+          TASK_STATUS_ENUM.Done,
+          TASK_STATUS_ENUM.Recycle,
+        ].includes(task.status as TASK_STATUS_ENUM)
+      ) {
+        await removeDownloadResultTaskApi(taskId);
+      } else {
+        await removeTaskApi(taskId);
+      }
     }
 
+    await saveSessionApi();
     await fetchTasks();
   },
   async openTaskFile(taskId) {
     const task = get().getTaskByGid(taskId);
     const path = await getTaskFullPath(task);
-    await revealItemInDir(path);
+
+    await revealItemInDir(path).catch((e) => Notice.error(e));
   },
   async copyTaskLink(taskId) {
     const task = get().getTaskByGid(taskId);
