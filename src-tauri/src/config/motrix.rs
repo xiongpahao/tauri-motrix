@@ -53,6 +53,8 @@ impl IMotrix {
                 }
 
                 config = serde_yaml::from_value(config_value).unwrap_or(config);
+
+                logging!(info, Type::Core, true, "Finally config: {:?}", config);
                 config
             }
             Err(err) => {
@@ -70,6 +72,7 @@ impl IMotrix {
             theme_mode: Some("system".into()),
             app_log_level: Some("info".into()),
             enable_auto_launch: Some(false),
+            auto_log_clean: Some(3),
             ..Self::default()
         }
     }
