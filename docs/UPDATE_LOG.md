@@ -1,5 +1,9 @@
 # Update Log
 
+## v0.1.1
+
+- After updating the language, the menu language will also change.
+
 ## v0.1.0
 
 - 🎨 Material Design Theme (MUI).
