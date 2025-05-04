@@ -2,7 +2,7 @@ use anyhow::Result;
 use tauri::{
     menu::{Menu, MenuEvent, MenuItem},
     tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent},
-    App, AppHandle, Emitter, Wry,
+    App, AppHandle, Emitter, Listener, Wry,
 };
 
 use crate::{core::handle, feat, utils::window::create_window};
@@ -61,14 +61,22 @@ fn on_menu_event(_: &AppHandle, event: MenuEvent) {
         }
         "add_task" => {
             println!("add task menu item was clicked");
-            create_window(true);
+            let minimized = create_window(true);
 
-            // TODO: await
             let _ = handle::Handle::global().get_window().map(|window| {
-                std::thread::spawn(move || {
-                    std::thread::sleep(std::time::Duration::from_secs(1));
-                    window.emit("motrix://open-add-task-dialog", "").unwrap();
-                });
+                // Check if window is ready before emitting the event
+                let window_clone = window.clone();
+                const ADD_TASK_DIALOG: &str = "motrix://open-add-task-dialog";
+                let add_fn = move || window_clone.emit(ADD_TASK_DIALOG, ()).unwrap();
+
+                if minimized {
+                    add_fn();
+                } else {
+                    window.once("motrix://web-ready", move |_| {
+                        // Now the DOM is ready, we can emit the event
+                        add_fn();
+                    });
+                }
             });
         }
         _ => {

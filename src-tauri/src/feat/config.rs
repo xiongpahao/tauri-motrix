@@ -13,6 +13,9 @@ use crate::{
 #[derive(Clone, Copy)]
 enum UpdateFlags {
     None = 0,
+    // RestartCore = 1 << 0,
+    // Aria2Config = 1 << 1,
+    // MotrixConfig = 1 << 2,
     Launch = 1 << 3,
     HideWindow = 1 << 4,
     TrayMenu = 1 << 5,
