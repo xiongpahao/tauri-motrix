@@ -17,8 +17,7 @@ enum UpdateFlags {
     // Aria2Config = 1 << 1,
     // MotrixConfig = 1 << 2,
     Launch = 1 << 3,
-    HideWindow = 1 << 4,
-    TrayMenu = 1 << 5,
+    TrayMenu = 1 << 4,
 }
 
 /// expose outside for motrix config
@@ -27,7 +26,6 @@ pub async fn patch_motrix(data: IMotrix) -> Result<()> {
 
     let language = data.language;
     let auto_launch = data.enable_auto_launch;
-    let app_hide_window = data.app_hide_window;
 
     let res: Result<()> = {
         let mut flag_signal: i32 = UpdateFlags::None as i32;
@@ -40,17 +38,9 @@ pub async fn patch_motrix(data: IMotrix) -> Result<()> {
             flag_signal |= UpdateFlags::Launch as i32;
         }
 
-        if app_hide_window.is_some() {
-            flag_signal |= UpdateFlags::HideWindow as i32;
-        }
-
         // Process updates based on flags
         if (flag_signal & (UpdateFlags::Launch as i32)) != 0 {
             sys_opt::SysOpt::global().update_launch()?;
-        }
-
-        if (flag_signal & (UpdateFlags::HideWindow as i32)) != 0 {
-            // TODO
         }
 
         if (flag_signal & (UpdateFlags::TrayMenu as i32)) != 0 {
