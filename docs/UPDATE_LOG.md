@@ -5,7 +5,6 @@
 - After updating the language, the menu language will also change.
 - Added download of atomic charts in Task Details.
 - Auto Launch
-- Auto Hide Window
 
 ## v0.1.0
 
