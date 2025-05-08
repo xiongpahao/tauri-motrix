@@ -1,5 +1,9 @@
 # Update Log
 
+## v0.1.2
+
+- Fixed crash when the app init log. (#1)
+
 ## v0.1.1
 
 - After updating the language, the menu language will also change.
