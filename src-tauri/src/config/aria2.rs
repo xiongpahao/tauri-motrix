@@ -14,6 +14,11 @@ pub struct IAria2Temp(pub HashMap<String, String>);
 impl IAria2Temp {
     pub fn new() -> Self {
         let aria2_path = aria2_path().unwrap();
+
+        if !aria2_path.exists() {
+            return Self::template();
+        }
+
         let aria2_path = path_to_str(&aria2_path).unwrap();
 
         let str = read_to_string(aria2_path).unwrap();
