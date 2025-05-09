@@ -7,6 +7,11 @@ describe("Notice Component", () => {
     cleanup();
     document.querySelector("#notice-container")?.firstChild?.remove();
   });
+
+  afterAll(() => {
+    document.querySelector("#notice-container")?.remove();
+  });
+
   it("should renders an info message correctly", () => {
     act(() => {
       Notice.info("Info Message");

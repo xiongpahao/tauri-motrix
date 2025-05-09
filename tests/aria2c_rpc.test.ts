@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { mockIPC } from "@tauri-apps/api/mocks";
+import { clearMocks, mockRPC } from "@tauri-motrix/aria2/mocks";
 
 beforeAll(() => {
   mockIPC((cmd) => {
@@ -69,4 +70,50 @@ describe("getAria2 fn", () => {
   });
 });
 
-describe("Aria2 api", () => {});
+describe("Aria2 api", () => {
+  beforeEach(() => {
+    mockRPC((method) => {
+      switch (method) {
+        case "aria2.custom":
+          return "OK";
+        case "system.listNotifications":
+          return ["aria2.custom"];
+        case "aria2.tellActive":
+          return "tellActive is OK";
+        case "aria2.tellWaiting":
+          return "tellWaiting is OK";
+      }
+    });
+  });
+
+  afterEach(() => {
+    clearMocks();
+  });
+  it("should enable to mock", async () => {
+    const { getAria2 } = await import("@/services/aria2c_api");
+    const { call } = await getAria2();
+
+    expect(call("custom")).resolves.toEqual("OK");
+  });
+
+  it("should get listNotifications", async () => {
+    const { getAria2 } = await import("@/services/aria2c_api");
+    const { listNotifications } = await getAria2();
+
+    expect(listNotifications()).resolves.toEqual(["aria2.custom"]);
+  });
+
+  it("should get tasks", async () => {
+    const { downloadingTasksApi } = await import("@/services/aria2c_api");
+
+    expect(downloadingTasksApi()).resolves.toEqual([
+      ["tellActive is OK"],
+      ["tellWaiting is OK"],
+    ]);
+  });
+
+  it("should undefined for not mock", async () => {
+    const { saveSessionApi } = await import("@/services/aria2c_api");
+    expect(saveSessionApi()).resolves.toBeUndefined();
+  });
+});
