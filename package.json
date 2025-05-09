@@ -90,5 +90,5 @@
       "react-dom": "$react-dom"
     }
   },
-  "packageManager": "pnpm@10.8.0"
+  "packageManager": "pnpm@10.10.0"
 }
