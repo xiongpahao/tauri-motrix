@@ -122,8 +122,40 @@ impl fmt::Display for IAria2Temp {
 }
 
 // expose to web
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct Aria2Info {
     pub port: u16,
     pub server: String,
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::HashMap;
+
+    use crate::config::Aria2Info;
+
+    use super::IAria2Temp;
+
+    #[test]
+    fn test_get_client_info() {
+        let mut map = HashMap::new();
+        map.insert("rpc-listen-port".into(), "2239".into());
+        let aria2 = IAria2Temp(map);
+
+        assert_eq!(
+            aria2.get_client_info(),
+            Aria2Info {
+                port: 2239,
+                server: "127.0.0.1:2239".into()
+            }
+        );
+    }
+
+    #[test]
+    fn test_guard_port() {
+        let mut map: HashMap<String, String> = HashMap::new();
+        map.insert("rpc-listen-port".into(), "1234".into());
+
+        assert_eq!(IAria2Temp::guard_port(&map), 1234);
+    }
 }

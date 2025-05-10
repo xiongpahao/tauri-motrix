@@ -98,3 +98,22 @@ impl IMotrix {
         patch!(enable_auto_launch);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::IMotrix;
+
+    #[test]
+    fn test_patch_config() {
+        let mut motrix = IMotrix {
+            ..Default::default()
+        };
+
+        motrix.patch_config(IMotrix {
+            theme_mode: Some("light".into()),
+            ..Default::default()
+        });
+
+        assert_eq!(motrix.theme_mode.unwrap(), "light")
+    }
+}
