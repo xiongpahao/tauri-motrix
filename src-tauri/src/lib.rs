@@ -50,6 +50,19 @@ pub fn run() {
                 api.prevent_exit();
             }
         }
+        tauri::RunEvent::WindowEvent { label, event, .. } => {
+            if label == "main" {
+                match event {
+                    tauri::WindowEvent::CloseRequested { api, .. } => {
+                        api.prevent_close();
+                        let window = core::handle::Handle::global().get_window().unwrap();
+                        let _ = window.hide();
+                    }
+                    _ => {}
+                }
+            }
+        }
+
         _ => {}
     });
 }
