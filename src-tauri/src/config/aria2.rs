@@ -25,6 +25,7 @@ impl IAria2Temp {
         let template = Self::template();
         let mut map = template.0;
 
+        let mut is_changed = false;
         for line in str.lines() {
             if line.starts_with('#') || line.is_empty() {
                 continue;
@@ -35,9 +36,16 @@ impl IAria2Temp {
             let value = split.next().unwrap().trim().to_string();
 
             map.insert(key, value);
+            is_changed = true;
         }
 
-        Self(map)
+        let aria2_instance = Self(map);
+
+        if is_changed {
+            let _ = Self::save_file(&aria2_instance);
+        }
+
+        aria2_instance
     }
 
     pub fn template() -> Self {
