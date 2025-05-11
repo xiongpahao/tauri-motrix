@@ -223,7 +223,12 @@ export const saveSessionApi = async () => {
   return call<"OK">("saveSession");
 };
 
-getAria2().then(({ listMethods, listNotifications }) => {
-  listMethods().then((res) => console.log("aria2 methods: ", res));
-  listNotifications().then((res) => console.log("aria2 notifications: ", res));
-});
+// @ts-expect-error only not test
+if (process.env.NODE_ENV !== "test") {
+  getAria2().then(({ listMethods, listNotifications }) => {
+    listMethods().then((res) => console.log("aria2 methods: ", res));
+    listNotifications().then((res) =>
+      console.log("aria2 notifications: ", res),
+    );
+  });
+}

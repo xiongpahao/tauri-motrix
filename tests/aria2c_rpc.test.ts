@@ -2,6 +2,12 @@ import { invoke } from "@tauri-apps/api/core";
 import { mockIPC } from "@tauri-apps/api/mocks";
 import { clearMocks, mockRPC } from "@tauri-motrix/aria2/mocks";
 
+import {
+  downloadingTasksApi,
+  getAria2,
+  saveSessionApi,
+} from "@/services/aria2c_api";
+
 beforeAll(() => {
   mockIPC((cmd) => {
     if (cmd === "get_aria2_info") {
@@ -24,10 +30,6 @@ describe("getAria2 fn", () => {
   });
 
   it("should call getAria2", async () => {
-    // why call it now?
-    // because the aria2c_api file called invoke in first.
-    const { getAria2 } = await import("@/services/aria2c_api");
-
     // @ts-expect-error jest runtime
     globalThis.fetch = jest.fn(() =>
       Promise.resolve({
@@ -40,8 +42,6 @@ describe("getAria2 fn", () => {
   });
 
   it("should call aria2 version", async () => {
-    const { getAria2 } = await import("@/services/aria2c_api");
-
     const getVersionData = {
       enabledFeatures: [
         "Async DNS",
@@ -90,22 +90,18 @@ describe("Aria2 api", () => {
     clearMocks();
   });
   it("should enable to mock", async () => {
-    const { getAria2 } = await import("@/services/aria2c_api");
     const { call } = await getAria2();
 
     expect(call("custom")).resolves.toEqual("OK");
   });
 
   it("should get listNotifications", async () => {
-    const { getAria2 } = await import("@/services/aria2c_api");
     const { listNotifications } = await getAria2();
 
     expect(listNotifications()).resolves.toEqual(["aria2.custom"]);
   });
 
   it("should get tasks", async () => {
-    const { downloadingTasksApi } = await import("@/services/aria2c_api");
-
     expect(downloadingTasksApi()).resolves.toEqual([
       ["tellActive is OK"],
       ["tellWaiting is OK"],
@@ -113,7 +109,6 @@ describe("Aria2 api", () => {
   });
 
   it("should undefined for not mock", async () => {
-    const { saveSessionApi } = await import("@/services/aria2c_api");
     expect(saveSessionApi()).resolves.toBeUndefined();
   });
 });
