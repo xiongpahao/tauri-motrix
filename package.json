@@ -34,6 +34,7 @@
     "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-notification": "~2",
     "@tauri-apps/plugin-opener": "^2.2.6",
+    "@tauri-apps/plugin-sql": "^2.2.0",
     "@tauri-apps/plugin-updater": "~2",
     "@tauri-motrix/aria2": "workspace:*",
     "ahooks": "^3.8.4",
@@ -90,5 +91,5 @@
       "react-dom": "$react-dom"
     }
   },
-  "packageManager": "pnpm@10.10.0"
+  "packageManager": "pnpm@10.11.0"
 }
