@@ -21,6 +21,10 @@
     "notification:default",
     "clipboard-manager:allow-write-text",
     "opener:allow-open-path",
-    "core:window:allow-hide"
+    "core:window:allow-hide",
+    "sql:default",
+    "sql:allow-load",
+    "sql:allow-execute",
+    "sql:allow-select"
   ]
 }

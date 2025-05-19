@@ -27,6 +27,10 @@ import {
   waitingTasksApi,
 } from "@/services/aria2c_api";
 import { DownloadOption } from "@/services/aria2c_api";
+import {
+  addDownloadHistory,
+  DownloadEngine,
+} from "@/services/download_history";
 import { usePollingStore } from "@/store/polling";
 import { compactUndefined } from "@/utils/compact_undefined";
 import { getTaskFullPath, getTaskName, getTaskUri } from "@/utils/task";
@@ -201,7 +205,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     const task = await taskItemApi({ gid });
     const taskName = getTaskName(task, "unknown", 16);
+
+    const link = await getTaskUri(task);
+    const path = await getTaskFullPath(task);
+
     Notice.success(t("task.StartMessage", { taskName }));
+
+    addDownloadHistory({
+      engine: DownloadEngine.Aria2,
+      link,
+      name: taskName,
+      path,
+    });
   },
   async onDownloadStop([{ gid }]) {
     const task = await taskItemApi({ gid });

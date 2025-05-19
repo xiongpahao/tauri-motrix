@@ -12,28 +12,16 @@ import {
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
 import { TaskActionButton } from "@/client/task_compose";
-
-export const enum DownloadEngine {
-  Aria2 = "aria2c",
-}
+import { DownloadHistory } from "@/services/download_history";
 
 export interface HistoryItemProps {
-  id: string;
-  link: string;
-  path: string;
-  engine: DownloadEngine;
-  name: string;
-  onDelete: (id: string) => void;
+  history: DownloadHistory;
+  onDelete: (id: DownloadHistory["id"]) => void;
 }
 
-function HistoryItem({
-  link,
-  id,
-  onDelete,
-  engine,
-  path,
-  name,
-}: HistoryItemProps) {
+function HistoryItem({ history, onDelete }: HistoryItemProps) {
+  const { engine, id, link, name, path } = history;
+
   return (
     <ListItem disablePadding>
       <ListItemButton
@@ -51,6 +39,9 @@ function HistoryItem({
         </ListItemIcon>
         <ListItemText
           primary={name}
+          slots={{
+            secondary: "div",
+          }}
           secondary={
             <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
               <Chip
