@@ -1,5 +1,6 @@
 import { Aria2Instance, create, EventSubscribeMap } from "@tauri-motrix/aria2";
 
+import { isTest } from "@/constant/environment";
 import { getAria2Info } from "@/services/cmd";
 
 let instancePromise: Promise<Aria2Instance> = null!;
@@ -223,8 +224,7 @@ export const saveSessionApi = async () => {
   return call<"OK">("saveSession");
 };
 
-// @ts-expect-error only not test
-if (process.env.NODE_ENV !== "test") {
+if (!isTest) {
   getAria2().then(({ listMethods, listNotifications }) => {
     listMethods().then((res) => console.log("aria2 methods: ", res));
     listNotifications().then((res) =>
