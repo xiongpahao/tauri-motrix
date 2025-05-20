@@ -31,7 +31,8 @@
         "SpeedLimit": "Speed Limit",
         "UploadSpeedLimit": "Upload Speed Limit",
         "DownloadSpeedLimit": "Download Speed Limit",
-        "AutoLaunch": "Auto Launch"
+        "AutoLaunch": "Auto Launch",
+        "TaskManagement": "Task Management"
     },
     "task": {
         "CloseAll": "Close All Tasks",
