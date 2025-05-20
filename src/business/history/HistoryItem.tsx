@@ -1,4 +1,8 @@
-import { DeleteOutline, LinkOutlined } from "@mui/icons-material";
+import {
+  DeleteOutline,
+  FileOpenOutlined,
+  LinkOutlined,
+} from "@mui/icons-material";
 import {
   Box,
   Checkbox,
@@ -10,17 +14,29 @@ import {
   ListItemText,
 } from "@mui/material";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
+import { revealItemInDir } from "@tauri-apps/plugin-opener";
+import { useTranslation } from "react-i18next";
 
 import { TaskActionButton } from "@/client/task_compose";
+import { Notice } from "@/components/Notice";
 import { DownloadHistory } from "@/services/download_history";
 
 export interface HistoryItemProps {
+  checked?: boolean;
   history: DownloadHistory;
   onDelete: (id: DownloadHistory["id"]) => void;
+  onSelect: (id: DownloadHistory["id"]) => void;
 }
 
-function HistoryItem({ history, onDelete }: HistoryItemProps) {
+function HistoryItem({
+  history,
+  onDelete,
+  checked,
+  onSelect,
+}: HistoryItemProps) {
   const { engine, id, link, name, path } = history;
+
+  const { t } = useTranslation();
 
   return (
     <ListItem disablePadding>
@@ -33,9 +49,14 @@ function HistoryItem({ history, onDelete }: HistoryItemProps) {
             minWidth: "40px",
           },
         })}
+        onClick={() => onSelect(id)}
       >
         <ListItemIcon>
-          <Checkbox edge="start" />
+          <Checkbox
+            edge="start"
+            checked={checked}
+            onChange={() => onSelect(id)}
+          />
         </ListItemIcon>
         <ListItemText
           primary={name}
@@ -43,7 +64,14 @@ function HistoryItem({ history, onDelete }: HistoryItemProps) {
             secondary: "div",
           }}
           secondary={
-            <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "4px",
+              }}
+            >
               <Chip
                 label={engine}
                 size="small"
@@ -55,10 +83,15 @@ function HistoryItem({ history, onDelete }: HistoryItemProps) {
           }
         />
 
-        <Box>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <TaskActionButton
             icon={<LinkOutlined />}
             onClick={() => writeText(link)}
+          />
+          <TaskActionButton
+            title={t("task.OpenFile")}
+            icon={<FileOpenOutlined />}
+            onClick={() => revealItemInDir(path).catch((e) => Notice.error(e))}
           />
           <TaskActionButton
             icon={<DeleteOutline />}

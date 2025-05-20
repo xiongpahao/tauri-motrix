@@ -196,17 +196,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const task = await taskItemApi({ gid });
     const taskName = getTaskName(task, "unknown_start", 64);
 
-    const link = await getTaskUri(task);
-    const path = await getTaskFullPath(task);
-
     Notice.success(t("task.StartMessage", { taskName }));
 
-    await createHistory({
-      engine: DOWNLOAD_ENGINE.Aria2,
-      link,
-      name: taskName,
-      path,
-    });
     mutate("getDownloadHistory");
   },
   async onDownloadStop([{ gid }]) {
@@ -220,6 +211,16 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const title = getTaskName(task, "unknown_complete", 64);
 
     sendNotification({ title, body: t("common.Complete") });
+
+    const link = await getTaskUri(task);
+    const path = await getTaskFullPath(task);
+
+    await createHistory({
+      engine: DOWNLOAD_ENGINE.Aria2,
+      link,
+      name: title,
+      path,
+    });
   },
   async registerEvent() {
     const { onDownloadComplete, onDownloadStart, onDownloadStop } = get();
