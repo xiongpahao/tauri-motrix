@@ -68,7 +68,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   async fetchTasks() {
     const { fetchType } = get();
 
-    let tasks;
+    let tasks: Array<Aria2Task> = [];
     switch (fetchType) {
       case TASK_STATUS_ENUM.Active:
         tasks = await downloadingTasksApi().then((res) => res?.flat(2));
