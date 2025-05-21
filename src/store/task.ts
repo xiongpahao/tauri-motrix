@@ -212,7 +212,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     sendNotification({ title, body: t("common.Complete") });
 
-    const link = await getTaskUri(task);
+    const link = getTaskUri(task);
     const path = await getTaskFullPath(task);
 
     await createHistory({
