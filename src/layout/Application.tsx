@@ -153,6 +153,7 @@ function Application() {
               color="inherit"
               aria-label="open aside menu"
               edge="end"
+              size="large"
               sx={[
                 {
                   marginLeft: 1,
