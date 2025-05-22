@@ -64,7 +64,7 @@ export async function createHistory(
   );
 }
 
-export async function findManyHistory() {
+export async function findManyHistory(): Promise<DownloadHistoryVO[]> {
   const db = await getMotrixDB();
 
   const result = await db.select<DownloadHistory[]>(
@@ -80,7 +80,9 @@ export async function findManyHistory() {
   );
 }
 
-export async function findOneHistoryByPlatId(id: string) {
+export async function findOneHistoryByPlatId(
+  id: string,
+): Promise<DownloadHistoryVO | undefined> {
   const db = await getMotrixDB();
 
   const result = await db.select<DownloadHistory[]>(
