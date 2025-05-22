@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 
 import { useAria2StateStore } from "@/store/aria2_state";
 import { parseByteVo } from "@/utils/download";
+import { useRef } from "react";
+import TrafficGraph, { TrafficRef } from "@/layout/TrafficGraph";
 
 const SpeedIndicatorRow = styled("section")(() => ({
   display: "flex",
@@ -34,28 +36,36 @@ function LayoutTraffic() {
 
   const { globalStat: stat } = useAria2StateStore();
 
+  const trafficRef = useRef<TrafficRef>(null);
+
   const [up, upUnit] = parseByteVo(stat.uploadSpeed, "/s");
   const [down, downUnit] = parseByteVo(stat.downloadSpeed, "/s");
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        gap: 0.75,
-      }}
-    >
-      <SpeedIndicatorRow title={t("UploadSpeed")}>
-        <ArrowUpwardRounded color={+up > 0 ? "secondary" : "disabled"} />
-        <SpeedValue color="secondary">{up}</SpeedValue>
-        <SpeedUnit>{upUnit}</SpeedUnit>
-      </SpeedIndicatorRow>
+    <Box sx={{ position: "relative" }}>
+      <Box>
+        <TrafficGraph ref={trafficRef} />
+      </Box>
 
-      <SpeedIndicatorRow title={t("DownloadSpeed")}>
-        <ArrowDownwardRounded color={+down > 0 ? "primary" : "disabled"} />
-        <SpeedValue color="primary">{down}</SpeedValue>
-        <SpeedUnit>{downUnit}</SpeedUnit>
-      </SpeedIndicatorRow>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 0.75,
+        }}
+      >
+        <SpeedIndicatorRow title={t("UploadSpeed")}>
+          <ArrowUpwardRounded color={+up > 0 ? "secondary" : "disabled"} />
+          <SpeedValue color="secondary">{up}</SpeedValue>
+          <SpeedUnit>{upUnit}</SpeedUnit>
+        </SpeedIndicatorRow>
+
+        <SpeedIndicatorRow title={t("DownloadSpeed")}>
+          <ArrowDownwardRounded color={+down > 0 ? "primary" : "disabled"} />
+          <SpeedValue color="primary">{down}</SpeedValue>
+          <SpeedUnit>{downUnit}</SpeedUnit>
+        </SpeedIndicatorRow>
+      </Box>
     </Box>
   );
 }
