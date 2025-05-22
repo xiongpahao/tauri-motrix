@@ -14,9 +14,9 @@
         "system": "System"
     },
     "Button-Fetch-Type": {
-        "active": "Downloading",
-        "waiting": "Waiting",
-        "complete": "Complete"
+        "active": "Pending",
+        "waiting": "Paused",
+        "complete": "Stopped"
     },
     "setting": {
         "ThemeMode": "Theme Mode",
