@@ -1,42 +1,45 @@
 import {
   DeleteOutline,
   FileOpenOutlined,
+  Folder,
   LinkOutlined,
 } from "@mui/icons-material";
 import {
   Box,
-  Checkbox,
-  Chip,
   ListItem,
   ListItemButton,
   ListItemIcon,
   listItemIconClasses,
   ListItemText,
+  typographyClasses,
 } from "@mui/material";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import { revealItemInDir } from "@tauri-apps/plugin-opener";
+import dayjs from "dayjs";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import { TaskActionButton } from "@/client/task_compose";
 import { Notice } from "@/components/Notice";
-import { DownloadHistory } from "@/services/download_history";
+import { DownloadHistoryVO } from "@/services/download_history";
+import { parseByteVo } from "@/utils/download";
 
 export interface HistoryItemProps {
-  checked?: boolean;
-  history: DownloadHistory;
-  onDelete: (id: DownloadHistory["id"]) => void;
-  onSelect: (id: DownloadHistory["id"]) => void;
+  history: DownloadHistoryVO;
+  onDelete: (id: DownloadHistoryVO["id"]) => void;
+  onSelect: (id: DownloadHistoryVO["id"]) => void;
 }
 
-function HistoryItem({
-  history,
-  onDelete,
-  checked,
-  onSelect,
-}: HistoryItemProps) {
-  const { engine, id, link, name, path } = history;
+function HistoryItem({ history, onDelete, onSelect }: HistoryItemProps) {
+  const { engine, id, link, name, path, downloaded_at, total_length } = history;
 
   const { t } = useTranslation();
+
+  const describe = useMemo(
+    () =>
+      `${engine} ${parseByteVo(total_length).join("")} ${dayjs.unix(downloaded_at).format("YYYY-MM-DD HH:mm:ss")}`,
+    [engine, downloaded_at, total_length],
+  );
 
   return (
     <ListItem disablePadding>
@@ -52,35 +55,21 @@ function HistoryItem({
         onClick={() => onSelect(id)}
       >
         <ListItemIcon>
-          <Checkbox
-            edge="start"
-            checked={checked}
-            onChange={() => onSelect(id)}
-          />
+          <Folder />
         </ListItemIcon>
         <ListItemText
-          primary={name}
-          slots={{
-            secondary: "div",
+          sx={{
+            display: "table",
+            tableLayout: "fixed",
+            width: "100%",
+            [`& .${typographyClasses.body1}`]: {
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+            },
           }}
-          secondary={
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                flexWrap: "wrap",
-                gap: "4px",
-              }}
-            >
-              <Chip
-                label={engine}
-                size="small"
-                variant="outlined"
-                color="primary"
-              />
-              <Chip label={path} size="small" variant="outlined" />
-            </Box>
-          }
+          primary={name}
+          secondary={describe}
         />
 
         <Box sx={{ display: "flex", alignItems: "center" }}>

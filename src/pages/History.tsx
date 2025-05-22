@@ -36,7 +36,7 @@ function HistoryPage() {
             key={item.id}
             history={item}
             onDelete={handleDelete}
-            checked={selectedIdList.includes(item.id)}
+            // checked={selectedIdList.includes(item.id)}
           />
         )}
       />

@@ -28,7 +28,10 @@ import {
   waitingTasksApi,
 } from "@/services/aria2c_api";
 import { DownloadOption } from "@/services/aria2c_api";
-import { createHistory } from "@/services/download_history";
+import {
+  createHistory,
+  findOneHistoryByPlatId,
+} from "@/services/download_history";
 import { usePollingStore } from "@/store/polling";
 import { arrayAddOrRemove } from "@/utils/array_add_or_remove";
 import { compactUndefined } from "@/utils/compact_undefined";
@@ -199,6 +202,28 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     Notice.success(t("task.StartMessage", { taskName }));
 
     mutate("getDownloadHistory");
+
+    const link = getTaskUri(task);
+    const path = await getTaskFullPath(task);
+
+    const historyRecord = await findOneHistoryByPlatId(gid);
+
+    console.log("miku history ", historyRecord);
+    if (!historyRecord) {
+      await createHistory(
+        {
+          engine: DOWNLOAD_ENGINE.Aria2,
+          link,
+          name: taskName,
+          path,
+          total_length: Number(task.totalLength),
+          plat_id: gid,
+        },
+        {
+          plat_gid: gid,
+        },
+      );
+    }
   },
   async onDownloadStop([{ gid }]) {
     const task = await taskItemApi({ gid });
@@ -211,16 +236,6 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const title = getTaskName(task, "unknown_complete", 64);
 
     sendNotification({ title, body: t("common.Complete") });
-
-    const link = getTaskUri(task);
-    const path = await getTaskFullPath(task);
-
-    await createHistory({
-      engine: DOWNLOAD_ENGINE.Aria2,
-      link,
-      name: title,
-      path,
-    });
   },
   async registerEvent() {
     const { onDownloadComplete, onDownloadStart, onDownloadStop } = get();
