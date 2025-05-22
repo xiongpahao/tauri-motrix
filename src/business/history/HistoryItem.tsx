@@ -27,10 +27,9 @@ import { parseByteVo } from "@/utils/download";
 export interface HistoryItemProps {
   history: DownloadHistoryVO;
   onDelete: (id: DownloadHistoryVO["id"]) => void;
-  onSelect: (id: DownloadHistoryVO["id"]) => void;
 }
 
-function HistoryItem({ history, onDelete, onSelect }: HistoryItemProps) {
+function HistoryItem({ history, onDelete }: HistoryItemProps) {
   const { engine, id, link, name, path, downloaded_at, total_length } = history;
 
   const { t } = useTranslation();
@@ -52,7 +51,6 @@ function HistoryItem({ history, onDelete, onSelect }: HistoryItemProps) {
             minWidth: "40px",
           },
         })}
-        onClick={() => onSelect(id)}
       >
         <ListItemIcon>
           <Folder />

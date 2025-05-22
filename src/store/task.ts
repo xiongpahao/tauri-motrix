@@ -31,6 +31,7 @@ import { DownloadOption } from "@/services/aria2c_api";
 import {
   createHistory,
   findOneHistoryByPlatId,
+  updateHistoryByPlatId,
 } from "@/services/download_history";
 import { usePollingStore } from "@/store/polling";
 import { arrayAddOrRemove } from "@/utils/array_add_or_remove";
@@ -54,6 +55,7 @@ interface TaskStore {
   copyTaskLink: (taskId: string) => void;
   addTask: (url: string, option: DownloadOption) => void;
   getTaskByGid: (gid: string) => Aria2Task;
+  syncToDownloadHistory: (task: Aria2Task) => void;
   registerEvent: () => void;
   onDownloadStart: (wrap: WrapGid) => void;
   onDownloadStop: (wrap: WrapGid) => void;
@@ -201,29 +203,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     Notice.success(t("task.StartMessage", { taskName }));
 
-    mutate("getDownloadHistory");
-
-    const link = getTaskUri(task);
-    const path = await getTaskFullPath(task);
-
-    const historyRecord = await findOneHistoryByPlatId(gid);
-
-    console.log("miku history ", historyRecord);
-    if (!historyRecord) {
-      await createHistory(
-        {
-          engine: DOWNLOAD_ENGINE.Aria2,
-          link,
-          name: taskName,
-          path,
-          total_length: Number(task.totalLength),
-          plat_id: gid,
-        },
-        {
-          plat_gid: gid,
-        },
-      );
-    }
+    get().syncToDownloadHistory(task);
   },
   async onDownloadStop([{ gid }]) {
     const task = await taskItemApi({ gid });
@@ -236,6 +216,8 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const title = getTaskName(task, "unknown_complete", 64);
 
     sendNotification({ title, body: t("common.Complete") });
+
+    get().syncToDownloadHistory(task);
   },
   async registerEvent() {
     const { onDownloadComplete, onDownloadStart, onDownloadStop } = get();
@@ -244,5 +226,31 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     addListener("onDownloadStart", onDownloadStart);
     addListener("onDownloadStop", onDownloadStop);
     addListener("onDownloadComplete", onDownloadComplete);
+  },
+  async syncToDownloadHistory(task) {
+    const taskName = getTaskName(task, "unknown_history", 64);
+    const link = getTaskUri(task);
+    const path = await getTaskFullPath(task);
+
+    const historyRecord = await findOneHistoryByPlatId(task.gid);
+
+    const historyDto = {
+      engine: DOWNLOAD_ENGINE.Aria2,
+      link,
+      name: taskName,
+      path,
+      total_length: Number(task.totalLength),
+      plat_id: task.gid,
+    };
+
+    if (historyRecord) {
+      await updateHistoryByPlatId(task.gid, historyDto);
+    } else {
+      await createHistory(historyDto, {
+        plat_gid: task.gid,
+      });
+    }
+
+    mutate("getDownloadHistory");
   },
 }));
