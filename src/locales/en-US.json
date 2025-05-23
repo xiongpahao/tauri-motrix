@@ -62,7 +62,10 @@
         "StopMessage": "Task \"{{taskName}}\" stopped",
         "Details": "Task Details",
         "InfoDetails": "Task Info",
-        "SpeedDetails": "Task Speed"
+        "SpeedDetails": "Task Speed",
+        "FileName": "Name",
+        "FileExtension": "Extension",
+        "FileSize": "Size"
     },
     "common": {
         "DownloadFile": "Download File",
