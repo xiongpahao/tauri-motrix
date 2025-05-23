@@ -79,7 +79,9 @@
         "Update": "Update",
         "Ok": "OK",
         "Exit": "Exit",
-        "SaveSuccess": "Save Success"
+        "SaveSuccess": "Save Success",
+        "UploadSpeed": "Upload Speed",
+        "DownloadSpeed": "Download Speed"
     },
     "update": {
         "GotoReleasePage": "Go to release page",

@@ -1,7 +1,7 @@
 import { ArrowDownwardRounded, ArrowUpwardRounded } from "@mui/icons-material";
 import { Box, styled, Typography } from "@mui/material";
 import { useDocumentVisibility } from "ahooks";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import TrafficGraph, { TrafficRef } from "@/layout/TrafficGraph";
@@ -44,10 +44,21 @@ function LayoutTraffic() {
 
   const documentVisibility = useDocumentVisibility();
 
+  useEffect(() => {
+    const up = +stat.uploadSpeed || 0;
+    const down = +stat.downloadSpeed || 0;
+
+    trafficRef.current?.appendData({ up, down });
+  }, [stat.uploadSpeed, stat.downloadSpeed]);
+
   return (
     <Box sx={{ position: "relative" }}>
-      {documentVisibility === "visible" && <TrafficGraph ref={trafficRef} />}
-
+      <Box
+        sx={{ mb: 0.75, cursor: "pointer" }}
+        onClick={() => trafficRef.current?.toggleStyle()}
+      >
+        {documentVisibility === "visible" && <TrafficGraph ref={trafficRef} />}
+      </Box>
       <Box
         sx={{
           display: "flex",
@@ -55,13 +66,13 @@ function LayoutTraffic() {
           gap: 0.75,
         }}
       >
-        <SpeedIndicatorRow title={t("UploadSpeed")}>
+        <SpeedIndicatorRow title={t("common.UploadSpeed")}>
           <ArrowUpwardRounded color={+up > 0 ? "secondary" : "disabled"} />
           <SpeedValue color="secondary">{up}</SpeedValue>
           <SpeedUnit>{upUnit}</SpeedUnit>
         </SpeedIndicatorRow>
 
-        <SpeedIndicatorRow title={t("DownloadSpeed")}>
+        <SpeedIndicatorRow title={t("common.DownloadSpeed")}>
           <ArrowDownwardRounded color={+down > 0 ? "primary" : "disabled"} />
           <SpeedValue color="primary">{down}</SpeedValue>
           <SpeedUnit>{downUnit}</SpeedUnit>
