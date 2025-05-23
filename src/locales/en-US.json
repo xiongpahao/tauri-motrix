@@ -81,7 +81,11 @@
         "Exit": "Exit",
         "SaveSuccess": "Save Success",
         "UploadSpeed": "Upload Speed",
-        "DownloadSpeed": "Download Speed"
+        "DownloadSpeed": "Download Speed",
+        "FromClipboard": "From Clipboard",
+        "FromTorrentFile": "From Torrent File",
+        "FromUrl": "From URL",
+        "UploadFile": "Upload file"
     },
     "update": {
         "GotoReleasePage": "Go to release page",
