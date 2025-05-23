@@ -135,7 +135,7 @@ function Application() {
           <TitleBar toggleOpenAside={toggleOpenAside} />
 
           <Drawer
-            sx={{
+            sx={(theme) => ({
               [`.${drawerClasses.paper}`]: {
                 position: "unset",
                 width: "200px",
@@ -144,7 +144,7 @@ function Application() {
                 backgroundColor: theme.palette.background.paper,
                 border: "none",
               },
-            }}
+            })}
             open={!isDownSm ? true : isOpenAside}
             onClose={setFalseOpenAside}
             variant={isDownSm ? "temporary" : "permanent"}
