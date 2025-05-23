@@ -47,6 +47,7 @@ const TheTraffic = styled("section")(() => ({
   "& > *": {
     paddingInline: "20px",
   },
+  paddingBottom: "8px",
 }));
 
 const Main = styled("main")(() => ({

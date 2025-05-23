@@ -1,11 +1,12 @@
 import { ArrowDownwardRounded, ArrowUpwardRounded } from "@mui/icons-material";
 import { Box, styled, Typography } from "@mui/material";
+import { useDocumentVisibility } from "ahooks";
+import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
+import TrafficGraph, { TrafficRef } from "@/layout/TrafficGraph";
 import { useAria2StateStore } from "@/store/aria2_state";
 import { parseByteVo } from "@/utils/download";
-import { useRef } from "react";
-import TrafficGraph, { TrafficRef } from "@/layout/TrafficGraph";
 
 const SpeedIndicatorRow = styled("section")(() => ({
   display: "flex",
@@ -41,11 +42,11 @@ function LayoutTraffic() {
   const [up, upUnit] = parseByteVo(stat.uploadSpeed, "/s");
   const [down, downUnit] = parseByteVo(stat.downloadSpeed, "/s");
 
+  const documentVisibility = useDocumentVisibility();
+
   return (
     <Box sx={{ position: "relative" }}>
-      <Box>
-        <TrafficGraph ref={trafficRef} />
-      </Box>
+      {documentVisibility === "visible" && <TrafficGraph ref={trafficRef} />}
 
       <Box
         sx={{
