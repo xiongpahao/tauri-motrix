@@ -25,6 +25,7 @@ export interface InputFileUploadProps {
   accept?: string;
   ref?: Ref<HTMLInputElement>;
   onChange?: (files: File[]) => void;
+  hideList?: boolean;
 }
 
 export default function InputFileUpload({
@@ -34,19 +35,21 @@ export default function InputFileUpload({
   accept,
   ref,
   onChange,
+  hideList,
 }: InputFileUploadProps) {
   const { t } = useTranslation();
 
+  // TODO: async function outside of useActionState
   const [files, onFileInput, isPending] = useActionState<
     File[],
     FileList | null | File[]
-  >(async (nameList, files) => {
+  >((nameList, files) => {
     if (!files) {
       return nameList;
     }
 
     const filesArray = Array.from(files);
-    await onChange?.(filesArray);
+    onChange?.(filesArray);
 
     return filesArray;
   }, []);
@@ -60,6 +63,8 @@ export default function InputFileUpload({
         tabIndex={-1}
         startIcon={<CloudUploadIcon />}
         sx={sx}
+        loading={isPending}
+        loadingIndicator="Loading…"
       >
         {t(text ?? "common.UploadFile")}
         <VisuallyHiddenInput
@@ -75,26 +80,26 @@ export default function InputFileUpload({
         />
       </Button>
 
-      {isPending
-        ? "Loading..."
-        : files.map((item) => (
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
+      {!hideList &&
+        files.map((item, index) => (
+          <Box
+            key={index}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography noWrap sx={{ mt: 1 }}>
+              {item.name}
+            </Typography>
+            <IconButton
+              onClick={() => onFileInput(files.filter((x) => x !== item))}
             >
-              <Typography noWrap sx={{ mt: 1 }}>
-                {item.name}
-              </Typography>
-              <IconButton
-                onClick={() => onFileInput(files.filter((x) => x !== item))}
-              >
-                <DeleteOutline />
-              </IconButton>
-            </Box>
-          ))}
+              <DeleteOutline />
+            </IconButton>
+          </Box>
+        ))}
     </Box>
   );
 }
