@@ -1,5 +1,5 @@
 import { useBoolean } from "ahooks";
-import { Ref, useImperativeHandle, useRef } from "react";
+import { Ref, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
@@ -9,7 +9,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();
   const [open, { setFalse, setTrue }] = useBoolean();
 
-  const fileRef = useRef<File>(null);
+  const [currentFile, setCurrentFile] = useState<File>();
 
   useImperativeHandle(props.ref, () => ({ close: setFalse, open: setTrue }));
 
@@ -25,13 +25,9 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
     >
       <InputFileUpload
         accept=".torrent"
-        onChange={(e) => {
-          if (!e.target.files) {
-            return;
-          }
-          fileRef.current = e.target.files[0];
-        }}
+        onChange={(files) => setCurrentFile(files[0])}
       />
+      {currentFile ? <></> : <></>}
     </BaseDialog>
   );
 }

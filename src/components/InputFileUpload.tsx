@@ -1,7 +1,8 @@
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { Box, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { styled, SxProps, Theme } from "@mui/material/styles";
-import { Ref } from "react";
+import { ChangeEvent, Ref, useActionState } from "react";
 import { useTranslation } from "react-i18next";
 
 const VisuallyHiddenInput = styled("input")({
@@ -22,7 +23,7 @@ export interface InputFileUploadProps {
   sx?: SxProps<Theme>;
   accept?: string;
   ref?: Ref<HTMLInputElement>;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (files: File[]) => void;
 }
 
 export default function InputFileUpload({
@@ -35,23 +36,49 @@ export default function InputFileUpload({
 }: InputFileUploadProps) {
   const { t } = useTranslation();
 
+  const [fileNames, onFileInput, isPending] = useActionState<
+    string[],
+    ChangeEvent<HTMLInputElement>
+  >(async (nameList, e) => {
+    const files = e.target.files;
+
+    if (!files) {
+      return nameList;
+    }
+
+    const filesArray = Array.from(files);
+    await onChange?.(filesArray);
+
+    return filesArray.map((item) => item.name);
+  }, []);
+
   return (
-    <Button
-      component="label"
-      role={undefined}
-      variant="contained"
-      tabIndex={-1}
-      startIcon={<CloudUploadIcon />}
-      sx={sx}
-    >
-      {t(text ?? "common.UploadFile")}
-      <VisuallyHiddenInput
-        type="file"
-        onChange={onChange}
-        multiple={multiple}
-        accept={accept}
-        ref={ref}
-      />
-    </Button>
+    <Box sx={{ mt: 2, mb: 1 }}>
+      <Button
+        component="label"
+        role={undefined}
+        variant="contained"
+        tabIndex={-1}
+        startIcon={<CloudUploadIcon />}
+        sx={sx}
+      >
+        {t(text ?? "common.UploadFile")}
+        <VisuallyHiddenInput
+          type="file"
+          onChange={onFileInput}
+          multiple={multiple}
+          accept={accept}
+          ref={ref}
+        />
+      </Button>
+
+      {isPending
+        ? "Loading..."
+        : fileNames.map((name) => (
+            <Typography noWrap sx={{ ml: 1, mt: 1 }}>
+              {name}
+            </Typography>
+          ))}
+    </Box>
   );
 }
