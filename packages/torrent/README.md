@@ -1,4 +1,4 @@
-# Rslib project
+# @tauri-motrix/torrent
 
 ## Setup
 
@@ -21,3 +21,7 @@ Build the library in watch mode:
 ```bash
 pnpm dev
 ```
+
+## Acknowledgements
+
+- [parse-torrent](https://github.com/webtorrent/parse-torrent)
