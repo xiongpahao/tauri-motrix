@@ -25,3 +25,4 @@ pnpm dev
 ## Acknowledgements
 
 - [parse-torrent](https://github.com/webtorrent/parse-torrent)
+- [magnet-uri](https://github.com/webtorrent/magnet-uri)
