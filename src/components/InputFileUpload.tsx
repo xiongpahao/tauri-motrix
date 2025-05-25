@@ -1,8 +1,9 @@
+import { DeleteOutline } from "@mui/icons-material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { styled, SxProps, Theme } from "@mui/material/styles";
-import { ChangeEvent, Ref, useActionState } from "react";
+import { Ref, useActionState } from "react";
 import { useTranslation } from "react-i18next";
 
 const VisuallyHiddenInput = styled("input")({
@@ -36,12 +37,10 @@ export default function InputFileUpload({
 }: InputFileUploadProps) {
   const { t } = useTranslation();
 
-  const [fileNames, onFileInput, isPending] = useActionState<
-    string[],
-    ChangeEvent<HTMLInputElement>
-  >(async (nameList, e) => {
-    const files = e.target.files;
-
+  const [files, onFileInput, isPending] = useActionState<
+    File[],
+    FileList | null | File[]
+  >(async (nameList, files) => {
     if (!files) {
       return nameList;
     }
@@ -49,7 +48,7 @@ export default function InputFileUpload({
     const filesArray = Array.from(files);
     await onChange?.(filesArray);
 
-    return filesArray.map((item) => item.name);
+    return filesArray;
   }, []);
 
   return (
@@ -65,19 +64,36 @@ export default function InputFileUpload({
         {t(text ?? "common.UploadFile")}
         <VisuallyHiddenInput
           type="file"
-          onChange={onFileInput}
+          onChange={(e) => onFileInput(e.target.files)}
           multiple={multiple}
           accept={accept}
           ref={ref}
+          onClick={(e) => {
+            // exist chose same file
+            e.currentTarget.value = "";
+          }}
         />
       </Button>
 
       {isPending
         ? "Loading..."
-        : fileNames.map((name) => (
-            <Typography noWrap sx={{ ml: 1, mt: 1 }}>
-              {name}
-            </Typography>
+        : files.map((item) => (
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography noWrap sx={{ mt: 1 }}>
+                {item.name}
+              </Typography>
+              <IconButton
+                onClick={() => onFileInput(files.filter((x) => x !== item))}
+              >
+                <DeleteOutline />
+              </IconButton>
+            </Box>
           ))}
     </Box>
   );
