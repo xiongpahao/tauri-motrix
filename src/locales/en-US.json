@@ -93,7 +93,7 @@
     "update": {
         "GotoReleasePage": "Go to release page",
         "CurrentlyOnLatest": "Currently on the Latest Version",
-        "BreakChangeUpdateError": "Break Change Update Error"
+        "BreakChangeUpdateError": "The portable version does not support in-app updates. Please manually download and replace it."
     },
     "about": {
         "Title": "App About",
