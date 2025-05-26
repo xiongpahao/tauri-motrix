@@ -92,7 +92,8 @@
     },
     "update": {
         "GotoReleasePage": "Go to release page",
-        "CurrentlyOnLatest": "Currently on the Latest Version"
+        "CurrentlyOnLatest": "Currently on the Latest Version",
+        "BreakChangeUpdateError": "Break Change Update Error"
     },
     "about": {
         "Title": "App About",
