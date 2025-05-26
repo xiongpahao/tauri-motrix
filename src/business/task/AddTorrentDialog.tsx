@@ -12,7 +12,8 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();
   const [open, { setFalse, setTrue }] = useBoolean();
 
-  const [files, setFiles] = useState<Instance["files"]>([]);
+  const [torrentFiles, setTorrentFiles] = useState<Instance["files"]>([]);
+  const [fileList, setFileList] = useState<File[]>([]);
 
   useImperativeHandle(props.ref, () => ({ close: setFalse, open: setTrue }));
 
@@ -24,27 +25,31 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
       cancelBtn={t("common.Cancel")}
       onCancel={setFalse}
       onClose={setFalse}
-      disableOk={!files?.length}
+      disableOk={!torrentFiles?.length}
       //   onOk={}
     >
       <InputFileUpload
         accept=".torrent"
+        fileList={fileList}
         onChange={(files) => {
+          setFileList(files);
           if (!files.length) {
+            setTorrentFiles([]);
             return;
           }
           const file = files[0];
 
           remote(file, (err, parsedTorrent) => {
-            if (err) throw err;
-
-            setFiles(listTorrentFiles(parsedTorrent?.files));
+            if (err) {
+              throw err;
+            }
+            setTorrentFiles(listTorrentFiles(parsedTorrent?.files));
           });
         }}
       />
-      {!!files?.length && (
+      {!!torrentFiles?.length && (
         <>
-          <TaskFiles files={files}></TaskFiles>
+          <TaskFiles files={torrentFiles}></TaskFiles>
         </>
       )}
     </BaseDialog>
