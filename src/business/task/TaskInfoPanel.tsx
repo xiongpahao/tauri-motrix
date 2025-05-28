@@ -15,7 +15,7 @@ function TaskInfoPanel({ task }: TaskInfoPanelProps) {
 
   return (
     <TaskDrawerList title={t("task.InfoDetails")}>
-      <TaskDrawerItem label={("GID")} value={task.gid} />
+      <TaskDrawerItem label="GID" value={task.gid} />
       <Divider />
       <TaskDrawerItem label={t("task.TaskName")} value={taskName} />
       <Divider />
