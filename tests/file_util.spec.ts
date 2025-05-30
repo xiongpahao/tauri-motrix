@@ -27,6 +27,9 @@ describe("File Utility Functions", () => {
   it("filterVideoFiles filters correctly", () => {
     const files = [{ name: "video.mp4" }, { name: "audio.mp3" }];
     expect(filterVideoFiles(files)).toEqual([{ name: "video.mp4" }]);
+
+    const fileWithExtensions = [{ name: "111", extension: ".mp3" }];
+    expect(filterVideoFiles(fileWithExtensions)).toEqual([]);
   });
 
   it("isVideoFile identifies correctly", () => {

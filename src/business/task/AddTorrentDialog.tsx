@@ -1,9 +1,10 @@
+import { TextField } from "@mui/material";
 import { useBoolean } from "ahooks";
-import { Instance, remote } from "parse-torrent";
-import { Ref, useImperativeHandle, useState } from "react";
+import { remote } from "parse-torrent";
+import { Key, Ref, useImperativeHandle, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import TaskFiles from "@/business/task/TaskFiles";
+import TaskFiles, { TaskFile } from "@/business/task/TaskFiles";
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
 import InputFileUpload from "@/components/InputFileUpload";
 import { listTorrentFiles } from "@/utils/file";
@@ -12,10 +13,19 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();
   const [open, { setFalse, setTrue }] = useBoolean();
 
-  const [torrentFiles, setTorrentFiles] = useState<Instance["files"]>([]);
+  const [torrentFiles, setTorrentFiles] = useState<TaskFile[]>([]);
   const [fileList, setFileList] = useState<File[]>([]);
+  const [selectedTorrentFileKeys, setSelectedTorrentFileKeys] = useState<Key[]>(
+    [],
+  );
 
   useImperativeHandle(props.ref, () => ({ close: setFalse, open: setTrue }));
+
+  const submit = () => {
+    if (selectedTorrentFileKeys.length === 0) {
+      return;
+    }
+  };
 
   return (
     <BaseDialog
@@ -26,7 +36,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
       onCancel={setFalse}
       onClose={setFalse}
       disableOk={!torrentFiles?.length}
-      //   onOk={}
+      onOk={submit}
     >
       <InputFileUpload
         accept=".torrent"
@@ -43,13 +53,20 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
             if (err) {
               throw err;
             }
-            setTorrentFiles(listTorrentFiles(parsedTorrent?.files));
+            setTorrentFiles(listTorrentFiles(parsedTorrent?.files) ?? []);
           });
         }}
       />
       {!!torrentFiles?.length && (
         <>
-          <TaskFiles files={torrentFiles} />
+          <TaskFiles
+            files={torrentFiles}
+            selectedRowKeys={selectedTorrentFileKeys}
+            onSelectionChange={(keys) => setSelectedTorrentFileKeys(keys)}
+          />
+          <TextField sx={{ mt: 2 }} label="Rename" fullWidth />
+          <TextField sx={{ mt: 2 }} label="Rename" fullWidth />
+          <TextField sx={{ mt: 2 }} label="Rename" fullWidth />
         </>
       )}
     </BaseDialog>

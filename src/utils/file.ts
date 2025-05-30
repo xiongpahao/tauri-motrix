@@ -31,15 +31,14 @@ export const getFileExtension = (filename: string) => {
   return filename.slice(((filename.lastIndexOf(".") - 1) >>> 0) + 2);
 };
 
-export type FileWithFullName = { name: string };
+export type FileWithFullName = { name: string; extension?: string };
 
 export const filterVideoFiles = <T extends FileWithFullName>(
   files: T[] = [],
 ) => {
   const suffix = [...VIDEO_SUFFIXES, ...SUB_SUFFIXES];
   return files.filter((item) => {
-    const extension = getFileExtension(item.name);
-    return suffix.includes(`.${extension}`);
+    return suffix.includes(item.extension ?? `.${getFileExtension(item.name)}`);
   });
 };
 
@@ -48,8 +47,9 @@ export const isVideoFile = (filename: string) =>
 
 export const filterAudioFiles = <T extends FileWithFullName>(files: T[] = []) =>
   files.filter((item) => {
-    const extension = getFileExtension(item.name);
-    return AUDIO_SUFFIXES.includes(`.${extension}`);
+    return AUDIO_SUFFIXES.includes(
+      item.extension ?? `.${getFileExtension(item.name)}`,
+    );
   });
 
 export const isAudioFile = (filename: string) =>
@@ -57,8 +57,9 @@ export const isAudioFile = (filename: string) =>
 
 export const filterImageFiles = <T extends FileWithFullName>(files: T[] = []) =>
   files.filter((item) => {
-    const extension = getFileExtension(item.name);
-    return IMAGE_SUFFIXES.includes(`.${extension}`);
+    return IMAGE_SUFFIXES.includes(
+      item.extension ?? `.${getFileExtension(item.name)}`,
+    );
   });
 
 export const isImageFile = (filename: string) =>
@@ -68,8 +69,9 @@ export const filterDocumentFiles = <T extends FileWithFullName>(
   files: T[] = [],
 ) =>
   files.filter((item) => {
-    const extension = getFileExtension(item.name);
-    return DOCUMENT_SUFFIXES.includes(`.${extension}`);
+    return DOCUMENT_SUFFIXES.includes(
+      item.extension ?? `.${getFileExtension(item.name)}`,
+    );
   });
 
 export const isDocumentFile = (filename: string) =>

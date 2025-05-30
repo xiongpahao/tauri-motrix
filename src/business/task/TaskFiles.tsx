@@ -50,9 +50,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-type TaskFile = NonNullable<Instance["files"]>[number];
+export type TaskFile = NonNullable<Instance["files"]>[number] & {
+  idx: number;
+  extension: string;
+};
+
 export interface TaskFilesProps {
-  files?: readonly TaskFile[];
+  files?: TaskFile[];
   rowKey?: string;
   selectedRowKeys?: Key[];
   defaultSelectedRowKeys?: Key[];
