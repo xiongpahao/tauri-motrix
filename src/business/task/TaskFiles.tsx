@@ -21,13 +21,12 @@ import { Key, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import useLazyKVMap, { GetRowKey } from "@/hooks/lazy_kv_map";
-import { parseByteVo } from "@/utils/download";
+import { calcProgress, parseByteVo } from "@/utils/download";
 import {
   filterAudioFiles,
   filterDocumentFiles,
   filterImageFiles,
   filterVideoFiles,
-  getFileExtension,
 } from "@/utils/file";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -53,9 +52,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export type TaskFile = NonNullable<Instance["files"]>[number] & {
   idx: number;
   extension: string;
+  completedLength?: number;
 };
 
 export interface TaskFilesProps {
+  mode?: "DETAIL";
   files?: TaskFile[];
   rowKey?: string;
   selectedRowKeys?: Key[];
@@ -82,6 +83,7 @@ export default function TaskFiles({
   defaultSelectedRowKeys,
   selectedRowKeys,
   onSelectionChange,
+  mode,
 }: TaskFilesProps) {
   const { t } = useTranslation();
 
@@ -103,7 +105,8 @@ export default function TaskFiles({
       return rowKey;
     }
 
-    return (record: TaskFile) => record?.[rowKey as keyof TaskFile];
+    return (record: TaskFile, index) =>
+      record?.[rowKey as keyof TaskFile] || `default_${index}`;
   }, [rowKey]);
 
   const derivedSelectedKeySet = useMemo<Set<Key>>(
@@ -254,7 +257,18 @@ export default function TaskFiles({
         <StyledTableCell sx={{ textOverflow: "ellipsis" }}>
           {record.name}
         </StyledTableCell>
-        <StyledTableCell>{getFileExtension(record.path)}</StyledTableCell>
+        {mode === "DETAIL" && (
+          <>
+            <StyledTableCell align="right" width={50}>
+              {calcProgress(record.length, record.completedLength || 0, 1)}
+            </StyledTableCell>
+
+            <StyledTableCell align="right" width={85}>
+              {parseByteVo(record.completedLength).join("")}
+            </StyledTableCell>
+          </>
+        )}
+        <StyledTableCell>{record.extension}</StyledTableCell>
         <StyledTableCell align="right">
           {parseByteVo(record.length).join("")}
         </StyledTableCell>
@@ -282,6 +296,18 @@ export default function TaskFiles({
               </StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Extension</StyledTableCell>
+
+              {mode === "DETAIL" && (
+                <>
+                  <StyledTableCell align="right" width={50}>
+                    %
+                  </StyledTableCell>
+
+                  <StyledTableCell align="right" width={85}>
+                    ✓
+                  </StyledTableCell>
+                </>
+              )}
               <StyledTableCell align="right">
                 {t("task.FileSize")}
               </StyledTableCell>

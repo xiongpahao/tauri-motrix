@@ -36,3 +36,18 @@ export const parseByte = (
   if (exp < 0) return NaN;
   return Math.round(num / Math.pow(1024, exp));
 };
+
+export const calcProgress = (
+  totalLength: number | string,
+  completedLength: number | string,
+  decimal = 2,
+) => {
+  const total = Number(totalLength);
+  const completed = Number(completedLength);
+  if (total === 0 || completed === 0) {
+    return 0;
+  }
+  const percentage = (completed / total) * 100;
+  const result = parseFloat(percentage.toFixed(decimal));
+  return result;
+};

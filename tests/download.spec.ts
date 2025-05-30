@@ -1,4 +1,4 @@
-import { parseByte, parseByteVo, toByte } from "@/utils/download";
+import { calcProgress, parseByte, parseByteVo, toByte } from "@/utils/download";
 
 describe("parseByteVo", () => {
   it("should return ['NaN', ''] for invalid input", () => {
@@ -58,5 +58,12 @@ describe("parseByte", () => {
 
   it("should handle string input", () => {
     expect(parseByte("2048", "KB")).toBe(2);
+  });
+});
+
+describe("calcProgress", () => {
+  it("should return 100", () => {
+    const percentage = calcProgress(1, 1, 1);
+    expect(percentage).toBe(100);
   });
 });
