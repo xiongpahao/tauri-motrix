@@ -8,9 +8,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import type { Instance } from "parse-torrent";
-import { useState } from "react";
+import { useMergedState } from "rc-util";
+import { Key, useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import useLazyKVMap, { GetRowKey } from "@/hooks/lazy_kv_map";
 import { parseByteVo } from "@/utils/download";
 import { getFileExtension } from "@/utils/file";
 
@@ -34,16 +36,143 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+type TaskFile = NonNullable<Instance["files"]>[number];
 export interface TaskFilesProps {
-  files: Instance["files"];
+  files?: readonly TaskFile[];
+  rowKey?: string;
+  selectedRowKeys?: Key[];
+  defaultSelectedRowKeys?: Key[];
+  onSelectionChange?: (
+    keys: Key[],
+    record: unknown,
+    info: { type: RowSelectMethod },
+  ) => void;
 }
 
-export default function TaskFiles({ files }: TaskFilesProps) {
+export type RowSelectMethod = "all" | "none" | "invert" | "single" | "multiple";
+
+export default function TaskFiles({
+  files,
+  rowKey = "path",
+  defaultSelectedRowKeys,
+  selectedRowKeys,
+  onSelectionChange,
+}: TaskFilesProps) {
   const { t } = useTranslation();
 
-  const [selectedRows, setSelectedRows] = useState<NonNullable<typeof files>>(
-    [],
+  const [mergedSelectedKeys, setMergedSelectedKeys] = useMergedState(
+    selectedRowKeys || defaultSelectedRowKeys || [],
+    {
+      value: selectedRowKeys,
+    },
   );
+
+  const rawData: readonly TaskFile[] = files || [];
+
+  const getRowKey = useMemo<GetRowKey<TaskFile>>(() => {
+    if (typeof rowKey === "function") {
+      return rowKey;
+    }
+
+    return (record: TaskFile) => record?.[rowKey as keyof TaskFile];
+  }, [rowKey]);
+
+  const derivedSelectedKeySet = useMemo<Set<Key>>(
+    () => new Set(mergedSelectedKeys),
+    [mergedSelectedKeys],
+  );
+
+  const [getRecordByKey] = useLazyKVMap<TaskFile>(
+    rawData,
+    "children",
+    getRowKey,
+  );
+
+  const setSelectedKeys = useCallback(
+    (keys: Key[], method: RowSelectMethod) => {
+      const availableKeys: Key[] = [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const records: any[] = [];
+
+      // Filter key which not exist in the `dataSource`
+      keys.forEach((key) => {
+        const record = getRecordByKey(key);
+        if (record !== undefined) {
+          availableKeys.push(key);
+          records.push(record);
+        }
+      });
+
+      setMergedSelectedKeys(availableKeys);
+      onSelectionChange?.(availableKeys, records, { type: method });
+    },
+    [getRecordByKey, onSelectionChange, setMergedSelectedKeys],
+  );
+
+  const onSelectAllChange = useCallback(() => {
+    if (!files) {
+      return;
+    }
+
+    const keySet = new Set(derivedSelectedKeySet);
+
+    // Record key only need check with enabled
+    const recordKeys = files.map(getRowKey);
+    const checkedCurrentAll = recordKeys.every((key) => keySet.has(key));
+    const changeKeys: Key[] = [];
+
+    if (checkedCurrentAll) {
+      recordKeys.forEach((key) => {
+        keySet.delete(key);
+        changeKeys.push(key);
+      });
+    } else {
+      recordKeys.forEach((key) => {
+        if (!keySet.has(key)) {
+          keySet.add(key);
+          changeKeys.push(key);
+        }
+      });
+    }
+
+    const keys = Array.from(keySet);
+
+    setSelectedKeys(keys, "all");
+  }, [derivedSelectedKeySet, files, getRowKey, setSelectedKeys]);
+
+  const renderCell = (key: Key, record: TaskFile, index: number) => {
+    const checked = derivedSelectedKeySet.has(key);
+
+    return (
+      <StyledTableRow key={index}>
+        <StyledTableCell component="th" scope="row">
+          <Checkbox
+            size="small"
+            checked={checked}
+            onChange={() => {
+              const keySet = new Set(derivedSelectedKeySet);
+
+              if (checked) {
+                keySet.delete(key);
+              } else {
+                keySet.add(key);
+              }
+              const keys = Array.from(keySet);
+
+              setSelectedKeys(keys, "single");
+            }}
+          />
+        </StyledTableCell>
+        <StyledTableCell sx={{ textOverflow: "ellipsis" }}>
+          {record.name}
+        </StyledTableCell>
+        <StyledTableCell>{getFileExtension(record.path)}</StyledTableCell>
+        <StyledTableCell align="right">
+          {parseByteVo(record.length).join("")}
+        </StyledTableCell>
+      </StyledTableRow>
+    );
+  };
 
   return (
     <TableContainer component={Paper}>
@@ -52,20 +181,14 @@ export default function TaskFiles({ files }: TaskFilesProps) {
           <TableRow>
             <StyledTableCell>
               <Checkbox
-                checked={selectedRows?.length === files?.length}
+                checked={mergedSelectedKeys?.length === files?.length}
                 sx={(theme) => ({
                   color: theme.palette.common.white,
                   "&.Mui-checked": {
                     color: theme.palette.common.white,
                   },
                 })}
-                onChange={(e) => {
-                  if (e.target.checked && files) {
-                    setSelectedRows(files);
-                  } else {
-                    setSelectedRows([]);
-                  }
-                }}
+                onChange={onSelectAllChange}
               />
             </StyledTableCell>
             <StyledTableCell>Name</StyledTableCell>
@@ -76,30 +199,9 @@ export default function TaskFiles({ files }: TaskFilesProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {files?.map((row) => (
-            <StyledTableRow key={row.name}>
-              <StyledTableCell component="th" scope="row">
-                <Checkbox
-                  size="small"
-                  checked={selectedRows?.includes(row)}
-                  onChange={(e) => {
-                    if (e.target.checked) {
-                      setSelectedRows([...selectedRows, row]);
-                    } else {
-                      setSelectedRows(selectedRows.filter((r) => r !== row));
-                    }
-                  }}
-                />
-              </StyledTableCell>
-              <StyledTableCell sx={{ textOverflow: "ellipsis" }}>
-                {row.name}
-              </StyledTableCell>
-              <StyledTableCell>{getFileExtension(row.path)}</StyledTableCell>
-              <StyledTableCell align="right">
-                {parseByteVo(row.length).join("")}
-              </StyledTableCell>
-            </StyledTableRow>
-          ))}
+          {files?.map((record, index) =>
+            renderCell(getRowKey(record, index), record, index),
+          )}
         </TableBody>
       </Table>
     </TableContainer>
