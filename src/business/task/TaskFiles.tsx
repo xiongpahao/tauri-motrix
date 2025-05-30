@@ -5,6 +5,7 @@ import {
   Grid,
   ToggleButton,
   ToggleButtonGroup,
+  ToggleButtonProps,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
@@ -21,7 +22,13 @@ import { useTranslation } from "react-i18next";
 
 import useLazyKVMap, { GetRowKey } from "@/hooks/lazy_kv_map";
 import { parseByteVo } from "@/utils/download";
-import { getFileExtension } from "@/utils/file";
+import {
+  filterAudioFiles,
+  filterDocumentFiles,
+  filterImageFiles,
+  filterVideoFiles,
+  getFileExtension,
+} from "@/utils/file";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -74,7 +81,9 @@ export default function TaskFiles({
 }: TaskFilesProps) {
   const { t } = useTranslation();
 
-  const [fileType, setFileType] = useState<FILE_SELECTION | undefined>();
+  const [toggleFileType, setToggleFileType] = useState<
+    FILE_SELECTION | undefined
+  >();
 
   const [mergedSelectedKeys, setMergedSelectedKeys] = useMergedState(
     selectedRowKeys || defaultSelectedRowKeys || [],
@@ -173,7 +182,46 @@ export default function TaskFiles({
     const keys = Array.from(keySet);
 
     setSelectedKeys(keys, "all");
+    setToggleFileType(undefined);
   }, [derivedSelectedKeySet, rawData, getRowKey, setSelectedKeys]);
+
+  const handleToggleFile = useCallback<
+    NonNullable<ToggleButtonProps["onChange"]>
+  >(
+    (_, value) => {
+      setToggleFileType(value);
+
+      if (!value) {
+        return;
+      }
+
+      let filtered: TaskFile[] = [];
+
+      const variableRawData = Array.from(rawData);
+
+      switch (value) {
+        case FILE_SELECTION.Audio:
+          filtered = filterAudioFiles(variableRawData);
+          break;
+
+        case FILE_SELECTION.Video:
+          filtered = filterVideoFiles(variableRawData);
+          break;
+
+        case FILE_SELECTION.Image:
+          filtered = filterImageFiles(variableRawData);
+          break;
+
+        case FILE_SELECTION.Document:
+          filtered = filterDocumentFiles(variableRawData);
+          break;
+      }
+
+      const newKeys = filtered.map(getRowKey);
+      setSelectedKeys(newKeys, "multiple");
+    },
+    [getRowKey, rawData, setSelectedKeys],
+  );
 
   const renderCell = (key: Key, record: TaskFile, index: number) => {
     const checked = derivedSelectedKeySet.has(key);
@@ -195,6 +243,7 @@ export default function TaskFiles({
               const keys = Array.from(keySet);
 
               setSelectedKeys(keys, "single");
+              setToggleFileType(undefined);
             }}
           />
         </StyledTableCell>
@@ -257,8 +306,8 @@ export default function TaskFiles({
         >
           <ToggleButtonGroup
             size="small"
-            value={fileType}
-            onChange={(_, value) => setFileType(value)}
+            value={toggleFileType}
+            onChange={handleToggleFile}
             exclusive
             color="primary"
           >
