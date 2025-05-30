@@ -67,7 +67,7 @@ export default function TaskFiles({
     },
   );
 
-  const rawData: readonly TaskFile[] = files || [];
+  const rawData: readonly TaskFile[] = useMemo(() => files || [], [files]);
 
   const getRowKey = useMemo<GetRowKey<TaskFile>>(() => {
     if (typeof rowKey === "function") {
@@ -110,14 +110,10 @@ export default function TaskFiles({
   );
 
   const onSelectAllChange = useCallback(() => {
-    if (!files) {
-      return;
-    }
-
     const keySet = new Set(derivedSelectedKeySet);
 
     // Record key only need check with enabled
-    const recordKeys = files.map(getRowKey);
+    const recordKeys = rawData.map(getRowKey);
     const checkedCurrentAll = recordKeys.every((key) => keySet.has(key));
     const changeKeys: Key[] = [];
 
@@ -138,7 +134,7 @@ export default function TaskFiles({
     const keys = Array.from(keySet);
 
     setSelectedKeys(keys, "all");
-  }, [derivedSelectedKeySet, files, getRowKey, setSelectedKeys]);
+  }, [derivedSelectedKeySet, rawData, getRowKey, setSelectedKeys]);
 
   const renderCell = (key: Key, record: TaskFile, index: number) => {
     const checked = derivedSelectedKeySet.has(key);
@@ -181,7 +177,7 @@ export default function TaskFiles({
           <TableRow>
             <StyledTableCell>
               <Checkbox
-                checked={mergedSelectedKeys?.length === files?.length}
+                checked={mergedSelectedKeys?.length === rawData.length}
                 sx={(theme) => ({
                   color: theme.palette.common.white,
                   "&.Mui-checked": {
@@ -199,7 +195,7 @@ export default function TaskFiles({
           </TableRow>
         </TableHead>
         <TableBody>
-          {files?.map((record, index) =>
+          {rawData.map((record, index) =>
             renderCell(getRowKey(record, index), record, index),
           )}
         </TableBody>
