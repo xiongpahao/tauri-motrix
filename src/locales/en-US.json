@@ -71,7 +71,8 @@
         "DownloadSpeed": "Download Speed",
         "FileName": "Name",
         "FileExtension": "Extension",
-        "FileSize": "Size"
+        "FileSize": "Size",
+        "SelectedFilesSum": "Selected: {{selectedFilesCount}} files, total size {{selectedFilesTotalSize}}"
     },
     "common": {
         "DownloadFile": "Download File",

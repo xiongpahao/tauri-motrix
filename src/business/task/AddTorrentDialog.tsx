@@ -49,7 +49,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
       />
       {!!torrentFiles?.length && (
         <>
-          <TaskFiles files={torrentFiles}></TaskFiles>
+          <TaskFiles files={torrentFiles} />
         </>
       )}
     </BaseDialog>

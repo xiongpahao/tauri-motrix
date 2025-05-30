@@ -1,4 +1,11 @@
-import { Checkbox } from "@mui/material";
+import { Article, MusicNote, Photo, Theaters } from "@mui/icons-material";
+import {
+  Box,
+  Checkbox,
+  Grid,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -9,7 +16,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import type { Instance } from "parse-torrent";
 import { useMergedState } from "rc-util";
-import { Key, useCallback, useMemo } from "react";
+import { Key, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import useLazyKVMap, { GetRowKey } from "@/hooks/lazy_kv_map";
@@ -51,6 +58,13 @@ export interface TaskFilesProps {
 
 export type RowSelectMethod = "all" | "none" | "invert" | "single" | "multiple";
 
+export const enum FILE_SELECTION {
+  Video = "video",
+  Audio = "audio",
+  Image = "image",
+  Document = "document",
+}
+
 export default function TaskFiles({
   files,
   rowKey = "path",
@@ -59,6 +73,8 @@ export default function TaskFiles({
   onSelectionChange,
 }: TaskFilesProps) {
   const { t } = useTranslation();
+
+  const [fileType, setFileType] = useState<FILE_SELECTION | undefined>();
 
   const [mergedSelectedKeys, setMergedSelectedKeys] = useMergedState(
     selectedRowKeys || defaultSelectedRowKeys || [],
@@ -80,6 +96,29 @@ export default function TaskFiles({
   const derivedSelectedKeySet = useMemo<Set<Key>>(
     () => new Set(mergedSelectedKeys),
     [mergedSelectedKeys],
+  );
+
+  const fileSelections = useMemo(
+    () =>
+      [
+        {
+          icon: <Theaters />,
+          value: FILE_SELECTION.Video,
+        },
+        {
+          icon: <MusicNote />,
+          value: FILE_SELECTION.Audio,
+        },
+        {
+          icon: <Photo />,
+          value: FILE_SELECTION.Image,
+        },
+        {
+          icon: <Article />,
+          value: FILE_SELECTION.Document,
+        },
+      ] as const,
+    [],
   );
 
   const [getRecordByKey] = useLazyKVMap<TaskFile>(
@@ -171,35 +210,79 @@ export default function TaskFiles({
   };
 
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>
-              <Checkbox
-                checked={mergedSelectedKeys?.length === rawData.length}
-                sx={(theme) => ({
-                  color: theme.palette.common.white,
-                  "&.Mui-checked": {
+    <Box>
+      <TableContainer component={Paper}>
+        <Table aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>
+                <Checkbox
+                  checked={mergedSelectedKeys.length === rawData.length}
+                  sx={(theme) => ({
                     color: theme.palette.common.white,
-                  },
-                })}
-                onChange={onSelectAllChange}
-              />
-            </StyledTableCell>
-            <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell>Extension</StyledTableCell>
-            <StyledTableCell align="right">
-              {t("task.FileSize")}
-            </StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rawData.map((record, index) =>
-            renderCell(getRowKey(record, index), record, index),
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+                    "&.Mui-checked": {
+                      color: theme.palette.common.white,
+                    },
+                  })}
+                  onChange={onSelectAllChange}
+                />
+              </StyledTableCell>
+              <StyledTableCell>Name</StyledTableCell>
+              <StyledTableCell>Extension</StyledTableCell>
+              <StyledTableCell align="right">
+                {t("task.FileSize")}
+              </StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rawData.map((record, index) =>
+              renderCell(getRowKey(record, index), record, index),
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Grid
+        container
+        spacing={2}
+        sx={{ mt: 2, alignItems: "center" }}
+        columns={24}
+      >
+        <Grid
+          size={{
+            xs: 24,
+            sm: 8,
+            md: 8,
+            lg: 8,
+          }}
+        >
+          <ToggleButtonGroup
+            size="small"
+            value={fileType}
+            onChange={(_, value) => setFileType(value)}
+            exclusive
+            color="primary"
+          >
+            {fileSelections.map(({ icon, value }) => (
+              <ToggleButton value={value} key={value}>
+                {icon}
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        </Grid>
+        <Grid
+          size={{
+            xs: 24,
+            sm: 16,
+            md: 16,
+            lg: 16,
+          }}
+        >
+          {t("task.SelectedFilesSum", {
+            selectedFilesCount: mergedSelectedKeys.length,
+            selectedFilesTotalSize: rawData.length,
+          })}
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
