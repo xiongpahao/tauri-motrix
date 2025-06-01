@@ -1,4 +1,5 @@
-import { TextField } from "@mui/material";
+import { Folder } from "@mui/icons-material";
+import { Grid, IconButton, TextField } from "@mui/material";
 import { useBoolean } from "ahooks";
 import { remote } from "parse-torrent";
 import { Key, Ref, useImperativeHandle, useState } from "react";
@@ -64,9 +65,59 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
             selectedRowKeys={selectedTorrentFileKeys}
             onSelectionChange={(keys) => setSelectedTorrentFileKeys(keys)}
           />
-          <TextField sx={{ mt: 2 }} label="Rename" fullWidth />
-          <TextField sx={{ mt: 2 }} label="Rename" fullWidth />
-          <TextField sx={{ mt: 2 }} label="Rename" fullWidth />
+          <Grid container spacing={3} sx={{ mt: 2 }}>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+              }}
+            >
+              <TextField
+                fullWidth
+                label="Rename"
+                placeholder="Optional"
+                value={""}
+                // onChange={(e) => setRename(e.target.value)}
+                variant="outlined"
+                size="small"
+              />
+            </Grid>
+            <Grid
+              size={{
+                xs: 12,
+                sm: 6,
+              }}
+            >
+              <TextField
+                fullWidth
+                label="Splits"
+                placeholder="Optional"
+                value={""}
+                // onChange={(e) => setSplits(e.target.value)}
+                variant="outlined"
+                size="small"
+              />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <TextField
+                fullWidth
+                label="Save To"
+                // value={savePath}
+                // onChange={(e) => setSavePath(e.target.value)}
+                variant="outlined"
+                size="small"
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <IconButton size="small">
+                        <Folder />
+                      </IconButton>
+                    ),
+                  },
+                }}
+              />
+            </Grid>
+          </Grid>
         </>
       )}
     </BaseDialog>
