@@ -95,7 +95,9 @@
         "FromClipboard": "From Clipboard",
         "FromTorrentFile": "From Torrent File",
         "FromUrl": "From URL",
-        "UploadFile": "Upload file"
+        "UploadFile": "Upload file",
+        "Optional": "Optional",
+        "DirPick": "Please select path"
     },
     "update": {
         "GotoReleasePage": "Go to release page",

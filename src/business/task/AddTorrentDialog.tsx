@@ -1,14 +1,22 @@
-import { Folder } from "@mui/icons-material";
-import { Grid, IconButton, TextField } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import { useBoolean } from "ahooks";
 import { remote } from "parse-torrent";
-import { Key, Ref, useImperativeHandle, useState } from "react";
+import { Key, Ref, useCallback, useImperativeHandle, useState } from "react";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import TaskFiles, { TaskFile } from "@/business/task/TaskFiles";
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
 import InputFileUpload from "@/components/InputFileUpload";
+import PathComboBox from "@/components/PathComboBox";
+import { useAria2 } from "@/hooks/aria2";
 import { listTorrentFiles } from "@/utils/file";
+
+interface IFormInput {
+  out: string;
+  split?: number;
+  dir: string;
+}
 
 function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
   const { t } = useTranslation();
@@ -20,12 +28,37 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
     [],
   );
 
+  const { aria2 } = useAria2();
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<IFormInput>({
+    values: {
+      split: 128,
+      dir: aria2?.dir ?? "",
+      out: "",
+    },
+  });
+
   useImperativeHandle(props.ref, () => ({ close: setFalse, open: setTrue }));
 
-  const submit = () => {
+  const setDirValue = useCallback(
+    (value: string) => setValue("dir", value),
+    [setValue],
+  );
+
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    const { out, split, dir } = data;
+
+    console.log("miku ", out, split, dir);
     if (selectedTorrentFileKeys.length === 0) {
       return;
     }
+
+    console.log("miku ");
   };
 
   return (
@@ -37,7 +70,8 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
       onCancel={setFalse}
       onClose={setFalse}
       disableOk={!torrentFiles?.length}
-      onOk={submit}
+      onSubmit={handleSubmit(onSubmit)}
+      enableForm
     >
       <InputFileUpload
         accept=".torrent"
@@ -72,14 +106,18 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
                 sm: 6,
               }}
             >
-              <TextField
-                fullWidth
-                label="Rename"
-                placeholder="Optional"
-                value={""}
-                // onChange={(e) => setRename(e.target.value)}
-                variant="outlined"
-                size="small"
+              <Controller
+                name="out"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    label={t("common.Rename")}
+                    fullWidth
+                    placeholder={t("common.Optional")}
+                    size="small"
+                    {...field}
+                  />
+                )}
               />
             </Grid>
             <Grid
@@ -88,33 +126,45 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
                 sm: 6,
               }}
             >
-              <TextField
-                fullWidth
-                label="Splits"
-                placeholder="Optional"
-                value={""}
-                // onChange={(e) => setSplits(e.target.value)}
-                variant="outlined"
-                size="small"
+              <Controller
+                name="split"
+                rules={{
+                  min: {
+                    value: 1,
+                    message: t("task.SplitMin", { min: 1 }),
+                  },
+                  max: {
+                    value: 128,
+                    message: t("task.SplitMax", { max: 128 }),
+                  },
+                }}
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    fullWidth
+                    placeholder={t("common.Optional")}
+                    size="small"
+                    type="number"
+                    label={t("task.Splits")}
+                    error={!!errors.split}
+                    helperText={errors.split?.message}
+                    {...field}
+                  />
+                )}
               />
             </Grid>
             <Grid size={{ xs: 12 }}>
-              <TextField
-                fullWidth
-                label="Save To"
-                // value={savePath}
-                // onChange={(e) => setSavePath(e.target.value)}
-                variant="outlined"
-                size="small"
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <IconButton size="small">
-                        <Folder />
-                      </IconButton>
-                    ),
-                  },
-                }}
+              <Controller
+                name="dir"
+                control={control}
+                render={({ field }) => (
+                  <PathComboBox
+                    setValue={setDirValue}
+                    error={!!errors.dir}
+                    openTitle="task.DirPick"
+                    {...field}
+                  />
+                )}
               />
             </Grid>
           </Grid>
