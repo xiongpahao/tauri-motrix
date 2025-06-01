@@ -1,5 +1,10 @@
 import { Folder, History } from "@mui/icons-material";
-import { IconButton, TextField, TextFieldProps } from "@mui/material";
+import {
+  IconButton,
+  IconButtonProps,
+  TextField,
+  TextFieldProps,
+} from "@mui/material";
 import { open as dialogOpen } from "@tauri-apps/plugin-dialog";
 import { useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
@@ -8,10 +13,11 @@ export type PathComboBoxProps = {
   openTitle?: string;
   value?: string;
   setValue?: (value: string) => void;
+  onHistory?: IconButtonProps["onClick"];
 } & TextFieldProps;
 
 function PathComboBox(props: PathComboBoxProps) {
-  const { setValue, openTitle, ...innerProps } = props;
+  const { setValue, openTitle, onHistory, ...innerProps } = props;
   const value = innerProps.value;
 
   const { t } = useTranslation();
@@ -44,15 +50,19 @@ function PathComboBox(props: PathComboBoxProps) {
       slotProps={{
         input: {
           endAdornment: (
-            <IconButton size="small" onClick={onFolderPick}>
+            <IconButton
+              size="small"
+              data-testid="open-folder-pick"
+              onClick={onFolderPick}
+            >
               <Folder />
             </IconButton>
           ),
-          startAdornment: (
-            <IconButton size="small">
+          startAdornment: onHistory ? (
+            <IconButton size="small" onClick={onHistory}>
               <History />
             </IconButton>
-          ),
+          ) : undefined,
         },
       }}
       {...innerProps}

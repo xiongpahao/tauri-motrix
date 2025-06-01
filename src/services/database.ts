@@ -20,5 +20,15 @@ export async function getMotrixDB() {
         json_ext TEXT
       )`,
   );
+
+  await db.execute(`CREATE TABLE IF NOT EXISTS save_to_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        dir TEXT NOT NULL CHECK(length(dir) > 0),
+        engine TEXT NOT NULL CHECK(length(engine) > 0),
+        created_at INTEGER NOT NULL DEFAULT (unixepoch()),
+        updated_at INTEGER NOT NULL DEFAULT (unixepoch()),
+        is_star INTEGER NOT NULL DEFAULT 0
+      )`);
+
   return db;
 }

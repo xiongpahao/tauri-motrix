@@ -120,6 +120,7 @@ export interface DownloadOption {
   maxConnection?: number;
   maxSplit?: number;
   split?: number;
+  "select-file": string;
 }
 
 export const addTaskApi = async (
@@ -132,6 +133,14 @@ export const addTaskApi = async (
     typeof urls === "string" ? [urls] : urls,
     option,
   );
+};
+
+export const addTorrentApi = async (
+  torrent: string,
+  option: DownloadOption,
+) => {
+  const { call } = await getAria2();
+  return call("addTorrent", torrent, [], option);
 };
 
 export interface Aria2GlobalStat {

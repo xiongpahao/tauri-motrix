@@ -5,6 +5,7 @@ import { Key, Ref, useCallback, useImperativeHandle, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import DirPopover from "@/business/history/DirPopover";
 import TaskFiles, { TaskFile } from "@/business/task/TaskFiles";
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
 import InputFileUpload from "@/components/InputFileUpload";
@@ -27,6 +28,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
   const [selectedTorrentFileKeys, setSelectedTorrentFileKeys] = useState<Key[]>(
     [],
   );
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>();
 
   const { aria2 } = useAria2();
 
@@ -162,12 +164,18 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
                     setValue={setDirValue}
                     error={!!errors.dir}
                     openTitle="task.DirPick"
+                    onHistory={(e) => setAnchorEl(e.currentTarget)}
                     {...field}
                   />
                 )}
               />
             </Grid>
           </Grid>
+          <DirPopover
+            setDirValue={setDirValue}
+            anchorEl={anchorEl}
+            onClose={() => setAnchorEl(undefined)}
+          />
         </>
       )}
     </BaseDialog>
