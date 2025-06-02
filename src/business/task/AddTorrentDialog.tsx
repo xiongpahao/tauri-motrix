@@ -4,6 +4,7 @@ import { remote } from "parse-torrent";
 import { Ref, useCallback, useImperativeHandle, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { mutate } from "swr";
 
 import DirPopover from "@/business/history/DirPopover";
 import TaskFiles, { TaskFile } from "@/business/task/TaskFiles";
@@ -14,6 +15,8 @@ import { DOWNLOAD_ENGINE } from "@/constant/task";
 import { useAria2 } from "@/hooks/aria2";
 import { addTorrentApi } from "@/services/aria2c_api";
 import { addOneDir, findOneDirByPath } from "@/services/save_to_history";
+import { useTaskStore } from "@/store/task";
+import { compactUndefined } from "@/utils/compact_undefined";
 import { getAsBase64, listTorrentFiles } from "@/utils/file";
 
 interface IFormInput {
@@ -30,6 +33,8 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
   const [torrentFiles, setTorrentFiles] = useState<TaskFile[]>([]);
   const [fileList, setFileList] = useState<File[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>();
+
+  const fetchTasks = useTaskStore((state) => state.fetchTasks);
 
   const { aria2 } = useAria2();
 
@@ -59,19 +64,24 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
 
     const torrent = await getAsBase64(fileList[0]);
 
-    await addTorrentApi(torrent, {
-      "select-file": selectFiles.join(","),
-      out,
-      split,
-      dir,
-    });
+    await addTorrentApi(
+      torrent,
+      compactUndefined({
+        "select-file": selectFiles.join(","),
+        out,
+        split,
+        dir,
+      }),
+    );
+    await fetchTasks();
 
-    const dirRecord = findOneDirByPath(out);
-    if (!dirRecord && out) {
+    const dirRecord = findOneDirByPath(dir);
+    if (!dirRecord && dir) {
       await addOneDir({
         dir,
         engine: DOWNLOAD_ENGINE.Aria2,
       });
+      mutate("getSaveToHistory");
     }
 
     setFalse();
@@ -124,7 +134,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
                 onSelectionChange={field.onChange}
                 error={!!errors.selectFiles}
                 helperText={errors.selectFiles?.message}
-                height={300}
+                height={200}
               />
             )}
           />

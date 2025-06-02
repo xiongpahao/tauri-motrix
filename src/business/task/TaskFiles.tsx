@@ -342,7 +342,7 @@ export default function TaskFiles({
       <Box sx={{ position: "relative" }}>
         {error && <ErrorIndicator>!</ErrorIndicator>}
         <ErrorTableContainer component={Paper} hasError={error} sx={{ height }}>
-          <Table aria-label="task files table">
+          <Table aria-label="task files table" size="small" stickyHeader>
             <TableHead>
               <TableRow>
                 <StyledTableCell>

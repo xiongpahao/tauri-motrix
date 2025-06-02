@@ -17,7 +17,10 @@ export interface DirPopoverProps {
 }
 
 function DirPopover({ anchorEl, onClose, setDirValue }: DirPopoverProps) {
-  const { data: dirHistoryList } = useSWR("getSaveToHistory", findManyDir);
+  const { data: dirHistoryList, mutate: mutateDirHistoryList } = useSWR(
+    "getSaveToHistory",
+    findManyDir,
+  );
 
   const open = Boolean(anchorEl);
   const id = open ? "business-dir-popover" : undefined;
@@ -28,12 +31,16 @@ function DirPopover({ anchorEl, onClose, setDirValue }: DirPopoverProps) {
       <HistoryDirItem
         dir={item.dir}
         onSelect={() => setDirValue?.(item.dir)}
-        onDelete={deleteDir}
-        onStar={(id) =>
-          updateDir(id, {
-            is_star,
-          })
-        }
+        onDelete={async (id) => {
+          await deleteDir(id);
+          mutateDirHistoryList();
+        }}
+        onStar={async (id) => {
+          await updateDir(id, {
+            is_star: !is_star,
+          });
+          mutateDirHistoryList();
+        }}
         id={item.id}
         key={item.id}
         is_star={is_star}

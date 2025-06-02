@@ -22,7 +22,10 @@ export function HistoryDirItem(props: {
   return (
     <ListItemButton onClick={() => onSelect(id)}>
       <ListItemText primary={dir} />
-      <TaskActionButton onClick={() => onStar(id)} icon={<StarOutline />} />
+      <TaskActionButton
+        onClick={() => onStar(id)}
+        icon={<StarOutline htmlColor={is_star ? "#E6A23C" : undefined} />}
+      />
       {!is_star && (
         <TaskActionButton
           onClick={() => onDelete(id)}
