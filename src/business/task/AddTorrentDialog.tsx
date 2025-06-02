@@ -13,7 +13,7 @@ import PathComboBox from "@/components/PathComboBox";
 import { DOWNLOAD_ENGINE } from "@/constant/task";
 import { useAria2 } from "@/hooks/aria2";
 import { addTorrentApi } from "@/services/aria2c_api";
-import { addOneDir } from "@/services/save_to_history";
+import { addOneDir, findOneDirByPath } from "@/services/save_to_history";
 import { getAsBase64, listTorrentFiles } from "@/utils/file";
 
 interface IFormInput {
@@ -66,10 +66,13 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
       dir,
     });
 
-    await addOneDir({
-      dir,
-      engine: DOWNLOAD_ENGINE.Aria2,
-    });
+    const dirRecord = findOneDirByPath(out);
+    if (!dirRecord && out) {
+      await addOneDir({
+        dir,
+        engine: DOWNLOAD_ENGINE.Aria2,
+      });
+    }
 
     setFalse();
   };

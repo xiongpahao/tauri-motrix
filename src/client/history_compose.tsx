@@ -1,4 +1,4 @@
-import { DeleteOutline, StartOutlined } from "@mui/icons-material";
+import { DeleteOutline, StarOutline } from "@mui/icons-material";
 import {
   alpha,
   ListItemButton,
@@ -22,7 +22,7 @@ export function HistoryDirItem(props: {
   return (
     <ListItemButton onClick={() => onSelect(id)}>
       <ListItemText primary={dir} />
-      <TaskActionButton onClick={() => onStar(id)} icon={<StartOutlined />} />
+      <TaskActionButton onClick={() => onStar(id)} icon={<StarOutline />} />
       {!is_star && (
         <TaskActionButton
           onClick={() => onDelete(id)}
