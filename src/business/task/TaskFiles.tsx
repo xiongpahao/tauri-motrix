@@ -2,6 +2,9 @@ import { Article, MusicNote, Photo, Theaters } from "@mui/icons-material";
 import {
   Box,
   Checkbox,
+  FormControl,
+  FormHelperText,
+  FormLabel,
   Grid,
   ToggleButton,
   ToggleButtonGroup,
@@ -12,7 +15,9 @@ import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
+import TableContainer, {
+  TableContainerProps,
+} from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import type { Instance } from "parse-torrent";
@@ -47,6 +52,39 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:last-child td, &:last-child th": {
     border: 0,
   },
+}));
+
+// Enhanced TableContainer with error styling
+const ErrorTableContainer = styled(TableContainer, {
+  shouldForwardProp: (prop) => prop !== "hasError",
+})<{ hasError?: boolean } & TableContainerProps>(({ theme, hasError }) => ({
+  border: hasError ? `2px solid ${theme.palette.error.main}` : "none",
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: hasError ? "rgba(244, 67, 54, 0.04)" : "inherit",
+  transition: "border 0.2s ease-in-out, background-color 0.2s ease-in-out",
+
+  // Add a subtle glow effect for errors
+  ...(hasError && {
+    boxShadow: `0 0 0 1px ${theme.palette.error.main}20`,
+  }),
+}));
+
+// Error indicator component
+const ErrorIndicator = styled(Box)(({ theme }) => ({
+  position: "absolute",
+  top: -8,
+  right: -8,
+  backgroundColor: theme.palette.error.main,
+  color: theme.palette.error.contrastText,
+  borderRadius: "50%",
+  width: 16,
+  height: 16,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "12px",
+  fontWeight: "bold",
+  zIndex: 1,
 }));
 
 export type TaskFile = NonNullable<Instance["files"]>[number] & {
@@ -234,100 +272,138 @@ export default function TaskFiles({
     [getRowKey, rawData, setSelectedKeys],
   );
 
-  const renderCell = (key: Key, record: TaskFile, index: number) => {
-    const checked = derivedSelectedKeySet.has(key);
+  const renderCell = useCallback(
+    (key: Key, record: TaskFile, index: number) => {
+      const checked = derivedSelectedKeySet.has(key);
 
-    return (
-      <StyledTableRow key={index}>
-        <StyledTableCell component="th" scope="row">
-          <Checkbox
-            size="small"
-            checked={checked}
-            onChange={() => {
-              const keySet = new Set(derivedSelectedKeySet);
+      return (
+        <StyledTableRow key={index}>
+          <StyledTableCell component="th" scope="row">
+            <Checkbox
+              size="small"
+              checked={checked}
+              onChange={() => {
+                const keySet = new Set(derivedSelectedKeySet);
 
-              if (checked) {
-                keySet.delete(key);
-              } else {
-                keySet.add(key);
-              }
-              const keys = Array.from(keySet);
+                if (checked) {
+                  keySet.delete(key);
+                } else {
+                  keySet.add(key);
+                }
+                const keys = Array.from(keySet);
 
-              setSelectedKeys(keys, "single");
-              setToggleFileType(undefined);
-            }}
-          />
-        </StyledTableCell>
-        <StyledTableCell sx={{ textOverflow: "ellipsis" }}>
-          {record.name}
-        </StyledTableCell>
-        {mode === "DETAIL" && (
-          <>
-            <StyledTableCell align="right" width={50}>
-              {calcProgress(record.length, record.completedLength || 0, 1)}
-            </StyledTableCell>
+                setSelectedKeys(keys, "single");
+                setToggleFileType(undefined);
+              }}
+            />
+          </StyledTableCell>
+          <StyledTableCell>
+            {/* <span
+              style={{
+                display: "table",
+                tableLayout: "fixed",
+                width: "100%",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+              }}
+            > */}
+            {record.name}
+          </StyledTableCell>
+          <StyledTableCell>{record.extension}</StyledTableCell>
+          {mode === "DETAIL" && (
+            <>
+              <StyledTableCell align="right" width={50}>
+                {calcProgress(record.length, record.completedLength || 0, 1)}
+              </StyledTableCell>
 
-            <StyledTableCell align="right" width={85}>
-              {parseByteVo(record.completedLength).join("")}
-            </StyledTableCell>
-          </>
-        )}
-        <StyledTableCell>{record.extension}</StyledTableCell>
-        <StyledTableCell align="right">
-          {parseByteVo(record.length).join("")}
-        </StyledTableCell>
-      </StyledTableRow>
-    );
-  };
+              <StyledTableCell align="right" width={85}>
+                {parseByteVo(record.completedLength).join("")}
+              </StyledTableCell>
+            </>
+          )}
+          <StyledTableCell align="right">
+            {parseByteVo(record.length).join("")}
+          </StyledTableCell>
+        </StyledTableRow>
+      );
+    },
+    [derivedSelectedKeySet, mode, setSelectedKeys],
+  );
 
   return (
-    <Box>
-      <TableContainer component={Paper}>
-        <Table aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>
-                <Checkbox
-                  checked={mergedSelectedKeys.length === rawData.length}
-                  sx={(theme) => ({
-                    color: theme.palette.common.white,
-                    "&.Mui-checked": {
+    <FormControl error={error}>
+      {/* <Alert severity="error" sx={{ mb: 2 }}>
+        {helperText}
+      </Alert> */}
+
+      <Box sx={{ position: "relative" }}>
+        {error && <ErrorIndicator>!</ErrorIndicator>}
+        <ErrorTableContainer component={Paper} hasError={error}>
+          <Table aria-label="task files table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>
+                  <Checkbox
+                    checked={mergedSelectedKeys.length === rawData.length}
+                    sx={(theme) => ({
                       color: theme.palette.common.white,
-                    },
-                  })}
-                  onChange={onSelectAllChange}
-                />
-              </StyledTableCell>
-              <StyledTableCell>Name</StyledTableCell>
-              <StyledTableCell>Extension</StyledTableCell>
+                      "&.Mui-checked": {
+                        color: theme.palette.common.white,
+                      },
+                    })}
+                    onChange={onSelectAllChange}
+                  />
+                </StyledTableCell>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Extension</StyledTableCell>
+                {mode === "DETAIL" && (
+                  <>
+                    <StyledTableCell align="right" width={50}>
+                      %
+                    </StyledTableCell>
 
-              {mode === "DETAIL" && (
-                <>
-                  <StyledTableCell align="right" width={50}>
-                    %
-                  </StyledTableCell>
-
-                  <StyledTableCell align="right" width={85}>
-                    ✓
-                  </StyledTableCell>
-                </>
+                    <StyledTableCell align="right" width={85}>
+                      ✓
+                    </StyledTableCell>
+                  </>
+                )}
+                <StyledTableCell align="right">
+                  {t("task.FileSize")}
+                </StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rawData.map((record, index) =>
+                renderCell(getRowKey(record, index), record, index),
               )}
-              <StyledTableCell align="right">
-                {t("task.FileSize")}
-              </StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rawData.map((record, index) =>
-              renderCell(getRowKey(record, index), record, index),
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableBody>
+          </Table>
+        </ErrorTableContainer>
+      </Box>
+      {/* Enhanced helper text with better styling */}
+      <FormHelperText
+        sx={{
+          mt: 1,
+          fontWeight: error ? 500 : 400,
+          fontSize: error ? "0.875rem" : "0.75rem",
+        }}
+      >
+        {helperText}
+      </FormHelperText>
       <Grid
         container
         spacing={2}
-        sx={{ mt: 2, alignItems: "center" }}
+        sx={{
+          mt: 2,
+          alignItems: "center",
+          ...(error && {
+            opacity: 0.8,
+            "& .MuiToggleButton-root": {
+              borderColor: "error.main",
+            },
+          }),
+        }}
         columns={24}
       >
         <Grid
@@ -344,6 +420,17 @@ export default function TaskFiles({
             onChange={handleToggleFile}
             exclusive
             color="primary"
+            sx={{
+              // Enhanced styling for error states
+              ...(error && {
+                "& .MuiToggleButton-root": {
+                  borderColor: "rgba(244, 67, 54, 0.5)",
+                  "&:hover": {
+                    backgroundColor: "rgba(244, 67, 54, 0.04)",
+                  },
+                },
+              }),
+            }}
           >
             {fileSelections.map(({ icon, value }) => (
               <ToggleButton value={value} key={value}>
@@ -360,12 +447,14 @@ export default function TaskFiles({
             lg: 16,
           }}
         >
-          {t("task.SelectedFilesSum", {
-            selectedFilesCount: mergedSelectedKeys.length,
-            selectedFilesTotalSize: rawData.length,
-          })}
+          <FormLabel>
+            {t("task.SelectedFilesSum", {
+              selectedFilesCount: mergedSelectedKeys.length,
+              selectedFilesTotalSize: rawData.length,
+            })}
+          </FormLabel>
         </Grid>
       </Grid>
-    </Box>
+    </FormControl>
   );
 }

@@ -93,6 +93,9 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
           <Controller
             name="selectFiles"
             control={control}
+            rules={{
+              required: t("task.SelectFilesError"),
+            }}
             render={({ field }) => (
               <TaskFiles
                 files={torrentFiles}
@@ -169,6 +172,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
                     error={!!errors.dir}
                     openTitle="task.DirPick"
                     onHistory={(e) => setAnchorEl(e.currentTarget)}
+                    placeholder={t("common.Optional")}
                     {...field}
                   />
                 )}

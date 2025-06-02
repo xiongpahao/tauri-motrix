@@ -72,7 +72,8 @@
         "FileName": "Name",
         "FileExtension": "Extension",
         "FileSize": "Size",
-        "SelectedFilesSum": "Selected: {{selectedFilesCount}} files, total size {{selectedFilesTotalSize}}"
+        "SelectedFilesSum": "Selected: {{selectedFilesCount}} files, total size {{selectedFilesTotalSize}}",
+        "SelectFilesError": "Please select at least one download file"
     },
     "common": {
         "DownloadFile": "Download File",
