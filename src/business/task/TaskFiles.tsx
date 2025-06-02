@@ -66,6 +66,8 @@ export interface TaskFilesProps {
     record: unknown,
     info: { type: RowSelectMethod },
   ) => void;
+  error?: boolean;
+  helperText?: string;
 }
 
 export type RowSelectMethod = "all" | "none" | "invert" | "single" | "multiple";
@@ -84,6 +86,8 @@ export default function TaskFiles({
   selectedRowKeys,
   onSelectionChange,
   mode,
+  error,
+  helperText,
 }: TaskFilesProps) {
   const { t } = useTranslation();
 

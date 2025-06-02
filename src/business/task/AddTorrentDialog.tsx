@@ -1,7 +1,7 @@
 import { Grid, TextField } from "@mui/material";
 import { useBoolean } from "ahooks";
 import { remote } from "parse-torrent";
-import { Key, Ref, useCallback, useImperativeHandle, useState } from "react";
+import { Ref, useCallback, useImperativeHandle, useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
@@ -17,6 +17,7 @@ interface IFormInput {
   out: string;
   split?: number;
   dir: string;
+  selectFiles: string[];
 }
 
 function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
@@ -25,9 +26,6 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
 
   const [torrentFiles, setTorrentFiles] = useState<TaskFile[]>([]);
   const [fileList, setFileList] = useState<File[]>([]);
-  const [selectedTorrentFileKeys, setSelectedTorrentFileKeys] = useState<Key[]>(
-    [],
-  );
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement>();
 
   const { aria2 } = useAria2();
@@ -42,6 +40,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
       split: 128,
       dir: aria2?.dir ?? "",
       out: "",
+      selectFiles: [],
     },
   });
 
@@ -53,14 +52,9 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
   );
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    const { out, split, dir } = data;
+    const { out, split, dir, selectFiles } = data;
 
-    console.log("miku ", out, split, dir);
-    if (selectedTorrentFileKeys.length === 0) {
-      return;
-    }
-
-    console.log("miku ");
+    console.log("miku ", out, split, dir, selectFiles);
   };
 
   return (
@@ -96,11 +90,20 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
       />
       {!!torrentFiles?.length && (
         <>
-          <TaskFiles
-            files={torrentFiles}
-            selectedRowKeys={selectedTorrentFileKeys}
-            onSelectionChange={(keys) => setSelectedTorrentFileKeys(keys)}
+          <Controller
+            name="selectFiles"
+            control={control}
+            render={({ field }) => (
+              <TaskFiles
+                files={torrentFiles}
+                selectedRowKeys={field.value}
+                onSelectionChange={field.onChange}
+                error={!!errors.selectFiles}
+                helperText={errors.selectFiles?.message}
+              />
+            )}
           />
+
           <Grid container spacing={3} sx={{ mt: 2 }}>
             <Grid
               size={{
@@ -117,6 +120,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
                     fullWidth
                     placeholder={t("common.Optional")}
                     size="small"
+                    error={!!errors.out}
                     {...field}
                   />
                 )}

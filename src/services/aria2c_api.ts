@@ -120,7 +120,7 @@ export interface DownloadOption {
   maxConnection?: number;
   maxSplit?: number;
   split?: number;
-  "select-file": string;
+  "select-file"?: string;
 }
 
 export const addTaskApi = async (

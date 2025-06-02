@@ -1,4 +1,4 @@
-import { List, Popover, PopoverProps } from "@mui/material";
+import { Box, List, Popover, PopoverProps } from "@mui/material";
 import useSWR from "swr";
 
 import { HistoryDirItem } from "@/client/history_compose";
@@ -53,7 +53,9 @@ function DirPopover({ anchorEl, onClose, setDirValue }: DirPopoverProps) {
       }}
     >
       {!dirHistoryList?.length ? (
-        <BaseEmpty />
+        <Box sx={{ p: 2 }}>
+          <BaseEmpty />
+        </Box>
       ) : (
         <List disablePadding>{dirHistoryList.map(renderItem)}</List>
       )}
