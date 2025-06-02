@@ -11,7 +11,8 @@ import { BaseDialog, DialogRef } from "@/components/BaseDialog";
 import InputFileUpload from "@/components/InputFileUpload";
 import PathComboBox from "@/components/PathComboBox";
 import { useAria2 } from "@/hooks/aria2";
-import { listTorrentFiles } from "@/utils/file";
+import { addTorrentApi } from "@/services/aria2c_api";
+import { getAsBase64, listTorrentFiles } from "@/utils/file";
 
 interface IFormInput {
   out: string;
@@ -51,10 +52,19 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
     [setValue],
   );
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     const { out, split, dir, selectFiles } = data;
 
-    console.log("miku ", out, split, dir, selectFiles);
+    const torrent = await getAsBase64(fileList[0]);
+
+    await addTorrentApi(torrent, {
+      "select-file": selectFiles.join(","),
+      out,
+      split,
+      dir,
+    });
+
+    setFalse();
   };
 
   return (
@@ -99,6 +109,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
             render={({ field }) => (
               <TaskFiles
                 files={torrentFiles}
+                rowKey="idx"
                 selectedRowKeys={field.value}
                 onSelectionChange={field.onChange}
                 error={!!errors.selectFiles}

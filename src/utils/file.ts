@@ -76,3 +76,22 @@ export const filterDocumentFiles = <T extends FileWithFullName>(
 
 export const isDocumentFile = (filename: string) =>
   !!filterDocumentFiles([{ name: filename }])[0];
+
+export const getAsBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      // https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsDataURL
+
+      const { result } = reader;
+
+      // TODO: consider the boundary situation
+      if (typeof result === "string") {
+        const noBase64Prefix = result.split("base64,")[1];
+        resolve(noBase64Prefix);
+      } else {
+        reject(result);
+      }
+    });
+    reader.readAsDataURL(file);
+  });

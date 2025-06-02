@@ -3,6 +3,7 @@ import {
   filterDocumentFiles,
   filterImageFiles,
   filterVideoFiles,
+  getAsBase64,
   getFileExtension,
   getFileName,
   isAudioFile,
@@ -79,5 +80,49 @@ describe("File Utility Functions", () => {
 
     const result = listTorrentFiles(mockFiles);
     expect(result?.[0].extension).toBe(".jpg");
+  });
+
+  it("base64String resolve with a base64 string when given a valid file", async () => {
+    const mockFile = new File(["test content"], "test.txt", {
+      type: "text/plain",
+    });
+
+    const base64String = await getAsBase64(mockFile);
+
+    expect(base64String).toBeTruthy();
+    expect(typeof base64String).toBe("string");
+  });
+
+  it("base64String reject when result is not a string", async () => {
+    const mockFile = new File(["test content"], "test.txt", {
+      type: "text/plain",
+    });
+
+    // Mock FileReader globally
+    const mockReadAsDataURL = jest.fn();
+    const mockAddEventListener = jest.fn();
+    const mockResult = jest.fn().mockReturnValue(new ArrayBuffer(0)); // Non-string result
+
+    jest.spyOn(global, "FileReader").mockImplementation(
+      () =>
+        ({
+          readAsDataURL: mockReadAsDataURL,
+          addEventListener: mockAddEventListener.mockImplementation(
+            (event, callback) => {
+              if (event === "load") {
+                callback(); // Simulate the load event
+              }
+            },
+          ),
+          result: mockResult(),
+        }) as never,
+    );
+
+    await expect(getAsBase64(mockFile)).rejects.toBeInstanceOf(ArrayBuffer);
+    expect(mockReadAsDataURL).toHaveBeenCalledWith(mockFile);
+    expect(mockAddEventListener).toHaveBeenCalledWith(
+      "load",
+      expect.any(Function),
+    );
   });
 });
