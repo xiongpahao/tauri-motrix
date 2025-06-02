@@ -106,6 +106,7 @@ export interface TaskFilesProps {
   ) => void;
   error?: boolean;
   helperText?: string;
+  height?: number;
 }
 
 export type RowSelectMethod = "all" | "none" | "invert" | "single" | "multiple";
@@ -126,6 +127,7 @@ export default function TaskFiles({
   mode,
   error,
   helperText,
+  height,
 }: TaskFilesProps) {
   const { t } = useTranslation();
 
@@ -339,7 +341,7 @@ export default function TaskFiles({
 
       <Box sx={{ position: "relative" }}>
         {error && <ErrorIndicator>!</ErrorIndicator>}
-        <ErrorTableContainer component={Paper} hasError={error}>
+        <ErrorTableContainer component={Paper} hasError={error} sx={{ height }}>
           <Table aria-label="task files table">
             <TableHead>
               <TableRow>

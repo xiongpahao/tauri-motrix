@@ -29,8 +29,16 @@ export async function updateDir(
   },
 ) {
   const db = await getMotrixDB();
-  return db.execute("UPDATE save_to_history SET is_star = $1 WHERE id = $2", [
-    dto.is_star ? 1 : 0,
-    id,
-  ]);
+  return db.execute(
+    "UPDATE save_to_history SET is_star = $1, updated_at = unixepoch() WHERE id = $2",
+    [dto.is_star ? 1 : 0, id],
+  );
+}
+
+export async function addOneDir(dto: Pick<SaveToHistory, "dir" | "engine">) {
+  const db = await getMotrixDB();
+  return db.execute(
+    "INSERT INTO save_to_history (dir, engine) VALUES ($1, $2)",
+    [dto.dir, dto.engine],
+  );
 }

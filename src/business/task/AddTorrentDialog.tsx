@@ -10,8 +10,10 @@ import TaskFiles, { TaskFile } from "@/business/task/TaskFiles";
 import { BaseDialog, DialogRef } from "@/components/BaseDialog";
 import InputFileUpload from "@/components/InputFileUpload";
 import PathComboBox from "@/components/PathComboBox";
+import { DOWNLOAD_ENGINE } from "@/constant/task";
 import { useAria2 } from "@/hooks/aria2";
 import { addTorrentApi } from "@/services/aria2c_api";
+import { addOneDir } from "@/services/save_to_history";
 import { getAsBase64, listTorrentFiles } from "@/utils/file";
 
 interface IFormInput {
@@ -64,6 +66,11 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
       dir,
     });
 
+    await addOneDir({
+      dir,
+      engine: DOWNLOAD_ENGINE.Aria2,
+    });
+
     setFalse();
   };
 
@@ -114,6 +121,7 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
                 onSelectionChange={field.onChange}
                 error={!!errors.selectFiles}
                 helperText={errors.selectFiles?.message}
+                height={300}
               />
             )}
           />
