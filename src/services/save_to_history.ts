@@ -45,8 +45,12 @@ export async function addOneDir(dto: Pick<SaveToHistory, "dir" | "engine">) {
 
 export async function findOneDirByPath(path: string) {
   const db = await getMotrixDB();
-  return db.select<SaveToHistory>(
+  const result = await db.select<SaveToHistory[]>(
     "SELECT id, dir, engine, created_at, updated_at, is_star FROM save_to_history WHERE dir = $1 ORDER BY created_at DESC LIMIT 1",
     [path],
   );
+
+  if (result.length > 0) {
+    return result[0];
+  }
 }

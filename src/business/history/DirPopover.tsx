@@ -1,4 +1,4 @@
-import { Box, List, Popover, PopoverProps } from "@mui/material";
+import { Box, List, Popover } from "@mui/material";
 import useSWR from "swr";
 
 import { HistoryDirItem } from "@/client/history_compose";
@@ -12,7 +12,7 @@ import {
 
 export interface DirPopoverProps {
   anchorEl?: HTMLButtonElement;
-  onClose?: PopoverProps["onClose"];
+  onClose?: () => void;
   setDirValue?: (value: string) => void;
 }
 
@@ -30,7 +30,10 @@ function DirPopover({ anchorEl, onClose, setDirValue }: DirPopoverProps) {
     return (
       <HistoryDirItem
         dir={item.dir}
-        onSelect={() => setDirValue?.(item.dir)}
+        onSelect={() => {
+          setDirValue?.(item.dir);
+          onClose?.();
+        }}
         onDelete={async (id) => {
           await deleteDir(id);
           mutateDirHistoryList();

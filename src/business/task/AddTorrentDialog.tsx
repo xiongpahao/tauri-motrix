@@ -75,7 +75,8 @@ function AddTorrentDialog(props: { ref: Ref<DialogRef> }) {
     );
     await fetchTasks();
 
-    const dirRecord = findOneDirByPath(dir);
+    const dirRecord = await findOneDirByPath(dir);
+
     if (!dirRecord && dir) {
       await addOneDir({
         dir,
