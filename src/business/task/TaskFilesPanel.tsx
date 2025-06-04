@@ -1,6 +1,9 @@
-import { useMemo } from "react";
+import { Box } from "@mui/material";
+import { useMergedState } from "rc-util";
+import { Key, useMemo } from "react";
 
 import TaskFiles from "@/business/task/TaskFiles";
+import ConfirmPanel from "@/components/ConfirmPanel";
 import { Aria2Task } from "@/services/aria2c_api";
 import { getFileExtension, getFileName } from "@/utils/file";
 
@@ -26,18 +29,28 @@ function TaskFilesPanel(props: { task: Aria2Task }) {
   }, [task.files]);
 
   const defaultSelectedRowKeys = useMemo(
-    () => fileList.filter((item) => item.selected).map((item) => item.path),
+    () => fileList.filter((item) => item.selected).map((item) => item.idx),
     [fileList],
   );
 
+  const [selectedKeys, setSelectedKeys] = useMergedState<Key[]>(
+    defaultSelectedRowKeys,
+  );
+
   return (
-    <div style={{ width: "100%" }}>
+    <ConfirmPanel
+      open={
+        JSON.stringify(defaultSelectedRowKeys) !== JSON.stringify(selectedKeys)
+      }
+    >
       <TaskFiles
         files={fileList}
         mode="DETAIL"
-        defaultSelectedRowKeys={defaultSelectedRowKeys}
+        key="idx"
+        selectedRowKeys={selectedKeys}
+        onSelectionChange={(keys) => setSelectedKeys(keys)}
       />
-    </div>
+    </ConfirmPanel>
   );
 }
 

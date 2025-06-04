@@ -9,6 +9,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   ToggleButtonProps,
+  Tooltip,
 } from "@mui/material";
 import Paper from "@mui/material/Paper";
 import { styled } from "@mui/material/styles";
@@ -190,6 +191,14 @@ export default function TaskFiles({
     getRowKey,
   );
 
+  const selectedFilesTotalSize = useMemo(() => {
+    // TODO: first time app didn't get length field
+    const result = mergedSelectedKeys.map(getRecordByKey).reduce((acc, cur) => {
+      return acc + Number(cur?.length);
+    }, 0);
+    return parseByteVo(result).join("");
+  }, [getRecordByKey, mergedSelectedKeys]);
+
   const setSelectedKeys = useCallback(
     (keys: Key[], method: RowSelectMethod) => {
       const availableKeys: Key[] = [];
@@ -303,17 +312,22 @@ export default function TaskFiles({
             />
           </StyledTableCell>
           <StyledTableCell>
-            {/* <span
-              style={{
-                display: "table",
-                tableLayout: "fixed",
-                width: "100%",
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-              }}
-            > */}
-            {record.name}
+            <Tooltip title={record.name} placement="top">
+              <Box
+                sx={{
+                  display: "table",
+                  tableLayout: "fixed",
+                  width: "100%",
+                  "> p": {
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
+                  },
+                }}
+              >
+                <p>{record.name}</p>
+              </Box>
+            </Tooltip>
           </StyledTableCell>
           <StyledTableCell>{record.extension}</StyledTableCell>
           {mode === "DETAIL" && (
@@ -455,7 +469,7 @@ export default function TaskFiles({
           <FormLabel>
             {t("task.SelectedFilesSum", {
               selectedFilesCount: mergedSelectedKeys.length,
-              selectedFilesTotalSize: rawData.length,
+              selectedFilesTotalSize,
             })}
           </FormLabel>
         </Grid>
