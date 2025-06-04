@@ -1,6 +1,14 @@
 import { Grid3x3Outlined, InfoOutline } from "@mui/icons-material";
 import SourceIcon from "@mui/icons-material/Source";
-import { Box, listItemClasses, paperClasses, Tab, Tabs } from "@mui/material";
+import {
+  Box,
+  listItemClasses,
+  paperClasses,
+  Tab,
+  Tabs,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -41,6 +49,9 @@ function TaskItemDrawer({
   const { t } = useTranslation();
 
   const [tab, setTab] = useState<TAB_TYPE>(TAB_TYPE.Info);
+
+  const theme = useTheme();
+  const isDownSm = useMediaQuery(theme.breakpoints.down("sm"));
 
   const mainElements = useMemo(() => {
     switch (tab) {
@@ -85,7 +96,7 @@ function TaskItemDrawer({
       }
       sx={{
         [`> .${paperClasses.root}`]: {
-          width: "90%",
+          width: isDownSm ? "450px" : "61.8%",
         },
         [`.${listItemClasses.root}`]: {
           padding: "8px 0",

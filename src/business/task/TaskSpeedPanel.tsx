@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -33,13 +34,30 @@ function TaskSpeedPanel({ task }: TaskSpeedPanelProps) {
 
   return (
     <TaskDrawerList>
-      <LinearProgressWithLabel value={progress} color={progressColor} />
-
       <TaskDrawerItem label={t("task.Progress")} value={progressText} />
       <TaskDrawerItem label={t("task.Connections")} value={task.connections} />
       <TaskDrawerItem label={t("task.DownloadSpeed")} value={speedVo} />
 
-      {bitfield && <TaskGraphic bitfield={bitfield} outerWidth={400} />}
+      <LinearProgressWithLabel value={progress} color={progressColor} />
+
+      {bitfield && (
+        <Box
+          sx={(theme) => ({
+            textAlign: "center",
+            mt: 2,
+            border:
+              theme.palette.mode === "dark"
+                ? "1px solid #565656"
+                : "1px solid #ebeef5",
+            borderRadius: 0.25,
+            mb: 3,
+            py: 1,
+            px: 0.75,
+          })}
+        >
+          <TaskGraphic bitfield={bitfield} outerWidth={400} />
+        </Box>
+      )}
     </TaskDrawerList>
   );
 }
