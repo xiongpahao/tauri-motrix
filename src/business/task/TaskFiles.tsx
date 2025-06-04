@@ -87,7 +87,10 @@ const ErrorIndicator = styled(Box)(({ theme }) => ({
   zIndex: 1,
 }));
 
-export type TaskFile = NonNullable<Instance["files"]>[number] & {
+export type TaskFile = Omit<
+  NonNullable<Instance["files"]>[number],
+  "offset"
+> & {
   idx: number;
   extension: string;
   completedLength?: number;
@@ -334,12 +337,12 @@ export default function TaskFiles({
   );
 
   return (
-    <FormControl error={error}>
+    <FormControl error={error} sx={{ width: "100%" }}>
       {/* <Alert severity="error" sx={{ mb: 2 }}>
         {helperText}
       </Alert> */}
 
-      <Box sx={{ position: "relative" }}>
+      <Box sx={{ position: "relative", overflow: "auto" }}>
         {error && <ErrorIndicator>!</ErrorIndicator>}
         <ErrorTableContainer component={Paper} hasError={error} sx={{ height }}>
           <Table aria-label="task files table" size="small" stickyHeader>

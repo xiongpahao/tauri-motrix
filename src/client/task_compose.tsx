@@ -119,10 +119,15 @@ export function TaskFab(props: {
   );
 }
 
-export function TaskDrawerList(props: { title: string; children: ReactNode }) {
+export function TaskDrawerList(props: { title?: string; children: ReactNode }) {
+  const { title } = props;
   return (
     <List
-      subheader={<Typography variant="subtitle1">{props.title}</Typography>}
+      subheader={
+        !title ? undefined : (
+          <Typography variant="subtitle1">{title}</Typography>
+        )
+      }
     >
       {props.children}
     </List>

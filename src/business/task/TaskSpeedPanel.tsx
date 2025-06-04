@@ -32,7 +32,7 @@ function TaskSpeedPanel({ task }: TaskSpeedPanelProps) {
   );
 
   return (
-    <TaskDrawerList title={t("task.SpeedDetails")}>
+    <TaskDrawerList>
       <LinearProgressWithLabel value={progress} color={progressColor} />
 
       <TaskDrawerItem label={t("task.Progress")} value={progressText} />
