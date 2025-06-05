@@ -1,4 +1,4 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Grow } from "@mui/material";
 import { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -9,7 +9,7 @@ export interface ConfirmPanelProps {
   okBtn?: ReactNode;
   cancelBtn?: ReactNode;
   loading?: boolean;
-  open?: boolean;
+  hide?: boolean;
 }
 
 function ConfirmPanel({
@@ -19,7 +19,7 @@ function ConfirmPanel({
   okBtn,
   loading,
   onOk,
-  open,
+  hide,
 }: ConfirmPanelProps) {
   const { t } = useTranslation();
 
@@ -30,7 +30,7 @@ function ConfirmPanel({
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Box>{children}</Box>
 
-      {open && (
+      <Grow in={!hide}>
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button variant="outlined" onClick={onCancel}>
             {cancelBtn}
@@ -40,7 +40,7 @@ function ConfirmPanel({
             {okBtn}
           </Button>
         </Box>
-      )}
+      </Grow>
     </Box>
   );
 }

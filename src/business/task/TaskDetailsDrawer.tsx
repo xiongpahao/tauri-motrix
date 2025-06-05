@@ -36,7 +36,7 @@ const enum TAB_TYPE {
   Files = "files",
 }
 
-function TaskItemDrawer({
+function TaskDetailsDrawer({
   open,
   onClose,
   task,
@@ -86,7 +86,7 @@ function TaskItemDrawer({
           <Tabs
             value={tab}
             onChange={(_, newValue) => setTab(newValue)}
-            aria-label="basic tabs example"
+            aria-label="task details tabs example"
           >
             <Tab icon={<InfoOutline />} value={TAB_TYPE.Info} />
             <Tab icon={<Grid3x3Outlined />} value={TAB_TYPE.Speed} />
@@ -108,4 +108,4 @@ function TaskItemDrawer({
   );
 }
 
-export default TaskItemDrawer;
+export default TaskDetailsDrawer;

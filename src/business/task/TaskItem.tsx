@@ -14,8 +14,8 @@ import {
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import TaskDetailsDrawer from "@/business/task/TaskDetailsDrawer";
 import TaskItemAction from "@/business/task/TaskItemAction";
-import TaskItemDrawer from "@/business/task/TaskItemDrawer";
 import { TaskDownloadDes } from "@/client/task_compose";
 import { TASK_STATUS_ENUM } from "@/constant/task";
 import { Aria2Task } from "@/services/aria2c_api";
@@ -154,7 +154,7 @@ function TaskItem({
         value={progress}
       />
 
-      <TaskItemDrawer
+      <TaskDetailsDrawer
         open={openInfo}
         task={task}
         onClose={() => setOpenInfo(false)}

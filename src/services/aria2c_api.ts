@@ -156,6 +156,17 @@ export const getGlobalStatApi = async () => {
   return call<Aria2GlobalStat>("getGlobalStat");
 };
 
+export const changeOptionApi = async (
+  gid: string,
+  option: {
+    // TODO: only use task file change now
+    "select-file": string;
+  },
+) => {
+  const { call } = await getAria2();
+  return call("changeOption", gid, option);
+};
+
 export const pauseTaskApi = async (gid: string) => {
   const { call } = await getAria2();
   return call("pause", gid);

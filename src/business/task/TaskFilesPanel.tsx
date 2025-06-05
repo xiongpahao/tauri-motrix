@@ -1,14 +1,20 @@
-import { Box } from "@mui/material";
-import { useMergedState } from "rc-util";
-import { Key, useMemo } from "react";
+import { Key, useCallback, useMemo, useState, useTransition } from "react";
+import { useTranslation } from "react-i18next";
 
 import TaskFiles from "@/business/task/TaskFiles";
 import ConfirmPanel from "@/components/ConfirmPanel";
-import { Aria2Task } from "@/services/aria2c_api";
+import { Notice } from "@/components/Notice";
+import { Aria2Task, changeOptionApi } from "@/services/aria2c_api";
+import { useTaskStore } from "@/store/task";
 import { getFileExtension, getFileName } from "@/utils/file";
 
-function TaskFilesPanel(props: { task: Aria2Task }) {
-  const { task } = props;
+export interface TaskFilesPanelProps {
+  task: Aria2Task;
+}
+
+function TaskFilesPanel({ task }: TaskFilesPanelProps) {
+  const { t } = useTranslation();
+  const fetchTasks = useTaskStore((state) => state.fetchTasks);
 
   const fileList = useMemo(() => {
     const result = task.files.map((item) => {
@@ -33,20 +39,45 @@ function TaskFilesPanel(props: { task: Aria2Task }) {
     [fileList],
   );
 
-  const [selectedKeys, setSelectedKeys] = useMergedState<Key[]>(
+  const [selectedKeys, setSelectedKeys] = useState<Key[]>(
     defaultSelectedRowKeys,
   );
 
+  const isHideConfirm = useMemo(
+    () => defaultSelectedRowKeys.join(",") === selectedKeys.join(","),
+    [defaultSelectedRowKeys, selectedKeys],
+  );
+
+  const [loading, startTransition] = useTransition();
+
+  const handleChangeFile = useCallback(async () => {
+    if (selectedKeys.length === 0) {
+      Notice.info(t("task.SelectAtLeastOne"));
+      return;
+    }
+    const isAll = selectedKeys.length === fileList.length;
+
+    const option = {
+      "select-file": isAll ? "" : selectedKeys.join(","),
+    };
+
+    await changeOptionApi(task.gid, option);
+
+    // TODO: list -> item
+    await fetchTasks();
+  }, [fetchTasks, fileList.length, selectedKeys, t, task.gid]);
+
   return (
     <ConfirmPanel
-      open={
-        JSON.stringify(defaultSelectedRowKeys) !== JSON.stringify(selectedKeys)
-      }
+      hide={isHideConfirm}
+      onCancel={() => setSelectedKeys(defaultSelectedRowKeys)}
+      onOk={() => startTransition(handleChangeFile)}
+      loading={loading}
     >
       <TaskFiles
         files={fileList}
         mode="DETAIL"
-        key="idx"
+        rowKey="idx"
         selectedRowKeys={selectedKeys}
         onSelectionChange={(keys) => setSelectedKeys(keys)}
       />
