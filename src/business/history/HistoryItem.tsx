@@ -31,7 +31,15 @@ export interface HistoryItemProps {
 }
 
 function HistoryItem({ history, onDelete }: HistoryItemProps) {
-  const { engine, id, link, name, path, downloaded_at, total_length } = history;
+  const {
+    engine,
+    id,
+    link,
+    name,
+    path,
+    created_at: downloaded_at,
+    total_length,
+  } = history;
 
   const { t } = useTranslation();
 
