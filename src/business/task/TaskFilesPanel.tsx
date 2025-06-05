@@ -14,10 +14,10 @@ export interface TaskFilesPanelProps {
 
 function TaskFilesPanel({ task }: TaskFilesPanelProps) {
   const { t } = useTranslation();
-  const fetchTasks = useTaskStore((state) => state.fetchTasks);
+  const fetchItem = useTaskStore((state) => state.fetchItem);
 
   const fileList = useMemo(() => {
-    const result = task.files.map((item) => {
+    return task.files.map((item) => {
       const name = getFileName(item.path);
       const extension = getFileExtension(name);
       return {
@@ -30,8 +30,6 @@ function TaskFilesPanel({ task }: TaskFilesPanelProps) {
         completedLength: +item.completedLength,
       };
     });
-    // merge(cached.files, result);
-    return result;
   }, [task.files]);
 
   const defaultSelectedRowKeys = useMemo(
@@ -55,17 +53,15 @@ function TaskFilesPanel({ task }: TaskFilesPanelProps) {
       Notice.info(t("task.SelectAtLeastOne"));
       return;
     }
-    const isAll = selectedKeys.length === fileList.length;
 
     const option = {
-      "select-file": isAll ? "" : selectedKeys.join(","),
+      "select-file": selectedKeys.join(","),
     };
 
     await changeOptionApi(task.gid, option);
 
-    // TODO: list -> item
-    await fetchTasks();
-  }, [fetchTasks, fileList.length, selectedKeys, t, task.gid]);
+    await fetchItem(task.gid);
+  }, [fetchItem, selectedKeys, t, task.gid]);
 
   return (
     <ConfirmPanel

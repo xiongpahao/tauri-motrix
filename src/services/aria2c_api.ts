@@ -107,9 +107,9 @@ export const stoppedTasksApi = async (param?: {
   return call<Aria2Task[]>("tellStopped", param?.offset ?? 0, param?.num ?? 20);
 };
 
-export const taskItemApi = async (param: { gid: string }) => {
+export const taskItemApi = async (gid: string) => {
   const { call } = await getAria2();
-  return call<Aria2Task>("tellStatus", param.gid);
+  return call<Aria2Task>("tellStatus", gid);
 };
 
 export interface DownloadOption {
