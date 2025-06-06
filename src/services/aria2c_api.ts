@@ -41,7 +41,7 @@ export interface Aria2BitTorrent {
   info: {
     name: string;
   };
-  announceList: string[];
+  announceList: Array<[string]>;
 }
 
 export interface Aria2Task {

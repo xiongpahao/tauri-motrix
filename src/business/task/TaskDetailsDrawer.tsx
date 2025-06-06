@@ -12,6 +12,7 @@ import {
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import TaskDiscoverPanel from "@/business/task/TaskDiscoverPanel";
 import TaskFilesPanel from "@/business/task/TaskFilesPanel";
 import TaskInfoPanel from "@/business/task/TaskInfoPanel";
 import { TaskItemProps } from "@/business/task/TaskItem";
@@ -68,7 +69,9 @@ function TaskDetailsDrawer({
       case TAB_TYPE.Files:
         return <TaskFilesPanel task={task} />;
       case TAB_TYPE.Discover:
-        return <div>11</div>;
+        return (
+          <TaskDiscoverPanel announceList={task.bittorrent!.announceList} />
+        );
       case TAB_TYPE.Client:
         return <div>111</div>;
     }
