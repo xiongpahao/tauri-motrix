@@ -50,6 +50,7 @@ export interface Aria2Task {
   infoHash?: string;
   bittorrent?: Aria2BitTorrent;
   bitfield?: string;
+  numSeeders?: string;
   completedLength: string;
   connections: string;
   dir: string;

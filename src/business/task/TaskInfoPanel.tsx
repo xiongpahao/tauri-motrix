@@ -31,12 +31,12 @@ function TaskInfoPanel({ task }: TaskInfoPanelProps) {
           <Divider>Torrent Info</Divider>
           <TaskDrawerItem label="Hash" value={task.infoHash ?? "unkown"} />
           <TaskDrawerItem
-            label="Piece Size"
+            label={t("common.PieceSize")}
             value={parseByteVo(task.pieceLength).join("")}
           />
-          <TaskDrawerItem label="Pieces" value={task.pieceLength} />
+          <TaskDrawerItem label={t("common.Pieces")} value={task.pieceLength} />
           <TaskDrawerItem
-            label="Creation Date"
+            label={t("common.CreationDate")}
             value={
               bittorrent?.creationDate
                 ? dayjs
