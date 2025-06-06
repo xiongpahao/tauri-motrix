@@ -41,13 +41,16 @@ export interface Aria2BitTorrent {
   info: {
     name: string;
   };
-  announceList: string[];
+  announceList: Array<[string]>;
+  comment?: string;
+  creationDate?: string;
 }
 
 export interface Aria2Task {
-  infoHash?: unknown;
+  infoHash?: string;
   bittorrent?: Aria2BitTorrent;
   bitfield?: string;
+  numSeeders?: string;
   completedLength: string;
   connections: string;
   dir: string;
@@ -110,6 +113,26 @@ export const stoppedTasksApi = async (param?: {
 export const taskItemApi = async (gid: string) => {
   const { call } = await getAria2();
   return call<Aria2Task>("tellStatus", gid);
+};
+
+interface Peer {
+  amChoking: string;
+  bitfield: string;
+  downloadSpeed: string;
+  ip: string;
+  peerChoking: string;
+  peerId: string;
+  port: string;
+  seeder: string;
+  uploadSpeed: string;
+}
+
+export const taskItemWithPeers = async (gid: string) => {
+  const { multiCall } = await getAria2();
+  return multiCall<[[Aria2Task | undefined], [Peer[] | undefined]]>([
+    { method: "tellStatus", params: [gid] },
+    { method: "getPeers", params: [gid] },
+  ]);
 };
 
 export interface DownloadOption {
