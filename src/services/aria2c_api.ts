@@ -42,10 +42,12 @@ export interface Aria2BitTorrent {
     name: string;
   };
   announceList: Array<[string]>;
+  comment?: string;
+  creationDate?: string;
 }
 
 export interface Aria2Task {
-  infoHash?: unknown;
+  infoHash?: string;
   bittorrent?: Aria2BitTorrent;
   bitfield?: string;
   completedLength: string;
