@@ -74,7 +74,9 @@
         "FileSize": "Size",
         "SelectedFilesSum": "Selected: {{selectedFilesCount}} files, total size {{selectedFilesTotalSize}}",
         "SelectFilesError": "Please select at least one download file",
-        "SelectAtLeastOne": "Please select at least one file"
+        "SelectAtLeastOne": "Please select at least one file",
+        "PeerClient": "Client",
+        "PeerHost": "Host"
     },
     "common": {
         "DownloadFile": "Download File",

@@ -4,6 +4,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import SourceIcon from "@mui/icons-material/Source";
 import {
   Box,
+  listClasses,
   listItemClasses,
   paperClasses,
   useMediaQuery,
@@ -12,6 +13,7 @@ import {
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import TaskClientPanel from "@/business/task/TaskClientPanel";
 import TaskDiscoverPanel from "@/business/task/TaskDiscoverPanel";
 import TaskFilesPanel from "@/business/task/TaskFilesPanel";
 import TaskInfoPanel from "@/business/task/TaskInfoPanel";
@@ -67,13 +69,13 @@ function TaskDetailsDrawer({
       case TAB_TYPE.Speed:
         return <TaskSpeedPanel task={task} />;
       case TAB_TYPE.Files:
-        return <TaskFilesPanel task={task} />;
+        return <TaskFilesPanel files={task.files} gid={task.gid} />;
       case TAB_TYPE.Discover:
         return (
           <TaskDiscoverPanel announceList={task.bittorrent!.announceList} />
         );
       case TAB_TYPE.Client:
-        return <div>111</div>;
+        return <TaskClientPanel gid={task.gid} />;
     }
   }, [tab, task]);
 
@@ -95,7 +97,7 @@ function TaskDetailsDrawer({
         />
       }
       header={
-        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: "16px" }}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
           <AntTabs
             value={tab}
             onChange={(_, newValue) => setTab(newValue)}
@@ -124,7 +126,17 @@ function TaskDetailsDrawer({
         },
       }}
     >
-      <Box sx={{ flex: "1 1 auto" }}>{mainElements}</Box>
+      <Box
+        sx={{
+          flex: "1 1 auto",
+          pt: "8px",
+          [`.${listClasses.padding}`]: {
+            pt: 0,
+          },
+        }}
+      >
+        {mainElements}
+      </Box>
     </BaseDrawer>
   );
 }
