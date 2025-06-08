@@ -9,9 +9,10 @@ import {
   ListItemIcon,
   listItemIconClasses,
   ListItemText,
+  Typography,
   typographyClasses,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import TaskDetailsDrawer from "@/business/task/TaskDetailsDrawer";
@@ -105,7 +106,24 @@ function TaskItem({
             },
           }}
           primary={getTaskName(task)}
-          secondary={progressText}
+          secondary={
+            <Fragment>
+              <Typography
+                component="span"
+                variant="body2"
+                sx={{ color: "text.primary", display: "inline" }}
+              >
+                {progressText}
+              </Typography>
+              {TASK_STATUS_ENUM.Active === status && (
+                <TaskDownloadDes
+                  speed={speedVo}
+                  connections={connections}
+                  remaining={remainingVo}
+                />
+              )}
+            </Fragment>
+          }
         />
 
         <Box
@@ -130,13 +148,6 @@ function TaskItem({
             onPause={onPause}
             onShowInfo={() => setOpenInfo(true)}
           />
-          {TASK_STATUS_ENUM.Active === status && (
-            <TaskDownloadDes
-              speed={speedVo}
-              connections={connections}
-              remaining={remainingVo}
-            />
-          )}
         </Box>
       </ListItemButton>
 
