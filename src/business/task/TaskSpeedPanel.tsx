@@ -6,8 +6,8 @@ import TaskGraphic from "@/business/task/TaskGraphic";
 import { TaskDrawerItem, TaskDrawerList } from "@/client/task_compose";
 import LinearProgressWithLabel from "@/components/LinearProgressWithLabel";
 import { Aria2Task } from "@/services/aria2c_api";
-import { parseByteVo } from "@/utils/download";
-import { getTaskProgressColor } from "@/utils/task";
+import { calcProgress, parseByteVo } from "@/utils/download";
+import { checkTaskIsBT, getTaskProgressColor } from "@/utils/task";
 
 export interface TaskSpeedPanelProps {
   task: Aria2Task;
@@ -32,11 +32,33 @@ function TaskSpeedPanel({ task }: TaskSpeedPanelProps) {
     [progress, status],
   );
 
+  const isBt = checkTaskIsBT(task);
+
   return (
     <TaskDrawerList>
       <TaskDrawerItem label={t("task.Progress")} value={progressText} />
+      {isBt && (
+        <TaskDrawerItem label={t("task.NumSeeders")} value={task.numSeeders} />
+      )}
       <TaskDrawerItem label={t("task.Connections")} value={task.connections} />
       <TaskDrawerItem label={t("task.DownloadSpeed")} value={speedVo} />
+
+      {isBt && (
+        <>
+          <TaskDrawerItem
+            label={t("common.UploadSpeed")}
+            value={parseByteVo(task.uploadSpeed).join("")}
+          />
+          <TaskDrawerItem
+            label={t("task.UploadLength")}
+            value={parseByteVo(task.uploadLength).join("")}
+          />
+          <TaskDrawerItem
+            label={t("common.Ratio")}
+            value={calcProgress(totalLength, task.uploadLength, 4)}
+          />
+        </>
+      )}
 
       <LinearProgressWithLabel value={progress} color={progressColor} />
 

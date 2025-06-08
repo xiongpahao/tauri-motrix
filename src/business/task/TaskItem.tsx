@@ -12,7 +12,7 @@ import {
   Typography,
   typographyClasses,
 } from "@mui/material";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import TaskDetailsDrawer from "@/business/task/TaskDetailsDrawer";
@@ -76,6 +76,10 @@ function TaskItem({
 
     return `${completed} / ${total}`;
   }, [completedLength, totalLength]);
+
+  const onClose = useCallback(() => {
+    setOpenInfo(false);
+  }, []);
 
   return (
     <ListItem disablePadding>
@@ -168,7 +172,7 @@ function TaskItem({
       <TaskDetailsDrawer
         open={openInfo}
         task={task}
-        onClose={() => setOpenInfo(false)}
+        onClose={onClose}
         onCopyLink={onCopyLink}
         onOpenFile={onOpenFile}
         onPause={onPause}
