@@ -80,12 +80,12 @@ export class Aria2 {
 
     webSocketIns.onopen = (event) => {
       console.log("aria2", "WebSocket OPEN");
-      this.#dispatchEvent("open", event);
+      this.dispatchEvent("open", event);
     };
 
     webSocketIns.onclose = (event) => {
       console.log("aria2", "WebSocket CLOSE");
-      this.#dispatchEvent("close", event);
+      this.dispatchEvent("close", event);
     };
 
     webSocketIns.onmessage = (message: MessageEvent) => {
@@ -94,7 +94,7 @@ export class Aria2 {
         data = JSON.parse(message.data);
       } catch (err) {
         console.error("aria2", "JSON parse failed", err, message);
-        this.#dispatchEvent("error", err);
+        this.dispatchEvent("error", err);
         return;
       }
 
@@ -103,7 +103,7 @@ export class Aria2 {
 
     webSocketIns.onerror = (error) => {
       console.error("aria2", "WebSocket ERROR", error);
-      this.#dispatchEvent("error", error);
+      this.dispatchEvent("error", error);
     };
   }
 
@@ -115,7 +115,7 @@ export class Aria2 {
     const { method: key, id: messageId } = data;
 
     if (!messageId) {
-      this.#dispatchEvent(key, data.params);
+      this.dispatchEvent(key, data.params);
     }
 
     if (!key && messageId in socketPendingMap) {
@@ -166,7 +166,7 @@ export class Aria2 {
     return this.call<T>("system.multicall", ...multi);
   }
 
-  #dispatchEvent(name: string, data: unknown) {
+  dispatchEvent(name: string, data: unknown) {
     const callbacks = this.eventSubscribeMap[name];
 
     if (callbacks) {
@@ -180,7 +180,7 @@ export class Aria2 {
     }
   }
 
-  #dispatchOffline<T>(method: string, callback: (data: T) => void): boolean {
+  dispatchOffline<T>(method: string, callback: (data: T) => void): boolean {
     const { offlineSubscribeMap } = this;
 
     if (method in offlineSubscribeMap) {
@@ -195,7 +195,7 @@ export class Aria2 {
   }
 
   addListener<T>(method: string, callback: (data: T) => void) {
-    if (this.#dispatchOffline(method, callback)) {
+    if (this.dispatchOffline(method, callback)) {
       return;
     }
 
@@ -210,7 +210,7 @@ export class Aria2 {
   }
 
   setListener<T>(method: string, callback: (data: T) => void) {
-    if (this.#dispatchOffline(method, callback)) {
+    if (this.dispatchOffline(method, callback)) {
       return;
     }
 
