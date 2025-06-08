@@ -8,6 +8,8 @@ import {
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
+  TextField,
+  textFieldClasses,
 } from "@mui/material";
 import { emit } from "@tauri-apps/api/event";
 import { readText } from "@tauri-apps/plugin-clipboard-manager";
@@ -45,6 +47,8 @@ function DownloadingPage() {
 
   const torrentRef = useRef<DialogRef>(null);
 
+  const searchRef = useRef<string>("");
+
   const addTaskByClipboard = useLockFn(async () => {
     try {
       const content = await readText();
@@ -59,27 +63,18 @@ function DownloadingPage() {
     <BasePage
       title={t("Task-Start")}
       header={
-        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-          <TaskAllAction
-            onPause={handleTaskPause}
-            onResume={handleTaskResume}
-            onStop={handleTaskStop}
-            selectedTaskIds={selectedTaskIds}
-            fetchType={fetchType}
-          />
-          <ButtonGroup size="small">
-            {NORMAL_STATUS.map((value) => (
-              <Button
-                key={value}
-                variant={value === fetchType ? "contained" : "outlined"}
-                onClick={() => setFetchType(value)}
-                sx={{ textTransform: "capitalize" }}
-              >
-                {t(`Button-Fetch-Type.${value}`)}
-              </Button>
-            ))}
-          </ButtonGroup>
-        </Box>
+        <ButtonGroup size="small">
+          {NORMAL_STATUS.map((value) => (
+            <Button
+              key={value}
+              variant={value === fetchType ? "contained" : "outlined"}
+              onClick={() => setFetchType(value)}
+              sx={{ textTransform: "capitalize" }}
+            >
+              {t(`Button-Fetch-Type.${value}`)}
+            </Button>
+          ))}
+        </ButtonGroup>
       }
       fab={
         <SpeedDial
@@ -105,6 +100,31 @@ function DownloadingPage() {
         </SpeedDial>
       }
     >
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          [`.${textFieldClasses.root}`]: {
+            flex: 1,
+          },
+        }}
+      >
+        <TextField
+          size="small"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              searchRef.current = e.currentTarget.nodeValue ?? "";
+            }
+          }}
+        />
+        <TaskAllAction
+          onPause={handleTaskPause}
+          onResume={handleTaskResume}
+          onStop={handleTaskStop}
+          selectedTaskIds={selectedTaskIds}
+          fetchType={fetchType}
+        />
+      </Box>
       <TaskList
         dataSource={tasks}
         renderItem={(task) => (

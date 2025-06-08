@@ -48,7 +48,7 @@ interface TaskStore {
   fetchTasks: () => void;
   fetchItem: (plat_id: string) => void;
   setFetchType: (type: TASK_STATUS_ENUM) => void;
-  handleTaskSelect: (taskId: string) => void;
+  handleTaskSelect: (taskId?: string) => void;
   handleTaskPause: (taskId?: string) => void;
   handleTaskResume: (taskId?: string) => void;
   handleTaskDelete: (taskId?: string) => void;
@@ -100,9 +100,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     await addTaskApi(url, compactUndefined(option));
     await get().fetchTasks();
   },
-  handleTaskSelect(taskId: string) {
-    const { selectedTaskIds } = get();
-    set({ selectedTaskIds: arrayAddOrRemove(selectedTaskIds, taskId) });
+  handleTaskSelect(taskId) {
+    if (taskId) {
+      set({ selectedTaskIds: arrayAddOrRemove(get().selectedTaskIds, taskId) });
+    } else {
+      set({ selectedTaskIds: get().tasks.map((item) => item.gid) });
+    }
   },
   async setFetchType(type: TASK_STATUS_ENUM) {
     set({ fetchType: type, selectedTaskIds: [] });
