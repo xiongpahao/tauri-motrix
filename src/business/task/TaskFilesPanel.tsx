@@ -4,20 +4,21 @@ import { useTranslation } from "react-i18next";
 import TaskFiles from "@/business/task/TaskFiles";
 import ConfirmPanel from "@/components/ConfirmPanel";
 import { Notice } from "@/components/Notice";
-import { Aria2Task, changeOptionApi } from "@/services/aria2c_api";
+import { Aria2File, changeOptionApi } from "@/services/aria2c_api";
 import { useTaskStore } from "@/store/task";
 import { getFileExtension, getFileName } from "@/utils/file";
 
 export interface TaskFilesPanelProps {
-  task: Aria2Task;
+  files: Aria2File[];
+  gid: string;
 }
 
-function TaskFilesPanel({ task }: TaskFilesPanelProps) {
+function TaskFilesPanel({ files, gid }: TaskFilesPanelProps) {
   const { t } = useTranslation();
   const fetchItem = useTaskStore((state) => state.fetchItem);
 
   const fileList = useMemo(() => {
-    return task.files.map((item) => {
+    return files.map((item) => {
       const name = getFileName(item.path);
       const extension = getFileExtension(name);
       return {
@@ -30,7 +31,7 @@ function TaskFilesPanel({ task }: TaskFilesPanelProps) {
         completedLength: +item.completedLength,
       };
     });
-  }, [task.files]);
+  }, [files]);
 
   const defaultSelectedRowKeys = useMemo(
     () => fileList.filter((item) => item.selected).map((item) => item.idx),
@@ -58,10 +59,10 @@ function TaskFilesPanel({ task }: TaskFilesPanelProps) {
       "select-file": selectedKeys.join(","),
     };
 
-    await changeOptionApi(task.gid, option);
+    await changeOptionApi(gid, option);
 
-    await fetchItem(task.gid);
-  }, [fetchItem, selectedKeys, t, task.gid]);
+    await fetchItem(gid);
+  }, [fetchItem, selectedKeys, t, gid]);
 
   return (
     <ConfirmPanel

@@ -74,7 +74,11 @@
         "FileSize": "Size",
         "SelectedFilesSum": "Selected: {{selectedFilesCount}} files, total size {{selectedFilesTotalSize}}",
         "SelectFilesError": "Please select at least one download file",
-        "SelectAtLeastOne": "Please select at least one file"
+        "SelectAtLeastOne": "Please select at least one file",
+        "PeerClient": "Client",
+        "PeerHost": "Host",
+        "NumSeeders": "Seeders",
+        "UploadLength": "Uploaded"
     },
     "common": {
         "DownloadFile": "Download File",
@@ -99,7 +103,11 @@
         "FromUrl": "From URL",
         "UploadFile": "Upload file",
         "Optional": "Optional",
-        "DirPick": "Please select path"
+        "DirPick": "Please select path",
+        "Ratio": "Ratio",
+        "CreationDate": "Creation Date",
+        "Pieces": "Pieces",
+        "PieceSize": "Piece Size"
     },
     "update": {
         "GotoReleasePage": "Go to release page",
