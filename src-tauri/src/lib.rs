@@ -1,10 +1,16 @@
+use std::time::Duration;
+
 use tauri_plugin_autostart::MacosLauncher;
+use tokio::time::timeout;
 use utils::resolve;
+
+use crate::{process::AsyncHandler, utils::logging::Type};
 
 mod cmd;
 mod config;
 mod core;
 mod feat;
+mod process;
 mod service;
 mod utils;
 
@@ -23,8 +29,27 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_shell::init())
         .setup(|app| {
-            tauri::async_runtime::block_on(async move {
-                resolve::resolve_setup(app).await;
+            let app_handle = app.handle().clone();
+            AsyncHandler::spawn(move || async move {
+                logging!(
+                    info,
+                    Type::Setup,
+                    true,
+                    "Asynchronously executing app setup..."
+                );
+                match timeout(Duration::from_secs(30), resolve::resolve_setup(&app_handle)).await {
+                    Ok(_) => {
+                        logging!(info, Type::Setup, true, "App setup completed successfully");
+                    }
+                    Err(_) => {
+                        logging!(
+                            error,
+                            Type::Setup,
+                            true,
+                            "App setup timed out (30 seconds), continuing with subsequent processes"
+                        );
+                    }
+                }
             });
             Ok(())
         })
