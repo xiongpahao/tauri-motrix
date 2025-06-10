@@ -11,6 +11,8 @@ import {
   ListItemText,
   Typography,
   typographyClasses,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Fragment, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -51,6 +53,10 @@ function TaskItem({
 }: TaskItemProps) {
   const { t } = useTranslation("task");
 
+  const theme = useTheme();
+
+  const isDownSm = useMediaQuery(theme.breakpoints.down("sm"));
+
   const { connections, gid, status } = task;
 
   const totalLength = Number(task.totalLength);
@@ -59,11 +65,19 @@ function TaskItem({
   const progress = (completedLength / totalLength) * 100 || 0;
 
   const speedVo = parseByteVo(downloadSpeed, "/s").join("");
-  const remainingVo = `${t("Remaining", { ns: "common" })} ${timeFormat(
-    timeRemaining(totalLength, completedLength, downloadSpeed),
-  )}`;
 
   const [openInfo, setOpenInfo] = useState(false);
+
+  const remainingVo = useMemo(() => {
+    let result = `${timeFormat(
+      timeRemaining(totalLength, completedLength, downloadSpeed),
+    )}`;
+
+    if (!isDownSm) {
+      result = `${t("Remaining", { ns: "common" })} ${result}`;
+    }
+    return result;
+  }, [completedLength, downloadSpeed, isDownSm, t, totalLength]);
 
   const progressColor = useMemo(
     () => getTaskProgressColor(progress, status),
