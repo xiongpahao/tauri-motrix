@@ -43,11 +43,13 @@ export type WrapGid = [{ gid: string }];
 interface TaskStore {
   tasks: Array<Aria2Task>;
   fetchType: TASK_STATUS_ENUM;
+  keyword: string;
   selectedTaskIds: Array<string>;
   selectedTasks: Array<Aria2Task>;
   fetchTasks: () => void;
   fetchItem: (plat_id: string) => void;
   setFetchType: (type: TASK_STATUS_ENUM) => void;
+  setKeyword: (keyword?: string) => void;
   handleTaskSelect: (taskId?: string) => void;
   handleTaskPause: (taskId?: string) => void;
   handleTaskResume: (taskId?: string) => void;
@@ -67,12 +69,13 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
   selectedTaskIds: [],
   fetchType: TASK_STATUS_ENUM.Active,
+  keyword: "",
   get selectedTasks() {
     const { tasks, selectedTaskIds } = get();
     return tasks.filter((task) => selectedTaskIds.includes(task.gid));
   },
   async fetchTasks() {
-    const { fetchType } = get();
+    const { fetchType, keyword } = get();
 
     let tasks: Array<Aria2Task> = [];
     switch (fetchType) {
@@ -87,6 +90,15 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       case TASK_STATUS_ENUM.Done:
         tasks = await stoppedTasksApi();
         break;
+    }
+
+    // Filter tasks by keyword if provided (case insensitive search)
+    if (keyword && keyword.trim() !== "") {
+      const normalizedKeyword = keyword.toLowerCase();
+      tasks = tasks.filter((task) => {
+        const taskName = getTaskName(task).toLowerCase();
+        return taskName.includes(normalizedKeyword);
+      });
     }
 
     set({ tasks });
@@ -104,7 +116,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const { tasks, selectedTaskIds } = get();
     if (taskId) {
       set({ selectedTaskIds: arrayAddOrRemove(selectedTaskIds, taskId) });
-    } else {
+    } else if (tasks.length > 0) {
       const isAllAlready = tasks.length === selectedTaskIds.length;
       set({
         selectedTaskIds: isAllAlready ? [] : tasks.map((item) => item.gid),
@@ -114,6 +126,10 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   async setFetchType(type: TASK_STATUS_ENUM) {
     set({ fetchType: type, selectedTaskIds: [] });
     await get().fetchTasks();
+  },
+  setKeyword(keyword) {
+    set({ keyword: keyword?.trim() ?? "" });
+    get().fetchTasks();
   },
   async handleTaskPause(taskId) {
     if (taskId) {

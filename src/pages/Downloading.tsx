@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  inputBaseClasses,
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
@@ -43,10 +44,10 @@ function DownloadingPage() {
     openTaskFile,
     copyTaskLink,
     setFetchType,
+    setKeyword,
   } = useTaskStore();
 
   const torrentRef = useRef<DialogRef>(null);
-
   const searchRef = useRef<string>("");
 
   const addTaskByClipboard = useLockFn(async () => {
@@ -113,15 +114,33 @@ function DownloadingPage() {
           <TextField
             fullWidth
             size="small"
+            sx={{
+              [`.${inputBaseClasses.root}`]: {
+                border: "1px solid #e0e0e0",
+                borderRadius: "24px",
+                fontSize: "16px",
+                background: "#f8f9fa",
+                transition: "all 0.2s",
+              },
+            }}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              if (value.length === 0) {
+                setKeyword(value);
+              }
+              searchRef.current = value;
+            }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                searchRef.current = e.currentTarget.nodeValue ?? "";
+                setKeyword(searchRef.current);
               }
             }}
             slotProps={{
               input: {
                 startAdornment: (
                   <span
+                    onClick={() => setKeyword(searchRef.current)}
                     style={{
                       cursor: "pointer",
                       // color: "#757575",
@@ -131,13 +150,6 @@ function DownloadingPage() {
                     🔍
                   </span>
                 ),
-                sx: {
-                  border: "1px solid #e0e0e0",
-                  borderRadius: "24px",
-                  fontSize: "16px",
-                  background: "#f8f9fa",
-                  transition: "all 0.2s",
-                },
               },
             }}
             placeholder={t("task.SearchPlaceholder")}
