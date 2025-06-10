@@ -79,7 +79,8 @@
         "PeerHost": "Host",
         "NumSeeders": "Seeders",
         "UploadLength": "Uploaded",
-        "SearchPlaceholder": "Search download tasks..."
+        "SearchPlaceholder": "Search download tasks...",
+        "Selected": "Selected {{count}} tasks"
     },
     "common": {
         "DownloadFile": "Download File",
@@ -108,7 +109,11 @@
         "Ratio": "Ratio",
         "CreationDate": "Creation Date",
         "Pieces": "Pieces",
-        "PieceSize": "Piece Size"
+        "PieceSize": "Piece Size",
+        "Start": "Start",
+        "Pause": "Pause",
+        "Delete": "Delete",
+        "All": "All"
     },
     "update": {
         "GotoReleasePage": "Go to release page",

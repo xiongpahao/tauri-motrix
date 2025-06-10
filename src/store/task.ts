@@ -101,10 +101,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     await get().fetchTasks();
   },
   handleTaskSelect(taskId) {
+    const { tasks, selectedTaskIds } = get();
     if (taskId) {
-      set({ selectedTaskIds: arrayAddOrRemove(get().selectedTaskIds, taskId) });
+      set({ selectedTaskIds: arrayAddOrRemove(selectedTaskIds, taskId) });
     } else {
-      set({ selectedTaskIds: get().tasks.map((item) => item.gid) });
+      const isAllAlready = tasks.length === selectedTaskIds.length;
+      set({
+        selectedTaskIds: isAllAlready ? [] : tasks.map((item) => item.gid),
+      });
     }
   },
   async setFetchType(type: TASK_STATUS_ENUM) {

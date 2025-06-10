@@ -114,7 +114,6 @@ function TaskItem({
           secondary={
             <Fragment>
               <Typography
-                component="span"
                 variant="body2"
                 sx={{ color: "text.primary", display: "inline" }}
               >

@@ -9,7 +9,6 @@ import {
   SpeedDialAction,
   SpeedDialIcon,
   TextField,
-  textFieldClasses,
 } from "@mui/material";
 import { emit } from "@tauri-apps/api/event";
 import { readText } from "@tauri-apps/plugin-clipboard-manager";
@@ -18,8 +17,9 @@ import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 import AddTorrentDialog from "@/business/task/AddTorrentDialog";
-import TaskAllAction from "@/business/task/TaskAllAction";
+import TaskBanner from "@/business/task/TaskBanner";
 import TaskItem from "@/business/task/TaskItem";
+import { BasePageColumn, Column } from "@/client/styled_compose";
 import { TaskList } from "@/client/task_compose";
 import { DialogRef } from "@/components/BaseDialog";
 import BasePage from "@/components/BasePage";
@@ -101,18 +101,13 @@ function DownloadingPage() {
         </SpeedDial>
       }
     >
-      <Box
-        sx={{
-          height: "100%",
-          display: "flex",
-          flexFlow: "column",
-        }}
-      >
-        <Box
+      <BasePageColumn>
+        <Column
           sx={(theme) => ({
             bgcolor: theme.palette.background.paper,
             px: 2,
             py: 1,
+            gap: 1,
           })}
         >
           <TextField
@@ -147,14 +142,15 @@ function DownloadingPage() {
             }}
             placeholder={t("task.SearchPlaceholder")}
           />
-          {/* <TaskAllAction
-          onPause={handleTaskPause}
-          onResume={handleTaskResume}
-          onStop={handleTaskStop}
-          selectedTaskIds={selectedTaskIds}
-          fetchType={fetchType}
-        /> */}
-        </Box>
+          <TaskBanner
+            onSelectAll={handleTaskSelect}
+            onPause={handleTaskPause}
+            onResume={handleTaskResume}
+            onStop={handleTaskStop}
+            selectedTaskIds={selectedTaskIds}
+            fetchType={fetchType}
+          />
+        </Column>
         <Box
           sx={{
             padding: "10px",
@@ -179,7 +175,7 @@ function DownloadingPage() {
             )}
           />
         </Box>
-      </Box>
+      </BasePageColumn>
       <AddTorrentDialog ref={torrentRef} />
     </BasePage>
   );
