@@ -61,6 +61,7 @@ function DownloadingPage() {
 
   return (
     <BasePage
+      full
       title={t("Task-Start")}
       header={
         <ButtonGroup size="small">
@@ -102,45 +103,83 @@ function DownloadingPage() {
     >
       <Box
         sx={{
+          height: "100%",
           display: "flex",
-          alignItems: "center",
-          [`.${textFieldClasses.root}`]: {
-            flex: 1,
-          },
+          flexFlow: "column",
         }}
       >
-        <TextField
-          size="small"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              searchRef.current = e.currentTarget.nodeValue ?? "";
-            }
-          }}
-        />
-        <TaskAllAction
+        <Box
+          sx={(theme) => ({
+            bgcolor: theme.palette.background.paper,
+            px: 2,
+            py: 1,
+          })}
+        >
+          <TextField
+            fullWidth
+            size="small"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                searchRef.current = e.currentTarget.nodeValue ?? "";
+              }
+            }}
+            slotProps={{
+              input: {
+                startAdornment: (
+                  <span
+                    style={{
+                      cursor: "pointer",
+                      // color: "#757575",
+                      fontSize: "20px",
+                    }}
+                  >
+                    🔍
+                  </span>
+                ),
+                sx: {
+                  border: "1px solid #e0e0e0",
+                  borderRadius: "24px",
+                  fontSize: "16px",
+                  background: "#f8f9fa",
+                  transition: "all 0.2s",
+                },
+              },
+            }}
+            placeholder={t("task.SearchPlaceholder")}
+          />
+          {/* <TaskAllAction
           onPause={handleTaskPause}
           onResume={handleTaskResume}
           onStop={handleTaskStop}
           selectedTaskIds={selectedTaskIds}
           fetchType={fetchType}
-        />
-      </Box>
-      <TaskList
-        dataSource={tasks}
-        renderItem={(task) => (
-          <TaskItem
-            onCopyLink={copyTaskLink}
-            onStop={handleTaskStop}
-            onResume={handleTaskResume}
-            onPause={handleTaskPause}
-            onOpenFile={openTaskFile}
-            key={task.gid}
-            task={task}
-            onSelect={handleTaskSelect}
-            selected={selectedTaskIds.includes(task.gid)}
+        /> */}
+        </Box>
+        <Box
+          sx={{
+            padding: "10px",
+            overflow: "auto",
+            flex: "1 1 1px",
+          }}
+        >
+          <TaskList
+            dataSource={tasks}
+            renderItem={(task) => (
+              <TaskItem
+                onCopyLink={copyTaskLink}
+                onStop={handleTaskStop}
+                onResume={handleTaskResume}
+                onPause={handleTaskPause}
+                onOpenFile={openTaskFile}
+                key={task.gid}
+                task={task}
+                onSelect={handleTaskSelect}
+                selected={selectedTaskIds.includes(task.gid)}
+              />
+            )}
           />
-        )}
-      />
+        </Box>
+      </Box>
       <AddTorrentDialog ref={torrentRef} />
     </BasePage>
   );

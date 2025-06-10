@@ -78,7 +78,8 @@
         "PeerClient": "Client",
         "PeerHost": "Host",
         "NumSeeders": "Seeders",
-        "UploadLength": "Uploaded"
+        "UploadLength": "Uploaded",
+        "SearchPlaceholder": "Search download tasks..."
     },
     "common": {
         "DownloadFile": "Download File",

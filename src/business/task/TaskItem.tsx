@@ -109,6 +109,7 @@ function TaskItem({
               overflow: "hidden",
             },
           }}
+          slots={{ secondary: "div" }}
           primary={getTaskName(task)}
           secondary={
             <Fragment>
