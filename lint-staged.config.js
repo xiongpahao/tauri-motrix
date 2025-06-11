@@ -1,6 +1,7 @@
 export default {
-  "*.ts": (filenames) => [
+  "*.{ts,tsx,js,jsx,css,md}": (filenames) => [
     `eslint --fix '${filenames.join("' '")}'`,
     `prettier --write '${filenames.join("' '")}'`,
   ],
+  "*.rs": (filenames) => [`rustfmt --check '${filenames.join("' '")}'`],
 };
