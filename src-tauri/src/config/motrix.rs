@@ -101,12 +101,6 @@ impl IMotrix {
         patch!(enable_auto_launch);
         patch!(auto_log_clean);
     }
-
-    /// Try to get the singleton port value before initialization
-    pub fn get_singleton_port() -> u16 {
-        const SERVER_PORT: u16 = 39621;
-        SERVER_PORT
-    }
 }
 
 #[cfg(test)]

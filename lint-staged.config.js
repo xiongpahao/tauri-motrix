@@ -3,5 +3,6 @@ export default {
     `eslint --fix '${filenames.join("' '")}'`,
     `prettier --write '${filenames.join("' '")}'`,
   ],
-  "*.rs": (filenames) => [`rustfmt --check '${filenames.join("' '")}'`],
+  "*.rs": (filenames) =>
+    `rustfmt --edition 2021 --check '${filenames.join("' '")}'`,
 };
