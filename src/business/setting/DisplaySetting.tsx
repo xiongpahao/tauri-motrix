@@ -1,10 +1,11 @@
-import { MenuItem, Select, Switch } from "@mui/material";
+import { MenuItem, Select } from "@mui/material";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import useSWR from "swr";
 
 import ThemeModeSwitch from "@/business/setting/ThemeModeSwitch";
 import { SettingItem, SettingList } from "@/client/setting_compose";
+import { Android12Switch } from "@/client/styled_compose";
 import { AVAILABLE_LANGUAGES } from "@/constant/language";
 import { useMotrix } from "@/hooks/motrix";
 import { getAutoLaunchStatus } from "@/services/cmd";
@@ -39,7 +40,7 @@ function AppearanceSetting() {
       </SettingItem>
 
       <SettingItem label={t("setting.AutoLaunch")}>
-        <Switch
+        <Android12Switch
           checked={!!motrix?.enable_auto_launch}
           onChange={async (e) => {
             await patchMotrix({ enable_auto_launch: e.target.checked });

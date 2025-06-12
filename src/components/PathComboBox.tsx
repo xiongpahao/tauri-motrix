@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 export type PathComboBoxProps = {
   openTitle?: string;
   value?: string;
-  setValue?: (value: string) => void;
+  setValue?: (value: string, preValue?: string) => void;
   onHistory?: IconButtonProps["onClick"];
 } & TextFieldProps;
 
@@ -36,8 +36,8 @@ function PathComboBox(props: PathComboBoxProps) {
     });
 
     if (folder) {
+      setValue?.(folder, pathRef.current);
       pathRef.current = folder;
-      setValue?.(folder);
     }
   }, [openTitle, setValue, t]);
 
@@ -65,7 +65,16 @@ function PathComboBox(props: PathComboBoxProps) {
           ) : undefined,
         },
       }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          setValue?.(pathRef.current);
+        }
+      }}
       {...innerProps}
+      onChange={(e) => {
+        pathRef.current = e.target.value;
+        innerProps.onChange?.(e);
+      }}
     />
   );
 }
