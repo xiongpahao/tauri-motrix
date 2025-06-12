@@ -10,7 +10,7 @@ export const AntTab = styled((props: TabProps) => (
   },
   fontWeight: theme.typography.fontWeightRegular,
   marginRight: theme.spacing(1),
-  color: "rgba(0, 0, 0, 0.85)",
+  color: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.85)" : "white",
   fontFamily: [
     "-apple-system",
     "BlinkMacSystemFont",
