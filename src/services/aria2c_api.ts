@@ -115,7 +115,7 @@ export const taskItemApi = async (gid: string) => {
   return call<Aria2Task>("tellStatus", gid);
 };
 
-interface Peer {
+export interface Peer {
   amChoking: string;
   bitfield: string;
   downloadSpeed: string;
