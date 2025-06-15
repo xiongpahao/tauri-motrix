@@ -30,6 +30,8 @@ pub struct IMotrix {
     pub enable_auto_launch: Option<bool>,
 
     pub auto_check_update: Option<bool>,
+
+    pub auto_resume_all: Option<bool>,
 }
 
 impl IMotrix {
@@ -73,6 +75,7 @@ impl IMotrix {
             enable_auto_launch: Some(false),
             auto_log_clean: Some(3),
             auto_check_update: Some(true),
+            auto_resume_all: Some(false),
             ..Self::default()
         }
     }
@@ -100,6 +103,8 @@ impl IMotrix {
         patch!(language);
         patch!(enable_auto_launch);
         patch!(auto_log_clean);
+        patch!(auto_check_update);
+        patch!(auto_resume_all);
     }
 }
 

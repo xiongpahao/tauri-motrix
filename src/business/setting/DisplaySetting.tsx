@@ -49,6 +49,18 @@ function AppearanceSetting() {
         />
       </SettingItem>
 
+      <SettingItem
+        label={t("setting.AutoResumeAll")}
+        secondary="every time the app starts"
+      >
+        <Android12Switch
+          checked={!!motrix?.auto_resume_all}
+          onChange={async (e) => {
+            await patchMotrix({ auto_resume_all: e.target.checked });
+          }}
+        />
+      </SettingItem>
+
       <SettingItem label={t("setting.Language")}>
         <Select
           size="small"

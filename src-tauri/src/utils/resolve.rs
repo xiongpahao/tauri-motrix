@@ -4,7 +4,7 @@ use crate::{
     config::Config,
     core::{handle, CoreManager},
     log_err,
-    service::tray,
+    service::{aria2c, tray},
     utils::init,
 };
 
@@ -22,6 +22,14 @@ pub async fn resolve_setup(app_handle: &AppHandle) {
 
     log::trace!(target: "app", "launch core");
     log_err!(CoreManager::global().init().await);
+
+    // TODO: temporary
+    let resume_all_when_app_launched = Config::motrix().latest().auto_resume_all;
+    let resume_all_when_app_launched = resume_all_when_app_launched.unwrap_or(false);
+
+    if resume_all_when_app_launched {
+        let _ = aria2c::unpause_all().await;
+    }
 
     log_err!(tray::create_tray(app_handle));
     log_err!(tray::update_tray_menu());
