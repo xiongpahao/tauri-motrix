@@ -37,7 +37,13 @@
     "DownloadSpeedLimit": "Download Speed Limit",
     "AutoLaunch": "Auto Launch",
     "TaskManagement": "Task Management",
-    "DefaultPath": "Default Path"
+    "DefaultPath": "Default Path",
+    "AutoResumeAll": "Automatically resume all unfinished tasks",
+    "BtAutoDownloadContent": "Automatically download magnet and torrent content",
+    "BtSaveMetadata": "Save magnet link as torrent file",
+    "BtForceEncryption": "BT force encryption",
+    "KeepSeeding": "Keep seeding when download is complete",
+    "Continue": "Task Continue"
   },
   "task": {
     "CloseAll": "Close All Tasks",
