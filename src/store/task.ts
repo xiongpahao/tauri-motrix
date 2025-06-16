@@ -7,6 +7,7 @@ import { mutate } from "swr";
 import { create } from "zustand";
 
 import { Notice } from "@/components/Notice";
+import { APP_LOG_LEVEL } from "@/constant/log";
 import { DOWNLOAD_ENGINE, TASK_STATUS_ENUM } from "@/constant/task";
 import {
   addTaskApi,
@@ -28,6 +29,7 @@ import {
   waitingTasksApi,
 } from "@/services/aria2c_api";
 import { DownloadOption } from "@/services/aria2c_api";
+import { appLog } from "@/services/cmd";
 import {
   createHistory,
   findOneHistoryByPlatId,
@@ -43,12 +45,17 @@ export type WrapGid = [{ gid: string }];
 interface TaskStore {
   tasks: Array<Aria2Task>;
   fetchType: TASK_STATUS_ENUM;
+  keyword: string;
   selectedTaskIds: Array<string>;
   selectedTasks: Array<Aria2Task>;
+  skipConfirm: boolean;
+  enableNotify: boolean;
+  syncByMotrix: (config: Partial<MotrixConfig>) => void;
   fetchTasks: () => void;
   fetchItem: (plat_id: string) => void;
   setFetchType: (type: TASK_STATUS_ENUM) => void;
-  handleTaskSelect: (taskId: string) => void;
+  setKeyword: (keyword?: string) => void;
+  handleTaskSelect: (taskId?: string) => void;
   handleTaskPause: (taskId?: string) => void;
   handleTaskResume: (taskId?: string) => void;
   handleTaskDelete: (taskId?: string) => void;
@@ -61,18 +68,22 @@ interface TaskStore {
   onDownloadStart: (wrap: WrapGid) => void;
   onDownloadStop: (wrap: WrapGid) => void;
   onDownloadComplete: (wrap: WrapGid) => void;
+  onDownloadError: (wrap: WrapGid) => void;
 }
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
   selectedTaskIds: [],
   fetchType: TASK_STATUS_ENUM.Active,
+  keyword: "",
+  skipConfirm: false,
+  enableNotify: true,
   get selectedTasks() {
     const { tasks, selectedTaskIds } = get();
     return tasks.filter((task) => selectedTaskIds.includes(task.gid));
   },
   async fetchTasks() {
-    const { fetchType } = get();
+    const { fetchType, keyword } = get();
 
     let tasks: Array<Aria2Task> = [];
     switch (fetchType) {
@@ -89,6 +100,15 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
         break;
     }
 
+    // Filter tasks by keyword if provided (case insensitive search)
+    if (keyword && keyword.trim() !== "") {
+      const normalizedKeyword = keyword.toLowerCase();
+      tasks = tasks.filter((task) => {
+        const taskName = getTaskName(task).toLowerCase();
+        return taskName.includes(normalizedKeyword);
+      });
+    }
+
     set({ tasks });
   },
   async fetchItem(plat_id) {
@@ -100,13 +120,24 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     await addTaskApi(url, compactUndefined(option));
     await get().fetchTasks();
   },
-  handleTaskSelect(taskId: string) {
-    const { selectedTaskIds } = get();
-    set({ selectedTaskIds: arrayAddOrRemove(selectedTaskIds, taskId) });
+  handleTaskSelect(taskId) {
+    const { tasks, selectedTaskIds } = get();
+    if (taskId) {
+      set({ selectedTaskIds: arrayAddOrRemove(selectedTaskIds, taskId) });
+    } else if (tasks.length > 0) {
+      const isAllAlready = tasks.length === selectedTaskIds.length;
+      set({
+        selectedTaskIds: isAllAlready ? [] : tasks.map((item) => item.gid),
+      });
+    }
   },
   async setFetchType(type: TASK_STATUS_ENUM) {
     set({ fetchType: type, selectedTaskIds: [] });
     await get().fetchTasks();
+  },
+  setKeyword(keyword) {
+    set({ keyword: keyword?.trim() ?? "" });
+    get().fetchTasks();
   },
   async handleTaskPause(taskId) {
     if (taskId) {
@@ -128,25 +159,28 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
   // TODO: to be renovated
   async handleTaskDelete(taskId) {
-    const { getTaskByGid, selectedTaskIds, fetchTasks } = get();
+    const { getTaskByGid, selectedTaskIds, fetchTasks, skipConfirm } = get();
 
-    let result: boolean;
-    if (!taskId) {
-      result = await confirm(
-        t("task.ConfirmDeleteBatch", {
-          tasksLength: selectedTaskIds.length,
+    let result = skipConfirm;
+
+    if (!result) {
+      if (!taskId) {
+        result = await confirm(
+          t("task.ConfirmDeleteBatch", {
+            tasksLength: selectedTaskIds.length,
+            title: t("task.Delete"),
+            kind: "warning",
+          }),
+        );
+      } else {
+        const task = getTaskByGid(taskId);
+        const taskName = getTaskName(task, "unknown", 16);
+
+        result = await confirm(t("task.ConfirmDelete", { taskName }), {
           title: t("task.Delete"),
           kind: "warning",
-        }),
-      );
-    } else {
-      const task = getTaskByGid(taskId);
-      const taskName = getTaskName(task, "unknown", 16);
-
-      result = await confirm(t("task.ConfirmDelete", { taskName }), {
-        title: t("task.Delete"),
-        kind: "warning",
-      });
+        });
+      }
     }
 
     if (!result) {
@@ -201,37 +235,69 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     return task;
   },
   async onDownloadStart([{ gid }]) {
-    get().fetchTasks();
+    const { fetchTasks, enableNotify } = get();
+    fetchTasks();
     usePollingStore.getState().resetInterval();
 
     const task = await taskItemApi(gid);
     const taskName = getTaskName(task, "unknown_start", 64);
 
-    Notice.success(t("task.StartMessage", { taskName }));
+    if (enableNotify) {
+      Notice.success(t("task.StartMessage", { taskName }));
+    }
 
     get().syncToDownloadHistory(task);
   },
   async onDownloadStop([{ gid }]) {
     const task = await taskItemApi(gid);
     const taskName = getTaskName(task, "unknown_stop", 64);
-    Notice.success(t("task.StopMessage", { taskName }));
+    if (get().enableNotify) {
+      Notice.success(t("task.StopMessage", { taskName }));
+    }
   },
   async onDownloadComplete([{ gid }]) {
     get().fetchTasks();
     const task = await taskItemApi(gid);
     const title = getTaskName(task, "unknown_complete", 64);
 
-    sendNotification({ title, body: t("common.Complete") });
+    if (get().enableNotify) {
+      sendNotification({ title, body: t("common.Complete") });
+    }
+    get().syncToDownloadHistory(task);
+  },
+  async onDownloadError([{ gid }]) {
+    const task = await taskItemApi(gid);
+    const { errorCode, errorMessage } = task;
+    const taskName = getTaskName(task, "unknown_error", 64);
+
+    appLog(
+      APP_LOG_LEVEL.Error,
+      `[Motrix] download error gid: ${gid}, #${errorCode}, ${errorMessage}`,
+    );
+
+    Notice.error(t("task.DownloadErrorMessage", { taskName }));
 
     get().syncToDownloadHistory(task);
   },
   async registerEvent() {
-    const { onDownloadComplete, onDownloadStart, onDownloadStop } = get();
+    const {
+      onDownloadComplete,
+      onDownloadStart,
+      onDownloadStop,
+      onDownloadError,
+    } = get();
     const { addListener } = await getAria2();
 
     addListener("onDownloadStart", onDownloadStart);
     addListener("onDownloadStop", onDownloadStop);
+    addListener("onDownloadError", onDownloadError);
     addListener("onDownloadComplete", onDownloadComplete);
+  },
+  syncByMotrix(config) {
+    set({
+      skipConfirm: !!config.no_confirm_before_delete_task,
+      enableNotify: !!config.task_completed_notify,
+    });
   },
   async syncToDownloadHistory(task) {
     const taskName = getTaskName(task, "unknown_history", 64);
@@ -247,6 +313,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       path,
       total_length: Number(task.totalLength),
       plat_id: task.gid,
+      status: task.status,
     };
 
     if (historyRecord) {
