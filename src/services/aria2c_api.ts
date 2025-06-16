@@ -63,6 +63,8 @@ export interface Aria2Task {
   totalLength: string;
   uploadLength: string;
   uploadSpeed: string;
+  errorCode?: string;
+  errorMessage?: string;
 }
 
 export interface Aria2File {

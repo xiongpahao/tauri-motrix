@@ -87,7 +87,8 @@
     "NumSeeders": "Seeders",
     "UploadLength": "Uploaded",
     "SearchPlaceholder": "Search download tasks...",
-    "Selected": "Selected {{count}} tasks"
+    "Selected": "Selected {{count}} tasks",
+    "DownloadErrorMessage": "Error occurred when downloading {{taskName}}"
   },
   "common": {
     "DownloadFile": "Download File",

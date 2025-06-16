@@ -7,6 +7,7 @@ import { mutate } from "swr";
 import { create } from "zustand";
 
 import { Notice } from "@/components/Notice";
+import { APP_LOG_LEVEL } from "@/constant/log";
 import { DOWNLOAD_ENGINE, TASK_STATUS_ENUM } from "@/constant/task";
 import {
   addTaskApi,
@@ -28,6 +29,7 @@ import {
   waitingTasksApi,
 } from "@/services/aria2c_api";
 import { DownloadOption } from "@/services/aria2c_api";
+import { appLog } from "@/services/cmd";
 import {
   createHistory,
   findOneHistoryByPlatId,
@@ -63,6 +65,7 @@ interface TaskStore {
   onDownloadStart: (wrap: WrapGid) => void;
   onDownloadStop: (wrap: WrapGid) => void;
   onDownloadComplete: (wrap: WrapGid) => void;
+  onDownloadError: (wrap: WrapGid) => void;
 }
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
@@ -248,12 +251,32 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
     get().syncToDownloadHistory(task);
   },
+  async onDownloadError([{ gid }]) {
+    const task = await taskItemApi(gid);
+    const { errorCode, errorMessage } = task;
+    const taskName = getTaskName(task, "unknown_error", 64);
+
+    appLog(
+      APP_LOG_LEVEL.Error,
+      `[Motrix] download error gid: ${gid}, #${errorCode}, ${errorMessage}`,
+    );
+
+    Notice.error(t("task.DownloadErrorMessage", { taskName }));
+
+    get().syncToDownloadHistory(task);
+  },
   async registerEvent() {
-    const { onDownloadComplete, onDownloadStart, onDownloadStop } = get();
+    const {
+      onDownloadComplete,
+      onDownloadStart,
+      onDownloadStop,
+      onDownloadError,
+    } = get();
     const { addListener } = await getAria2();
 
     addListener("onDownloadStart", onDownloadStart);
     addListener("onDownloadStop", onDownloadStop);
+    addListener("onDownloadError", onDownloadError);
     addListener("onDownloadComplete", onDownloadComplete);
   },
   async syncToDownloadHistory(task) {
@@ -270,6 +293,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       path,
       total_length: Number(task.totalLength),
       plat_id: task.gid,
+      status: task.status,
     };
 
     if (historyRecord) {
