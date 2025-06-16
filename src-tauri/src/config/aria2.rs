@@ -82,7 +82,10 @@ impl IAria2Temp {
         map.insert("bt-max-peers".into(), "128".into());
         map.insert("bt-save-metadata".into(), "true".into());
         map.insert("bt-load-saved-metadata".into(), "true".into());
+
         map.insert("max-concurrent-downloads".into(), "5".into());
+        map.insert("seed-ratio".into(), "1".into());
+        map.insert("seed-time".into(), "60".into());
 
         Self(map)
     }

@@ -73,6 +73,10 @@ function PathComboBox(props: PathComboBoxProps) {
           setValue?.(pathRef.current);
           textFieldRef.current?.blur();
         }
+
+        if (e.key === "Escape") {
+          textFieldRef.current?.blur();
+        }
       }}
       {...innerProps}
       onChange={(e) => {

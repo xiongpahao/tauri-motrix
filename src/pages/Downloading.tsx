@@ -40,7 +40,7 @@ function DownloadingPage() {
     handleTaskSelect,
     handleTaskPause,
     handleTaskResume,
-    handleTaskDelete: handleTaskStop,
+    handleTaskDelete,
     openTaskFile,
     copyTaskLink,
     setFetchType,
@@ -162,7 +162,7 @@ function DownloadingPage() {
             onSelectAll={handleTaskSelect}
             onPause={handleTaskPause}
             onResume={handleTaskResume}
-            onStop={handleTaskStop}
+            onStop={handleTaskDelete}
             selectedTaskIds={selectedTaskIds}
             fetchType={fetchType}
           />
@@ -179,7 +179,7 @@ function DownloadingPage() {
             renderItem={(task) => (
               <TaskItem
                 onCopyLink={copyTaskLink}
-                onStop={handleTaskStop}
+                onStop={handleTaskDelete}
                 onResume={handleTaskResume}
                 onPause={handleTaskPause}
                 onOpenFile={openTaskFile}

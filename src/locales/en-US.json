@@ -45,7 +45,12 @@
     "KeepSeeding": "Keep seeding when download is complete",
     "Continue": "Task Continue",
     "MaxConcurrentTasks": "Maximum active tasks",
-    "MaxConnectionPerServer": "Maximum connections per server"
+    "MaxConnectionPerServer": "Maximum connections per server",
+    "SeedRatio": "Bt Seed Ratio",
+    "SeedTime": "BT Seed Time (minutes)",
+    "TaskCompletedNotify": "Notify after download is complete",
+    "NewTaskShowDownloading": "Automatically show downloading after adding task",
+    "NoConfirmBeforeDeleteTask": "No confirmation is required before deleting task"
   },
   "task": {
     "CloseAll": "Close All Tasks",
