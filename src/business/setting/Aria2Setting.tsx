@@ -1,5 +1,6 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { mutate } from "swr";
 
 import HistoryPathInput from "@/business/history/HistoryPathInput";
 import ExternalControllerDialog from "@/business/setting/ExternalControllerDialog";
@@ -8,7 +9,10 @@ import TaskManagementDialog from "@/business/setting/TaskManagementDialog";
 import { SettingItem, SettingList } from "@/client/setting_compose";
 import { Android12Switch } from "@/client/styled_compose";
 import { DialogRef } from "@/components/BaseDialog";
+import { Notice } from "@/components/Notice";
+import { DOWNLOAD_ENGINE } from "@/constant/task";
 import { useAria2 } from "@/hooks/aria2";
+import { addOneDir, findOneDirByPath } from "@/services/save_to_history";
 
 function Aria2Setting() {
   const { t } = useTranslation();
@@ -29,6 +33,29 @@ function Aria2Setting() {
     isTrue("follow-metalink") &&
     !isTrue("pause-metadata");
 
+  const [dir, setDir] = useState(aria2?.dir || "");
+
+  useEffect(() => {
+    if (aria2?.dir) {
+      setDir(aria2.dir);
+    }
+  }, [aria2]);
+
+  const handleDir = async (newPath: string) => {
+    await patchAria2({ dir: newPath });
+
+    const dirRecord = await findOneDirByPath(dir);
+
+    if (!dirRecord && dir) {
+      await addOneDir({
+        dir,
+        engine: DOWNLOAD_ENGINE.Aria2,
+      });
+      mutate("getSaveToHistory");
+    }
+    Notice.success(t("common.SaveSuccess"));
+  };
+
   return (
     <SettingList title={t("setting.Aria2")}>
       <ExternalControllerDialog ref={externalRef} />
@@ -46,12 +73,17 @@ function Aria2Setting() {
       />
 
       <SettingItem
-        label={t("setting.TaskManagement")}
+        label={t("common.More")}
         onClick={() => taskManagementRef.current?.open()}
       />
 
       <SettingItem label={t("setting.DefaultPath")}>
-        <HistoryPathInput defaultValue={aria2?.dir} sx={{ ml: 2 }} />
+        <HistoryPathInput
+          value={dir}
+          setValue={handleDir}
+          onChange={(e) => setDir(e.target.value)}
+          sx={{ ml: 2 }}
+        />
       </SettingItem>
 
       <SettingItem label={t("setting.BtSaveMetadata")}>
