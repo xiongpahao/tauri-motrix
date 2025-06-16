@@ -63,6 +63,8 @@ export interface Aria2Task {
   totalLength: string;
   uploadLength: string;
   uploadSpeed: string;
+  errorCode?: string;
+  errorMessage?: string;
 }
 
 export interface Aria2File {
@@ -115,7 +117,7 @@ export const taskItemApi = async (gid: string) => {
   return call<Aria2Task>("tellStatus", gid);
 };
 
-interface Peer {
+export interface Peer {
   amChoking: string;
   bitfield: string;
   downloadSpeed: string;
