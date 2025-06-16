@@ -104,13 +104,13 @@ export async function findOneHistoryByPlatId(
 
 export async function updateHistoryByPlatId(
   id: string,
-  history: DownloadHistoryDTO,
+  dto: DownloadHistoryDTO,
 ) {
   const db = await getMotrixDB();
 
   return db.execute(
-    "UPDATE download_history SET total_length = $1 WHERE plat_id = $2",
-    [history.total_length, id],
+    "UPDATE download_history SET total_length = $1, name = $2, path = $3 WHERE plat_id = $4",
+    [dto.total_length, dto.name, dto.path, id],
   );
 }
 
