@@ -14,6 +14,7 @@
     "email": "Qiacrkeng@gmail.com"
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "check": "node ./scripts/check.mjs",
     "updater": "node scripts/updater.mjs",
     "dev": "rsbuild dev",
