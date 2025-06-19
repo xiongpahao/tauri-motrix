@@ -5,7 +5,7 @@ use crate::{
     core::{handle, CoreManager},
     log_err,
     service::{aria2c, tray},
-    utils::init,
+    utils::{init, window::create_window},
 };
 
 pub async fn resolve_setup(app_handle: &AppHandle) {
@@ -33,4 +33,8 @@ pub async fn resolve_setup(app_handle: &AppHandle) {
 
     log_err!(tray::create_tray(app_handle));
     log_err!(tray::update_tray_menu());
+
+    // create main window
+    // TODO: silent startup in feature
+    create_window(true);
 }

@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "tauri-motrix",
+  "productName": "Tauri Motrix",
   "version": "0.2.2",
   "identifier": "com.tauri-motrix.app",
   "build": {
@@ -10,16 +10,6 @@
     "frontendDist": "../dist"
   },
   "app": {
-    "windows": [
-      {
-        "title": "tauri-motrix",
-        "width": 800,
-        "height": 600,
-        "minWidth": 500,
-        "minHeight": 550,
-        "decorations": false
-      }
-    ],
     "security": {
       "csp": null
     }
