@@ -42,7 +42,6 @@
     "@tauri-apps/plugin-updater": "~2",
     "@tauri-motrix/aria2": "workspace:*",
     "ahooks": "^3.8.4",
-    "axios": "^1.7.9",
     "bittorrent-peerid": "^1.3.6",
     "dayjs": "^1.11.13",
     "i18next": "^24.2.1",
