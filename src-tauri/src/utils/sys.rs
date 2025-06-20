@@ -45,7 +45,7 @@ pub async fn terminate_process(pid: u32) {
         }
     }
 }
-}
+
 
 pub async fn get_occupied_port_pids(port: u16) -> Vec<u32> {
     println!("[check_port] whether port {} is available", port);
