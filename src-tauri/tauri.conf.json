@@ -27,7 +27,7 @@
     "externalBin": ["sidecar/aria2c"],
     "createUpdaterArtifacts": true,
     "resources": ["resources", "resources/locales/*"],
-    "publisher": "Taoister39",
+    "publisher": "xiongpahao",
     "copyright": "GNU General Public License v3.0",
     "category": "Utility"
   },
@@ -35,7 +35,7 @@
     "updater": {
       "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDg0QTJDRThGMDVFQTJFQzAKUldUQUx1b0ZqODZpaEkyU1FNRjVML0ZmQlFyYmVnRVpvb2duV2lzdkY4eXpRamVoWStPY2ZMM1UK",
       "endpoints": [
-        "https://github.com/Taoister39/tauri-motrix/releases/download/updater/update.json"
+        "https://github.com/xiongpahao/tauri-motrix/releases/download/updater/update.json"
       ],
       "windows": {
         "installMode": "passive"
