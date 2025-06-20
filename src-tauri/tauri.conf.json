@@ -25,7 +25,7 @@
       "icons/icon.ico"
     ],
     "externalBin": ["sidecar/aria2c"],
-    "createUpdaterArtifacts": true,
+    "createUpdaterArtifacts": false,
     "resources": ["resources", "resources/locales/*"],
     "publisher": "xiongpahao",
     "copyright": "GNU General Public License v3.0",
