@@ -16,7 +16,6 @@
   },
   "bundle": {
     "active": true,
-    "appName": "tauri-motrix",
     "targets": ["dmg", "app"],
     "icon": [
       "icons/32x32.png",
@@ -32,6 +31,7 @@
     "copyright": "GNU General Public License v3.0",
     "category": "Utility",
     "macOS": {
+      "filename": "tauri-motrix",
       "frameworks": [],
       "minimumSystemVersion": "10.13",
       "entitlements": null,
