@@ -24,6 +24,27 @@ pub async fn terminate_process(pid: u32) {
             }
         }
     }
+    #[cfg(target_os = "macos")]
+    {
+        let output = Command::new("kill")
+            .args(["-9", &pid.to_string()])
+            .output();
+
+        match output {
+            Ok(output) => {
+                if output.status.success() {
+                    println!("[terminate_process] successfully killed PID: {}", pid);
+                } else {
+                    let stderr = String::from_utf8_lossy(&output.stderr);
+                    println!("[terminate_process] failed to kill: {}", stderr);
+                }
+            }
+            Err(err) => {
+                println!("[terminate_process] failed to command: {:?}", err);
+            }
+        }
+    }
+}
 }
 
 pub async fn get_occupied_port_pids(port: u16) -> Vec<u32> {
@@ -53,6 +74,26 @@ pub async fn get_occupied_port_pids(port: u16) -> Vec<u32> {
 
                     if !pids.contains(&pid) {
                         pids.push(pid);
+                    }
+                }
+            }
+        } 
+    #[cfg(target_os = "macos")]
+    {
+        let output = Command::new("lsof")
+            .args(["-i", &format!(":{}", port)])
+            .output()
+            .expect("failed to execute lsof command");
+
+        if output.status.success() {
+            let output_str = String::from_utf8_lossy(&output.stdout);
+            for line in output_str.lines().skip(1) {
+                let cols: Vec<&str> = line.split_whitespace().collect();
+                if cols.len() >= 2 {
+                    if let Ok(pid) = cols[1].parse::<u32>() {
+                        if !pids.contains(&pid) {
+                            pids.push(pid);
+                        }
                     }
                 }
             }
