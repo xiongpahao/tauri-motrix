@@ -50,7 +50,7 @@ pub async fn terminate_process(pid: u32) {
 pub async fn get_occupied_port_pids(port: u16) -> Vec<u32> {
     println!("[check_port] whether port {} is available", port);
 
-    let mut pids: Vec<u32> = [].to_vec();
+    let mut pids = Vec::new();
 
     #[cfg(target_os = "windows")]
     {
@@ -77,7 +77,11 @@ pub async fn get_occupied_port_pids(port: u16) -> Vec<u32> {
                     }
                 }
             }
-        } 
+        } else {
+            println!("[check_port] failed to execute netstat command");
+        }
+    }
+
     #[cfg(target_os = "macos")]
     {
         let output = Command::new("lsof")
@@ -98,9 +102,10 @@ pub async fn get_occupied_port_pids(port: u16) -> Vec<u32> {
                 }
             }
         } else {
-            println!("[check_port] failed to execute netstat command");
+            println!("[check_port] failed to execute lsof command");
         }
     }
 
     pids
+    
 }
