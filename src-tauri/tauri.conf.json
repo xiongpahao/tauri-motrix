@@ -16,7 +16,8 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis"],
+    "appName": "tauri-motrix",
+    "targets": ["dmg", "app"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -29,7 +30,13 @@
     "resources": ["resources", "resources/locales/*"],
     "publisher": "xiongpahao",
     "copyright": "GNU General Public License v3.0",
-    "category": "Utility"
+    "category": "Utility",
+    "macOS": {
+      "frameworks": [],
+      "minimumSystemVersion": "10.13",
+      "entitlements": null,
+      "exceptionDomain": ""
+    }
   },
   "plugins": {
     "updater": {
