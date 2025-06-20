@@ -8,29 +8,12 @@ pub fn create_window(is_showup: bool) -> bool {
     let app_handle = handle::Handle::global().app_handle().unwrap();
 
     if let Some(window) = handle::Handle::global().get_window() {
-        logging!(
-            info,
-            Type::Window,
-            true,
-            "Found existing window, attempting to restore visibility"
-        );
-
-        if window.is_minimized().unwrap_or(false) {
-            logging!(
-                info,
-                Type::Window,
-                true,
-                "Window is minimized, restoring window state"
-            );
-            let _ = window.unminimize();
-        }
-        let _ = window.show();
-        let _ = window.set_focus();
+        // ...（略）...
         return true;
     }
 
     #[cfg(target_os = "windows")]
-    let window = tauri::WebviewWindowBuilder::new(
+    let window_result = tauri::WebviewWindowBuilder::new(
         &app_handle,
         "main".to_string(),
         tauri::WebviewUrl::App("index.html".into()),
@@ -42,12 +25,29 @@ pub fn create_window(is_showup: bool) -> bool {
     .maximizable(true)
     .build();
 
-    match window {
+    #[cfg(target_os = "macos")]
+    let window_result = tauri::WebviewWindowBuilder::new(
+        &app_handle,
+        "main".to_string(),
+        tauri::WebviewUrl::App("index.html".into()),
+    )
+    .title("Tauri Motrix")
+    .inner_size(800.0, 600.0)
+    .min_inner_size(500.0, 550.0)
+    .title_bar_style(tauri::TitleBarStyle::Overlay) // 举例
+    .build();
+
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    let window_result = tauri::WebviewWindowBuilder::new(
+        &app_handle,
+        "main".to_string(),
+        tauri::WebviewUrl::App("index.html".into()),
+    ).build();
+
+    match window_result {
         Ok(window) => {
             logging!(info, Type::Window, true, "Window created successfully");
-
             if is_showup {
-                println!("is showup");
                 let _ = window.show();
                 let _ = window.set_focus();
             } else {
